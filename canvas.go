@@ -148,33 +148,33 @@ func (canvas *Canvas) DrawPoints(mode CanvasPointMode, count int, pts []Point, p
 }
 
 func (canvas *Canvas) OnDrawPoints(mode CanvasPointMode, count int, pts []Point, paint *Paint) {
-	if count <= 0 {
-		return
-	}
-	var r, storage Rect
-	var bounds *Rect = nil
-	if paint.CanComputeFastBounds() {
-		// special-case 2 points (common for drawing a single line)
-		if count == 2 {
-			r.SetLTRBPoint(pts[0], pts[1])
-		} else {
-			// TODO(impl)
-			// r.SetPoints(pts, count)
-		}
-		if canvas.QuickReject(paint.ComputeFastStrokeBounds(r, &storage)) {
-			return
-		}
-		bounds = &r
-	}
-	canvas.PredrawNotify()
-	var looper = newAutoDrawLooper(canvas, paint, false, bounds)
-	defer looper.Finalizer()
-	for looper.Next(KDrawFilterTypePoint) {
-		var iter = newDrawIter(canvas)
-		for iter.Next() {
-			iter.Device().DrawPoints(iter, mode, count, pts, looper.Paint())
-		}
-	}
+	// if count <= 0 {
+	// 	return
+	// }
+	// var r, storage Rect
+	// var bounds *Rect = nil
+	// if paint.CanComputeFastBounds() {
+	// 	// special-case 2 points (common for drawing a single line)
+	// 	if count == 2 {
+	// 		r.SetLTRBPoint(pts[0], pts[1])
+	// 	} else {
+	// 		// TODO(impl)
+	// 		// r.SetPoints(pts, count)
+	// 	}
+	// 	if canvas.QuickReject(paint.ComputeFastStrokeBounds(r, &storage)) {
+	// 		return
+	// 	}
+	// 	bounds = &r
+	// }
+	// canvas.PredrawNotify()
+	// var looper = newAutoDrawLooper(canvas, paint, false, bounds)
+	// defer looper.Finalizer()
+	// for looper.Next(KDrawFilterTypePoint) {
+	// 	var iter = newDrawIter(canvas)
+	// 	for iter.Next() {
+	// 		iter.Device().DrawPoints(iter, mode, count, pts, looper.Paint())
+	// 	}
+	// }
 }
 
 func (canvas *Canvas) QuickReject(src Rect) bool {
@@ -280,6 +280,8 @@ func newCanvasMCRec(conservativeRasterClip bool) *tCanvasMCRec {
 	rec.DeferredSaveCount = 0
 	// don't bother initializing Next
 	// inc_rec()
+	toimpl()
+	return nil
 }
 
 // Subclass save/restore notifiers.
@@ -340,17 +342,17 @@ func newAutoDrawLooper(canvas *Canvas, paint *Paint, skipLayerForImageFilter boo
 		var tmp = NewPaint()
 		tmp.SetImageFilter(looper.paint.ImageFilter())
 		tmp.SetXfermode(looper.paint.Xfermode())
-		var storage Rect
+		// var storage Rect
 		if rawBounds != nil {
 			// Make rawBounds include all paint outsets except for those due to image filters.
-			rawBounds = applyPaintToBoundsSansImageFilter(looper.paint, *rawBounds, &storage)
+			// rawBounds = applyPaintToBoundsSansImageFilter(looper.paint, *rawBounds, &storage)
 		}
 		canvas.internalSaveLayer(newCanvasSaveLayerRec(rawBounds, tmp, nil, KCanvasSaveLayerFlagIsOpaque), KCanvasSaveLayerStrategyFullLayer)
 		looper.tempLayerForImageFilter = false
 		// we remove the imagefilter/xfermode inside doNext()
 	}
 	if paint.Looper() != nil {
-		looper.drawLooperContext = paint.Looper().CreateContext(canvas)
+		// looper.drawLooperContext = paint.Looper().CreateContext(canvas)
 		looper.isSimple = false
 	} else {
 		looper.drawLooperContext = nil
@@ -425,6 +427,7 @@ func newDrawIter(canvas *Canvas) *tDrawIter {
 
 func (iter *tDrawIter) Next() bool {
 	toimpl()
+	return false
 }
 
 type LazyPaint struct {

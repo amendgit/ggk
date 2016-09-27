@@ -10,7 +10,9 @@ func MemoryPixelsDefaultFactory() *MemoryPixelsFactory {
 }
 
 func (f *MemoryPixelsFactory) Create(info *ImageInfo, rowBytes int, ct *ColorTable) *Pixels {
-	return NewMemoryPixelsAlloc(info, rowBytes)
+	// return NewMemoryPixelsAlloc(info, rowBytes)
+	toimpl()
+	return nil
 }
 
 type MemoryPixels struct {

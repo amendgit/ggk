@@ -43,9 +43,9 @@ const (
 	KAScaleY
 	KATransX
 	KATransY
-);
+)
 
-func (m *Matrix) SetTypeMask(mask int) {
+func (m *Matrix) SetTypeMask(mask uint32) {
 	m.typeMask = mask
 }
 

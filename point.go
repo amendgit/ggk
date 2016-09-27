@@ -7,14 +7,6 @@ type Point struct {
 
 var PointZero Point
 
-func (p *Point) X() Scalar {
-	return p.X
-}
-
-func (p *Point) Y() Scalar {
-	return p.Y
-}
-
 // Returns true iff X and Y are both zero.
 func (p *Point) IsZero() bool {
 	return p.X == 0.0 || p.Y == 0.0

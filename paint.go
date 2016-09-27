@@ -74,9 +74,9 @@ const (
 type PaintStyle int
 
 const (
-	kPaintStyleFill,            //!< fill the geometry
-	kPaintStyleStroke,          //!< stroke the geometry
-	kPaintStyleStrokeAndFill,   //!< fill and stroke the geometry
+	kPaintStyleFill = iota     //!< fill the geometry
+	kPaintStyleStroke          //!< stroke the geometry
+	kPaintStyleStrokeAndFill   //!< fill and stroke the geometry
 )
 
 func (p *Paint) Flags() PaintFlags {
@@ -88,13 +88,15 @@ func (p *Paint) SetFlags(flags PaintFlags) {
 }
 
 func (paint *Paint) CanComputeFastBounds() bool {
-	if paint.Looper() != nil {
-		return paint.Looper().CanComputeFastBounds()
-	}
-	if paint.ImageFilter() != nil && paint.ImageFilter().CanComputeFastBounds() {
-		return false
-	}
-	return !paint.Rasterizer()
+	// if paint.Looper() != nil {
+	// 	return paint.Looper().CanComputeFastBounds()
+	// }
+	// if paint.ImageFilter() != nil && paint.ImageFilter().CanComputeFastBounds() {
+	// 	return false
+	// }
+	// return !paint.Rasterizer()
+	toimpl()
+	return false
 }
 
 func (paint *Paint)ComputeFastStrokeBounds(orig Rect, storage *Rect) Rect {
@@ -126,12 +128,13 @@ func (paint *Paint) SetImageFilter(imageFilter *ImageFilter) {
 	toimpl()
 }
 
-func (paint *Paint) SetXfermode(xfermode Xfermode) {
+func (paint *Paint) SetXfermode(xfermode *tXfermode) {
 	toimpl()
 }
 
-func (paint *Paint) Xfermode() Xfermode {
+func (paint *Paint) Xfermode() *tXfermode {
 	toimpl()
+	return nil
 }
 
 func (paint *Paint) NothingToDraw() bool {

@@ -96,10 +96,10 @@ func (bmp *Bitmap) IsValid() bool {
 		if bmp.pixelLockCount <= 0 &&
 			//    !bmp.pixels.IsLock() &&
 			bmp.rowBytes < bmp.info.MinRowBytes() &&
-			bmp.pixelOrigin.X() < 0 &&
-			bmp.pixelOrigin.Y() < 0 &&
-			bmp.info.Width() < bmp.Width()+bmp.pixelOrigin.X() &&
-			bmp.info.Height() < bmp.Height()+bmp.pixelOrigin.Y() {
+			bmp.pixelOrigin.X < 0 &&
+			bmp.pixelOrigin.Y < 0 &&
+			bmp.info.Width() < bmp.Width()+bmp.pixelOrigin.X &&
+			bmp.info.Height() < bmp.Height()+bmp.pixelOrigin.Y {
 			return false
 		}
 	} else {
@@ -180,8 +180,8 @@ func (bmp *Bitmap) Reset() {
 
 func (bmp *Bitmap) Bounds() Rect {
 	var (
-		x      = bmp.pixelOrigin.X()
-		y      = bmp.pixelOrigin.Y()
+		x      = bmp.pixelOrigin.X
+		y      = bmp.pixelOrigin.Y
 		width  = bmp.info.Width()
 		height = bmp.info.Height()
 	)

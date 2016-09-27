@@ -17,14 +17,15 @@ type DrawLooper struct {
 // memory for the Context. The required size can be queried by calling
 // contextSize(). It is also the caller's responsibility to destroy the
 // object after use.
-func (l *DrawLooper) CreateContext(canvas Canvas, storage interface{}) *DrawLooperContext {
+// func (l *DrawLooper) CreateContext(canvas Canvas, storage interface{}) *DrawLooperContext {
 
-}
+// }
 
 // Returns the number of bytes needed to store subclasses of Context (belonging to the
 // corresponding DrawLooper subclass).
 func (l *DrawLooper) ContextSize() int {
-
+	toimpl()
+	return 0
 }
 
 // The fast bounds functions are used to enable the paint to be culled early
@@ -36,11 +37,12 @@ func (l *DrawLooper) ContextSize() int {
 // storage rect, where the storage rect is with the union of the src rect
 // and the looper's bounding rect.
 func (l *DrawLooper) CanComputeFastBounds(paint *Paint) bool {
-
+	toimpl()
+	return false
 }
 
 func (l *DrawLooper) ComputeFastBounds(paint *Paint, src, dst Rect) {
-
+	toimpl()
 }
 
 // If this looper can be interpreted as having two layers, such that
@@ -50,10 +52,15 @@ func (l *DrawLooper) ComputeFastBounds(paint *Paint, src, dst Rect) {
 // then return true, and if not null, fill out the BlurShadowRec).
 //
 // If any of the above are not met, return false and ignore the BlurShadowRec parameter.
-func (l *DrawLooper) AsABlurShadow(rec *DrawLooperBlurShadowRec) bool {
-
+func (l *DrawLooper) AsABlurShadow(rec *tDrawLooperBlurShadowRec) bool {
+	toimpl()
+	return false
 }
 
 type tDrawLooperContext struct {
+
+}
+
+type tDrawLooperBlurShadowRec struct {
 
 }
