@@ -73,7 +73,7 @@ func (bmp *Bitmap) IsEmpty() bool {
 // Return true iff the bitmap has no pixelref. Note: this can return true even if the
 // dimensions of the bitmap are > 0 (see IsEmpty()).
 // Hey! Before you use this, see if you really want to know DrawNothing() intead.
-func (bmp *Bitmap) IsNil() bool {
+func (bmp *Bitmap) IsNull() bool {
 	return bmp.pixels == nil
 }
 
@@ -138,46 +138,108 @@ func (bmp *Bitmap) SetAlphaType(alphaType AlphaType) bool {
 	return true
 }
 
+// Return the address of the pixels for this Bitmap.
 func (bmp *Bitmap) Pixels() *Pixels {
 	return bmp.pixels
 }
 
+// Return the bytes of the pixels for this bitmap.
 func (bmp *Bitmap) PixelsBytes() []byte {
 	bmp.pixels.LockPixels()
 	var bytes = bmp.pixels.Bytes()
 	return bytes
 }
 
-func (bmp *Bitmap) InstallPixels(requestedInfo ImageInfo, pixelsBytes []byte, rowBytes int, ct *ColorTable) bool {
-	if !bmp.SetInfo(requestedInfo, rowBytes) {
-		// release pixels
-		bmp.Reset()
-		return false
-	}
-	if pixelsBytes == nil {
-		// release pixels
-		return true // we behaved as if they called setInfo()
-	}
-	var pixels = NewMemoryPixelsDirect(pixelsBytes)
-	if pixels == nil {
-		bmp.Reset()
-		return false
-	}
-	bmp.pixels = pixels.Pixels
-	// since we're already allocated, we LockPixels right away.
-	bmp.LockPixels()
-	if !bmp.IsValid() {
-		// 	log.Printf(`xyz`)
-	}
-	return true
+// Return the byte size of the pixels, based on the height and rowBytes.
+// Note this truncates the result to 32bits. Call Size64() to detect 
+// if the real size exceeds 32bit.
+func (bmp *Bitmap) Size() int32 {
+	toimpl()
+	return 0
 }
 
+// Return the number of bytes from the pointer returned by getPixels()
+// to the end of the allocated space in the buffer. Required in
+// cases where extractSubset has been called.
+func (bmp *Bitmap) SafeSize() int32 {
+	toimpl()
+	return 0
+}
+
+// Return the full size of the bitmap, in bytes.
+func (bmp *Bitmap) ComputeSize64() int64 {
+	toimpl()
+	return 0
+}
+
+// Return the number of bytes from the pointer returned by getPixels()
+// to the end of the allocated space in the buffer. This may be smaller
+// than computeSize64() if there is any rowbytes padding beyond the width.
+func (bmp *Bitmap) ComputeSafeSize64() int64 {
+	toimpl()
+	return 0
+}
+
+// Returns true if this bitmap is marked as immutable, meaning that the
+// contents of its pixels will not change for the lifetime of the bitmap.
+func (bmp *Bitmap) IsImmutable() bool {
+	toimpl()
+	return false
+}
+
+// Marks this bitmap as immutable, meaning that the contents of its
+// pixels will not change for the lifetime of the bitmap and of the
+// underlying pixelref. This state can be set, but it cannot be
+// cleared once it is set. This state propagates to all other bitmaps
+// that share the same pixelref.
+func (bmp *Bitmap) SetIsImmutable() {
+	toimpl()
+}
+
+// Return true if the bitmap is opaque (has no translucent/transparent pixels)
+func (bmp *Bitmap) IsOpaque() bool {
+	toimpl()
+	return false
+}
+
+// Returns true if the bitmap is volatile (i.e. should not be cached by devices.)
+func (bmp *Bitmap) IsVolatile() bool {
+	toimpl()
+	return false
+}
+
+// Specify whether this bitmap is volatile. Bitmaps are not volatile by
+// default. Temporary bitmaps that are discarded after use should be
+// marked as volatile. This provides a hint to the device that the bitmap
+// should not be cached. Providing this hint when appropriate can
+// improve performance by avoiding unnecessary overhead and resource
+// consumption on the device.
+func (bmp *Bitmap) SetIsVolatile(isVolatile bool) {
+	toimpl()
+	return false
+}
+
+// Reset the bitmap to its initial state (see default constructor). If we are a (shared)
+// owner of the pixels, that ownership is decremented.
 func (bmp *Bitmap) Reset() {
 	bmp.freePixels()
 	var zero Bitmap
 	*bmp = zero
 }
 
+// This will brute-force return true if all of the pixels in the bitmap
+// are opaque. If it fails to read the pixels, or encounters an error,
+// it will return false.
+//
+// Since this can be an expensive operation, the bitmap stores a flag for
+// this (isOpaque). Only call this if you need to compute this value from
+// "unknown" pixels.
+func (bmp *Bitmap) ComputeIsOpaque() bool {
+	toimpl()
+	return false
+}
+
+// Return the bitmap's bounds [0, 0, width, height] as an Rect.
 func (bmp *Bitmap) Bounds() Rect {
 	var (
 		x      = bmp.pixelOrigin.X
@@ -186,6 +248,17 @@ func (bmp *Bitmap) Bounds() Rect {
 		height = bmp.info.Height()
 	)
 	return MakeRect(x, y, width, height)
+}
+
+func (bmp *Bitmap) Dimensions() Size {
+	toimpl()
+	return SizeZero
+}
+
+// Returns the bounds of this bitmap, offset by its pixelref origin.
+func (bmp *Bitmap) Subset() Rect {
+	toimpl()
+	return RectZero
 }
 
 func (bmp *Bitmap) SetInfo(imageInfo ImageInfo, rowBytes int) bool {
@@ -218,6 +291,15 @@ func (bmp *Bitmap) SetInfo(imageInfo ImageInfo, rowBytes int) bool {
 	return true
 }
 
+ // Allocate the bitmap's pixels to match the requested image info. If the Factory
+ // is non-null, call it to allcoate the pixelref. If the ImageInfo requires
+ // a colortable, then ColorTable must be non-null, and will be ref'd.
+ // On failure, the bitmap will be set to empty and return false.
+func (bmp *Bitmap) TryAllocPixels(info *ImageInfo, factory *PixelsRefFactory, ct *ColorTable) bool {
+	toimpl()
+	return false
+}
+
 var ErrAllocPixels = errors.New(`ERROR: bad imageInfo, rowBytes. or allocate failed`)
 
 func (bmp *Bitmap) AllocPixels(requestedInfo ImageInfo, rowBytes int) error {
@@ -245,6 +327,47 @@ func (bmp *Bitmap) AllocPixels(requestedInfo ImageInfo, rowBytes int) error {
 		return ErrAllocPixels
 	}
 	return ErrAllocPixels
+}
+
+// Install a pixelref that wraps the specified pixels and rowBytes, and
+// optional ReleaseProc and context. When the pixels are no longer
+// referenced, if releaseProc is not null, it will be called with the
+// pixels and context as parameters.
+// On failure, the bitmap will be set to empty and return false.
+//
+// If specified, the releaseProc will always be called, even on failure. It is also possible
+// for success but the releaseProc is immediately called (e.g. valid Info but NULL pixels).
+// func (bmp *Bitmap) InstallPixels(requestedInfo ImageInfo, pixelsBytes []byte, rowbytes int, ct *ColorTable, 
+// 	releaseProc ReleaseProc, context *interface{}) bool {
+// 	toimpl()
+// 	return false
+// }
+
+// Call installPixels with no ReleaseProc specified. This means that the
+// caller must ensure that the specified pixels are valid for the lifetime
+// of the created bitmap (and its pixelRef).
+func (bmp *Bitmap) InstallPixels(requestedInfo ImageInfo, pixelsBytes []byte, rowBytes int, ct *ColorTable) bool {
+	if !bmp.SetInfo(requestedInfo, rowBytes) {
+		// release pixels
+		bmp.Reset()
+		return false
+	}
+	if pixelsBytes == nil {
+		// release pixels
+		return true // we behaved as if they called setInfo()
+	}
+	var pixels = NewMemoryPixelsDirect(pixelsBytes)
+	if pixels == nil {
+		bmp.Reset()
+		return false
+	}
+	bmp.pixels = pixels.Pixels
+	// since we're already allocated, we LockPixels right away.
+	bmp.LockPixels()
+	if !bmp.IsValid() {
+		// 	log.Printf(`xyz`)
+	}
+	return true
 }
 
 // Assign a pixels and origin to the bitmap. Pixels are reference.
@@ -278,7 +401,7 @@ func (bmp *Bitmap) UnlockPixels() error {
 }
 
 // Unreference any pixels or colorTables.
-func (bmp *Bitmap) freePixels() {
+func (bmp *Bitmap) FreePixels() {
 	if bmp.pixels != nil {
 		if bmp.pixelLockCount > 0 {
 			bmp.UnlockPixels()
