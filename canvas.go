@@ -42,16 +42,16 @@ func NewCanvas(bmp *Bitmap) *Canvas {
 	return canvas
 }
 
-func (c *Canvas) init(dev *BaseDevice, flags CanvasInitFlags) {
+func (canvas *Canvas) init(dev *BaseDevice, flags CanvasInitFlags) {
 	toimpl()
 }
 
-func (c *Canvas) ReadPixelsToBitmap(bmp *Bitmap, x, y Scalar) error {
+func (canvas *Canvas) ReadPixelsToBitmap(bmp *Bitmap, x, y Scalar) error {
 	toimpl()
 	return nil
 }
 
-func (c *Canvas) ReadPixelsInRectToBitmap(bmp *Bitmap, srcRect Rect) error {
+func (canvas *Canvas) ReadPixelsInRectToBitmap(bmp *Bitmap, srcRect Rect) error {
 	toimpl()
 	return nil
 }
@@ -137,10 +137,10 @@ const (
 	KPointModePolygon
 )
 
-func (c *Canvas) DrawPoint(x, y Scalar, paint *Paint) {
+func (canvas *Canvas) DrawPoint(x, y Scalar, paint *Paint) {
 	var pt Point
 	pt.X, pt.Y = x, y
-	c.DrawPoints(KPointModePoints, 1, []Point{pt}, paint)
+	canvas.DrawPoints(KPointModePoints, 1, []Point{pt}, paint)
 }
 
 func (canvas *Canvas) DrawPoints(mode CanvasPointMode, count int, pts []Point, paint *Paint) {
