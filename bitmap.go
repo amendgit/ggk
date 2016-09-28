@@ -379,6 +379,13 @@ func (bmp *Bitmap) SetPixels(pixels *Pixels, origin Point) {
 	toimpl()
 }
 
+// Return the current pixelref object or NULL if there is none. This does
+// not affect the refcount of the pixelref.
+func (bmp *Bitmap) PixelRef() *PixelRef {
+	toimpl()
+	return nil
+}
+
 // Call this to ensure that the bitmap points to the current pixel address
 // in the pixels. Balance it with a call to UnlockPixels(). These calls
 // are harmless if there is no pixelRef.
