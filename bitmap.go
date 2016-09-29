@@ -386,6 +386,30 @@ func (bmp *Bitmap) PixelRef() *PixelRef {
 	return nil
 }
 
+// A bitmap can reference a subset of a pixelref's pixels. That means the
+// bitmap's width/height can be <= the dimensions of the pixelref. The
+// pixelref origin is the x,y location within the pixelref's pixels for
+// the bitmap's top/left corner. To be valid the following must be true:
+//
+// origin_x + bitmap_width  <= pixelref_width
+// origin_y + bitmap_height <= pixelref_height
+//
+// PixelRefOrigin() returns this origin, or (0,0) if there is no pixelRef.
+func (bmp *Bitmap) PixelRefOrigin() Point {
+	toimpl()
+	return PointZero
+}
+
+// Assign a pixelref and origin to the bitmap. Pixelrefs are reference,
+// so the existing one (if any) will be unref'd and the new one will be
+// ref'd. (x,y) specify the offset within the pixelref's pixels for the
+// top/left corner of the bitmap. For a bitmap that encompases the entire
+// pixels of the pixelref, these will be (0,0).
+func (bmp *Bitmap) SetPixelRef(pr *PixelRef, dx, dy int) *PixelRef {
+	toimpl()
+	return nil
+}
+
 // Call this to ensure that the bitmap points to the current pixel address
 // in the pixels. Balance it with a call to UnlockPixels(). These calls
 // are harmless if there is no pixelRef.
@@ -407,6 +431,18 @@ func (bmp *Bitmap) UnlockPixels() error {
 	return nil
 }
 
+func (bmp *Bitmap) requestLock(result *AutoPixmapLock) bool {
+	toimpl()
+	return false
+}
+
+// Call this to be sure that the bitmap is valid enough to be drawn (i.e.
+// it has non-null pixels, and if required by its colortype, it has a
+// non-null colortable. Returns true if all of the above are met.
+func (bmp *Bitmap) ReadyToDraw() {
+	toimpl()
+}
+
 // Unreference any pixels or colorTables.
 func (bmp *Bitmap) FreePixels() {
 	if bmp.pixels != nil {
@@ -419,4 +455,62 @@ func (bmp *Bitmap) FreePixels() {
 	bmp.pixelLockCount = 0
 	bmp.pixels = nil
 	bmp.colorTable = nil
+}
+
+// Return the bitmap's colortable, if it uses one (i.e. colorType is
+// Index_8) and the pixels are locked.
+// Otherwise returns NULL. Does not affect the colortable's
+// reference count.
+func (bmp *Bitmap) ColorTable() *ColorTable {
+	toimpl()
+	return nil
+}
+
+// Returns a non-zero, unique value corresponding to the pixels in our
+// pixelref. Each time the pixels are changed (and notifyPixelsChanged
+// is called), a different generation ID will be returned. Finally, if
+// there is no pixelRef then zero is returned.
+func (bmp *Bitmap) GenerationID() uint32 {
+	toimpl()
+	return 0
+}
+
+// Call this if you have changed the contents of the pixels. This will in-
+// turn cause a different generation ID value to be returned from
+// getGenerationID().
+func (bmp *Bitmap) NotifyPixelsChanged() {
+	toimpl()
+}
+
+// Fill the entire bitmap with the specified color.
+// If the bitmap's colortype does not support alpha (e.g. 565) then the alpha
+// of the color is ignored (treated as opaque). If the colortype only supports
+// alpha (e.g. A1 or A8) then the color's r,g,b components are ignored.
+func (bmp *Bitmap) EraseColor(c Color) {
+	toimpl()
+}
+
+// Fill the entire bitmap with the specified color.
+// If the bitmap's colortype does not support alpha (e.g. 565) then the alpha
+// of the color is ignored (treated as opaque). If the colortype only supports
+// alpha (e.g. A1 or A8) then the color's r,g,b components are ignored.
+func (bmp *Bitmap) EraseARGB(a, r, g, b uint8) {
+	toimpl()
+}
+
+// Fill the specified area of this bitmap with the specified color.
+// If the bitmap's colortype does not support alpha (e.g. 565) then the alpha
+// of the color is ignored (treated as opaque). If the colortype only supports
+// alpha (e.g. A1 or A8) then the color's r,g,b components are ignored.
+func (bmp *Bitmap) EraseRect(c Color, area Rect) {
+	toimpl()
+}
+
+// Return the SkColor of the specified pixel.  In most cases this will
+// require un-premultiplying the color.  Alpha only colortypes (e.g. kAlpha_8_SkColorType)
+// return black with the appropriate alpha set.  The value is undefined
+// for kUnknown_SkColorType or if x or y are out of bounds, or if the bitmap
+// does not have any pixels (or has not be locked with lockPixels()).
+func (bmp *Bitmap) ColorAt(x, y) Color {
+	return Color(0, 0, 0, 0)
 }
