@@ -5,6 +5,29 @@ import (
 	"sync/atomic"
 )
 
+type BitmapAllocator interface {
+	AllocPixelRef(bmp *Bitmap, ct *ColorTable) bool
+}
+
+type BitmapHeapAllocator struct {
+	// empty.
+}
+
+func (alloc *BitmapHeapAllocator) AllocPixelRef(bmp *Bitmap, ct *ColorTable) bool {
+	toimpl()
+	return false
+}
+
+type BitmapFlags int
+
+const (
+	kBitmapFlagImageIsVolatile = 0x02
+	// A hint for the renderer responsible for drawing this bitmap
+    // indicating that it should attempt to use mipmaps when this bitmap
+    // is drawn scaled down.
+	kBitmapFlagHasHardwareMipMap = 0x08
+)
+
 type Bitmap struct {
 	rowBytes int
 	flags    uint8
@@ -15,6 +38,23 @@ type Bitmap struct {
 	pixels         *Pixels
 	pixelOrigin    Point
 	pixelLockCount int32
+}
+
+// Copies the src bitmap into this bitmap. Ownership of the src
+// bitmap's pixels is shared with the src bitmap.
+func (bmp *Bitmap) Assign(otr *Bitmap) *Bitmap {
+	toimpl()
+	return nil
+}
+
+func (bmp *Bitmap) Move(otr *Bitmap) *Bitmap {
+	toimpl()
+	return nil
+}
+
+func (bmp *Bitmap) Copy(otr *Bitmap) *Bitmap {
+	toimpl()
+	return nil
 }
 
 // Swap the fields of the two bitmaps. This routine is guaranteed to never fail or throw.
@@ -513,4 +553,170 @@ func (bmp *Bitmap) EraseRect(c Color, area Rect) {
 // does not have any pixels (or has not be locked with lockPixels()).
 func (bmp *Bitmap) ColorAt(x, y) Color {
 	return Color(0, 0, 0, 0)
+}
+
+// Returns the address of the specified pixel. This performs a runtime
+// check to know the size of the pixels, and will return the same answer
+// as the corresponding size-specific method (e.g. getAddr16). Since the
+// check happens at runtime, it is much slower than using a size-specific
+// version. Unlike the size-specific methods, this routine also checks if
+// getPixels() returns null, and returns that. The size-specific routines
+// perform a debugging assert that getPixels() is not null, but they do
+// not do any runtime checks.
+func (bmp *Bitmap) AddrAt(x, y int) int {
+	toimpl()
+	return 0
+}
+
+// Returns the address of the pixel specified by x,y for 32bit pixels.
+// In debug build, this asserts that the pixels are allocated and locked,
+// and that the colortype is 32-bit, however none of these checks are performed
+// in the release build.
+func (bmp *Bitmap) Addr32At(x, y int) int {
+	toimpl()
+	return 0
+}
+
+// Returns the address of the pixel specified by x,y for 16bit pixels.
+// In debug build, this asserts that the pixels are allocated and locked,
+// and that the colortype is 16-bit, however none of these checks are performed
+// in the release build.
+func (bmp *Bitmap) Addr16At(x, y int) int {
+	toimpl()
+	return 0
+}
+
+// Returns the address of the pixel specified by x,y for 8bit pixels.
+// In debug build, this asserts that the pixels are allocated and locked,
+// and that the colortype is 8-bit, however none of these checks are performed
+// in the release build.
+func (bmp *Bitmap) Addr8At(x, y int) int {
+	toimpl()
+	return 0
+}
+
+// Returns the color corresponding to the pixel specified by x,y for
+// colortable based bitmaps.
+// In debug build, this asserts that the pixels are allocated and locked,
+// that the colortype is indexed, and that the colortable is allocated,
+// however none of these checks are performed in the release build.
+func (bmp *Bitmap) Index8ColorAt(x, y int) PremulColor {
+	toimpl()
+	return PremulColor(0, 0, 0)
+}
+
+// Set dst to be a setset of this bitmap. If possible, it will share the
+// pixel memory, and just point into a subset of it. However, if the colortype
+// does not support this, a local copy will be made and associated with
+// the dst bitmap. If the subset rectangle, intersected with the bitmap's
+// dimensions is empty, or if there is an unsupported colortype, false will be
+// returned and dst will be untouched.
+// @param dst  The bitmap that will be set to a subset of this bitmap
+// @param subset The rectangle of pixels in this bitmap that dst will
+//               reference.
+// @return true if the subset copy was successfully made.
+func (bmp *Bitmap) ExtractSubset(dst *Bitmap, subset Rect) bool {
+	toimpl()
+	return false
+}
+
+// Makes a deep copy of this bitmap, respecting the requested colorType,
+// and allocating the dst pixels on the cpu.
+// Returns false if either there is an error (i.e. the src does not have
+// pixels) or the request cannot be satisfied (e.g. the src has per-pixel
+// alpha, and the requested colortype does not support alpha).
+// @param dst The bitmap to be sized and allocated
+// @param ct The desired colorType for dst
+// @param allocator Allocator used to allocate the pixelref for the dst
+//                  bitmap. If this is null, the standard HeapAllocator
+//                  will be used.
+// @return true if the copy was made.
+func (bmp *Bitmap) CopyToWithColorType(dst *Bitmap, ct ColorType, allocator *Allocator) bool {
+	toimpl()
+	return false
+}
+
+func (bmp *Bitmap) CopyTo(dst *Bitmap, allocator *Allocator) bool {
+	toimpl()
+	return false
+}
+
+// Copy the bitmap's pixels into the specified buffer (pixels + rowBytes),
+// converting them into the requested format (SkImageInfo). The src pixels are read
+// starting at the specified (srcX,srcY) offset, relative to the top-left corner.
+//
+// The specified ImageInfo and (srcX,srcY) offset specifies a source rectangle
+//
+//     srcR.setXYWH(srcX, srcY, dstInfo.width(), dstInfo.height());
+//
+// srcR is intersected with the bounds of the bitmap. If this intersection is not empty,
+// then we have two sets of pixels (of equal size). Replace the dst pixels with the
+// corresponding src pixels, performing any colortype/alphatype transformations needed
+// (in the case where the src and dst have different colortypes or alphatypes).
+//
+// This call can fail, returning false, for several reasons:
+// - If srcR does not intersect the bitmap bounds.
+// - If the requested colortype/alphatype cannot be converted from the src's types.
+// - If the src pixels are not available.
+func (bmp *Bitmap) ReadPixels(dstInfo *ImageInfo, dstPixels []byte, dstRowBytes int, srcX, srcY int) bool {
+	toimpl()
+	return false
+}
+
+// Returns true if this bitmap's pixels can be converted into the requested
+// colorType, such that copyTo() could succeed.
+func (bmp *Bitmap) CanCopyTo(ct ColorType) bool {
+	toimpl()
+	return false
+}
+
+// Makes a deep copy of this bitmap, keeping the copied pixels
+// in the same domain as the source: If the src pixels are allocated for
+// the cpu, then so will the dst. If the src pixels are allocated on the
+// gpu (typically as a texture), the it will do the same for the dst.
+// If the request cannot be fulfilled, returns false and dst is unmodified.
+func (bmp *Bitmap) DeepCopyTo(dst *Bitmap) bool {
+	toimpl()
+	return false
+}
+
+func (bmp *Bitmap) HasHardwareMipMap() bool {
+	return bmp.flags & kBitmapFlagHasHardwareMipMap != 0
+}
+
+func (bmp *Bitmap) SetHasHardwareMipMap(hasHardwareMipMap bool) {
+	if hasHardwareMipMap {
+		bmp.flags |= kBitmapFlagHasHardwareMipMap
+	} else {
+		bmp.flags &= ~kBitmapFlagHasHardwareMipMap
+	}
+}
+
+// Set dst to contain alpha layer of this bitmap. If destination bitmap
+// fails to be initialized, e.g. because allocator can't allocate pixels
+// for it, dst will not be modified and false will be returned.
+//
+// @param dst The bitmap to be filled with alpha layer
+// @param paint The paint to draw with
+// @param allocator Allocator used to allocate the pixelref for the dst
+//                  bitmap. If this is null, the standard HeapAllocator
+//                  will be used.
+// @param offset If not null, it is set to top-left coordinate to position
+//               the returned bitmap so that it visually lines up with the
+//               original
+func (bmp *Bitmap) ExtractAlpha(dst *Bitmap, paint *Paint, allocator *Allocator, offset Point) bool {
+	toimpl()
+	return false
+}
+
+// If the pixels are available from this bitmap (w/o locking) return true, and fill out the
+// specified pixmap (if not null). If the pixels are not available (either because there are
+// none, or becuase accessing them would require locking or other machinary) return false and
+// ignore the pixmap parameter.
+//
+// Note: if this returns true, the results (in the pixmap) are only valid until the bitmap
+// is changed in anyway, in which case the results are invalid.
+func (bmp *Bitmap) PeekPixels(pixmap *Pixmap) bool {
+	toimpl()
+	return false
 }
