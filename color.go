@@ -3,7 +3,7 @@ package ggk
 import "errors"
 
 // 8-bit type for an alpha value. 0xff is 100% opaque, 0x00 is 100% transparent.
-// type Alpha uint8
+type Alpha uint8
 
 // Color is 32-bit ARGB color value, not permultiplied. The color components are
 // alwarys in a known order. This is different from PMColor, which has its bytes
@@ -102,9 +102,9 @@ func PremulColorFromARGB32(a, r, g, b uint8) (PremulColor, error) {
 // component values.
 func PremultiplyARGB(a, r, g, b uint8) (PremulColor, error) {
 	if a != 255 {
-		r = MulDiv255Round(uint16(r), uint16(a))
-		g = MulDiv255Round(uint16(r), uint16(a))
-		b = MulDiv255Round(uint16(r), uint16(a))
+		r = MulDiv255Round(r, a)
+		g = MulDiv255Round(r, a)
+		b = MulDiv255Round(r, a)
 	}
 	return PremulColorFromARGB32(a, r, g, b)
 }

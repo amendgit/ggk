@@ -130,17 +130,17 @@ type CanvasPointMode int
 
 const (
 	// DrawPoints draws each point separately
-	KPointModePoints CanvasPointMode = iota
+	KCanvasPointModePoints CanvasPointMode = iota
 	// DrawPoints draws each pair of points as a line segment
-	KPointModeLines
+	KCanvasPointModeLines
 	// DrawPoints draws the array of points as a polygon
-	KPointModePolygon
+	KCanvasPointModePolygon
 )
 
 func (canvas *Canvas) DrawPoint(x, y Scalar, paint *Paint) {
 	var pt Point
 	pt.X, pt.Y = x, y
-	canvas.DrawPoints(KPointModePoints, 1, []Point{pt}, paint)
+	canvas.DrawPoints(KCanvasPointModePoints, 1, []Point{pt}, paint)
 }
 
 func (canvas *Canvas) DrawPoints(mode CanvasPointMode, count int, pts []Point, paint *Paint) {

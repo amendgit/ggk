@@ -6,6 +6,7 @@ type Paint struct {
 	flags   uint16
 	hinting uint8
 	looper  *DrawLooper
+	style   PaintStyle
 }
 
 func NewPaint() *Paint {
@@ -74,9 +75,9 @@ const (
 type PaintStyle int
 
 const (
-	kPaintStyleFill = iota     //!< fill the geometry
-	kPaintStyleStroke          //!< stroke the geometry
-	kPaintStyleStrokeAndFill   //!< fill and stroke the geometry
+	KPaintStyleFill          = iota // < fill the geometry
+	KPaintStyleStroke               // < stroke the geometry
+	KPaintStyleStrokeAndFill        // < fill and stroke the geometry
 )
 
 func (p *Paint) Flags() PaintFlags {
@@ -99,13 +100,13 @@ func (paint *Paint) CanComputeFastBounds() bool {
 	return false
 }
 
-func (paint *Paint)ComputeFastStrokeBounds(orig Rect, storage *Rect) Rect {
-	return paint.doComputeFastStrokeBounds(orig, storage, kPaintStyleStroke)
+func (paint *Paint) ComputeFastStrokeBounds(orig Rect, storage *Rect) Rect {
+	return paint.doComputeFastStrokeBounds(orig, storage, KPaintStyleStroke)
 }
 
 // Take the style explicitly, so the caller can force us to be stroked
 // without having to make a copy of the paint just to change that field.
-func (paint *Paint)doComputeFastStrokeBounds(orig Rect, storage *Rect, style PaintStyle) Rect {
+func (paint *Paint) doComputeFastStrokeBounds(orig Rect, storage *Rect, style PaintStyle) Rect {
 	toimpl()
 	return RectZero
 }
@@ -140,4 +141,18 @@ func (paint *Paint) Xfermode() *tXfermode {
 func (paint *Paint) NothingToDraw() bool {
 	toimpl()
 	return false
+}
+
+func (paint *Paint) Clone() *Paint {
+	toimpl()
+	return nil
+}
+
+func (paint *Paint) SetStyle(style PaintStyle) {
+	paint.style = style
+}
+
+func (paint *Paint) StrokeWidth() int {
+	toimpl()
+	return 0
 }

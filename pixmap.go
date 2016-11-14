@@ -17,3 +17,7 @@ func (p *Pixmap) Width() Scalar {
 func (p *Pixmap) Height() Scalar {
 	return p.info.Height()
 }
+
+type AutoPixmapUnlock struct {
+
+}

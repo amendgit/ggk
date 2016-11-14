@@ -7,10 +7,10 @@ import (
 var RectZero Rect
 
 type Rect struct {
-	left   Scalar
-	top    Scalar
-	width  Scalar
-	height Scalar
+	Left   Scalar
+	Top    Scalar
+	Width  Scalar
+	Height Scalar
 }
 
 func MakeRect(x, y, width, height Scalar) Rect {
@@ -28,81 +28,80 @@ func MakeRectLTRB(left, top, right, bottom Scalar) Rect {
 }
 
 // Return te left edge of the rect.
-func (r Rect) Left() Scalar {
-	return r.left
+func (r Rect) L() Scalar {
+	return r.Left
 }
 
 func (r Rect) X() Scalar {
-	return r.left
+	return r.Left
 }
 
 // Return the top edge of the rect.
-func (r Rect) Top() Scalar {
-	return r.top
+func (r Rect) T() Scalar {
+	return r.Top
 }
 
 func (r Rect) Y() Scalar {
-	return r.top
+	return r.Top
 }
 
 // Return the rectangle's width. This does not check for a valid rect
 // (i.e. left <= right) so the result may be negative.
-func (r Rect) Width() Scalar {
-	return r.width
+func (r Rect) W() Scalar {
+	return r.Width
 }
 
 // Returns the rectangle's height. This does not check for a vaild rect
 // (i.e. top <= bottom) so the result may be negative.
-func (r Rect) Height() Scalar {
-	return r.height
+func (r Rect) H() Scalar {
+	return r.Height
 }
 
 // Returns the rectangle's right edge.
-func (r Rect) Right() Scalar {
-	return r.left + r.width
+func (r Rect) R() Scalar {
+	return r.Left + r.Width
 }
 
 // Returns the rectangle's bottom edge.
-func (r Rect) Bottom() Scalar {
-	return r.top + r.height
+func (r Rect) B() Scalar {
+	return r.Top + r.Height
 }
 
 // Returns the rectangle's center x.
 func (r Rect) CenterX() Scalar {
-	return r.left + r.width*0.5
+	return r.Left + r.Width*0.5
 }
 
 // Returns the rectangle's center Y.
 func (r Rect) CenterY() Scalar {
-	return r.top + r.height*0.5
+	return r.Top + r.Height*0.5
 }
 
 // Return true if the rectangle's width or height are <= 0
 func (r Rect) IsEmpty() bool {
-	return r.left <= 0 || r.height <= 0
+	return r.Left <= 0 || r.Height <= 0
 }
 
 // Return true if the two rectangles have same position and size.
 func (a Rect) Equal(b Rect) bool {
-	return a.left == b.left && a.top == b.top && a.width == b.width &&
-		a.height == b.height
+	return a.Left == b.Left && a.Top == b.Top && a.Width == b.Width && a.Height == b.Height
 }
 
 // Set the rectangle's edges with (x, y, w, h)
 func (r *Rect) SetXYWH(x, y, width, height Scalar) {
-	r.left, r.top, r.width, r.height = x, y, width, height
+	r.Left, r.Top, r.Width, r.Height = x, y, width, height
 }
 
 // Set the rectangle's edges with (left, top, right, bottom)
 func (r *Rect) SetLTRB(left, top, right, bottom Scalar) {
-	r.left, r.top, r.width, r.height = left, top, right-left, bottom-top
+	r.Left, r.Top, r.Width, r.Height = left, top, right-left, bottom-top
 }
 
 func (r *Rect) SetLTRBPoint(lt, rb Point) {
-	r.left   = ScalarMin(lt.X, rb.X)
-	r.top    = ScalarMin(lt.Y, rb.Y)
-	r.width  = ScalarAbs(rb.X - lt.X)
-	r.height = ScalarAbs(rb.Y - lt.Y)
+	r.Left = ScalarMin(lt.X, rb.X)
+	r.Top = ScalarMin(lt.Y, rb.Y)
+	r.Width = ScalarAbs(rb.X - lt.X)
+	r.Height = ScalarAbs(rb.Y - lt.Y)
 }
 
 func (r *Rect) IntersectXYWH(x, y, w, h Scalar) bool {
@@ -111,5 +110,5 @@ func (r *Rect) IntersectXYWH(x, y, w, h Scalar) bool {
 }
 
 func (r Rect) ToGoRect() image.Rectangle {
-	return image.Rect(int(r.left), int(r.top), int(r.width), int(r.height))
+	return image.Rect(int(r.Left), int(r.Top), int(r.Width), int(r.Height))
 }

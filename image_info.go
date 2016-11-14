@@ -372,7 +372,7 @@ func (h *tReadPixelsRec) Trim(srcWidth, srcHeight Scalar) error {
 	var idx = int(0 - (y*Scalar(h.RowBytes) + x*Scalar(h.Info.BytesPerPixel())))
 	// the intersect may have shrunk info's logical size.
 	h.Pixels = h.Pixels[idx:]
-	h.Info = h.Info.MakeWH(srcRect.Width(), srcRect.Height())
+	h.Info = h.Info.MakeWH(srcRect.Width, srcRect.Height)
 	h.X, h.Y = srcRect.X(), srcRect.Y()
 	return nil
 }

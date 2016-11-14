@@ -18,14 +18,14 @@ func (alloc *BitmapHeapAllocator) AllocPixelRef(bmp *Bitmap, ct *ColorTable) boo
 	return false
 }
 
-type BitmapFlags int
+type BitmapFlags uint8
 
 const (
-	kBitmapFlagImageIsVolatile = 0x02
+	kBitmapFlagImageIsVolatile = uint8(0x02)
 	// A hint for the renderer responsible for drawing this bitmap
     // indicating that it should attempt to use mipmaps when this bitmap
     // is drawn scaled down.
-	kBitmapFlagHasHardwareMipMap = 0x08
+	kBitmapFlagHasHardwareMipMap = uint8(0x08)
 )
 
 type Bitmap struct {
@@ -152,7 +152,7 @@ func (bmp *Bitmap) IsValid() bool {
 
 // Return true iff drawing the bitmap has no effect.
 func (bmp *Bitmap) DrawNothing() bool {
-	return bmp.IsEmpty() || bmp.IsNil()
+	return bmp.IsEmpty() || bmp.IsNull()
 }
 
 // Return the number of bytes between subsequent rows of the bitmap.
@@ -256,13 +256,13 @@ func (bmp *Bitmap) IsVolatile() bool {
 // consumption on the device.
 func (bmp *Bitmap) SetIsVolatile(isVolatile bool) {
 	toimpl()
-	return false
+	return
 }
 
 // Reset the bitmap to its initial state (see default constructor). If we are a (shared)
 // owner of the pixels, that ownership is decremented.
 func (bmp *Bitmap) Reset() {
-	bmp.freePixels()
+	bmp.FreePixels()
 	var zero Bitmap
 	*bmp = zero
 }
@@ -325,7 +325,7 @@ func (bmp *Bitmap) SetInfo(imageInfo ImageInfo, rowBytes int) bool {
 		bmp.Reset()
 		return false
 	}
-	bmp.freePixels()
+	bmp.FreePixels()
 	bmp.info = imageInfo.MakeAlphaType(alphaType)
 	bmp.rowBytes = rowBytes
 	return true
@@ -335,7 +335,7 @@ func (bmp *Bitmap) SetInfo(imageInfo ImageInfo, rowBytes int) bool {
  // is non-null, call it to allcoate the pixelref. If the ImageInfo requires
  // a colortable, then ColorTable must be non-null, and will be ref'd.
  // On failure, the bitmap will be set to empty and return false.
-func (bmp *Bitmap) TryAllocPixels(info *ImageInfo, factory *PixelsRefFactory, ct *ColorTable) bool {
+func (bmp *Bitmap) TryAllocPixels(info *ImageInfo, factory *PixelRefFactory, ct *ColorTable) bool {
 	toimpl()
 	return false
 }
@@ -471,7 +471,7 @@ func (bmp *Bitmap) UnlockPixels() error {
 	return nil
 }
 
-func (bmp *Bitmap) requestLock(result *AutoPixmapLock) bool {
+func (bmp *Bitmap) requestLock(result *AutoPixmapUnlock) bool {
 	toimpl()
 	return false
 }
@@ -551,8 +551,8 @@ func (bmp *Bitmap) EraseRect(c Color, area Rect) {
 // return black with the appropriate alpha set.  The value is undefined
 // for kUnknown_SkColorType or if x or y are out of bounds, or if the bitmap
 // does not have any pixels (or has not be locked with lockPixels()).
-func (bmp *Bitmap) ColorAt(x, y) Color {
-	return Color(0, 0, 0, 0)
+func (bmp *Bitmap) ColorAt(x, y int) Color {
+	return ColorWithARGB(0, 0, 0, 0)
 }
 
 // Returns the address of the specified pixel. This performs a runtime
@@ -602,7 +602,7 @@ func (bmp *Bitmap) Addr8At(x, y int) int {
 // however none of these checks are performed in the release build.
 func (bmp *Bitmap) Index8ColorAt(x, y int) PremulColor {
 	toimpl()
-	return PremulColor(0, 0, 0)
+	return PremulColor(0)
 }
 
 // Set dst to be a setset of this bitmap. If possible, it will share the
@@ -631,12 +631,12 @@ func (bmp *Bitmap) ExtractSubset(dst *Bitmap, subset Rect) bool {
 //                  bitmap. If this is null, the standard HeapAllocator
 //                  will be used.
 // @return true if the copy was made.
-func (bmp *Bitmap) CopyToWithColorType(dst *Bitmap, ct ColorType, allocator *Allocator) bool {
+func (bmp *Bitmap) CopyToWithColorType(dst *Bitmap, ct ColorType, allocator *BitmapAllocator) bool {
 	toimpl()
 	return false
 }
 
-func (bmp *Bitmap) CopyTo(dst *Bitmap, allocator *Allocator) bool {
+func (bmp *Bitmap) CopyTo(dst *Bitmap, allocator *BitmapAllocator) bool {
 	toimpl()
 	return false
 }
@@ -688,7 +688,7 @@ func (bmp *Bitmap) SetHasHardwareMipMap(hasHardwareMipMap bool) {
 	if hasHardwareMipMap {
 		bmp.flags |= kBitmapFlagHasHardwareMipMap
 	} else {
-		bmp.flags &= ~kBitmapFlagHasHardwareMipMap
+		bmp.flags &= ^kBitmapFlagHasHardwareMipMap
 	}
 }
 
@@ -704,7 +704,7 @@ func (bmp *Bitmap) SetHasHardwareMipMap(hasHardwareMipMap bool) {
 // @param offset If not null, it is set to top-left coordinate to position
 //               the returned bitmap so that it visually lines up with the
 //               original
-func (bmp *Bitmap) ExtractAlpha(dst *Bitmap, paint *Paint, allocator *Allocator, offset Point) bool {
+func (bmp *Bitmap) ExtractAlpha(dst *Bitmap, paint *Paint, allocator *BitmapAllocator, offset Point) bool {
 	toimpl()
 	return false
 }

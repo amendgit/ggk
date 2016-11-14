@@ -3,7 +3,7 @@ package ggk
 // AAClip is anti-alising clip.
 type AAClip struct {
 	bounds  Rect
-	runHead *RunHead
+	runHead *AAClipRunHead
 }
 
 func (clip *AAClip) Assign(otr *AAClip) *AAClip {
@@ -121,7 +121,7 @@ func (clip *AAClip) Debug(compressY bool) {
 const kAAClipBlitterGrayMaskScratchSize = 32 * 32
 
 type AAClipBlitter struct {
-	*Blitter
+	Blitter
 
 	blitter      *Blitter
 	aaclip       *AAClip
@@ -159,5 +159,9 @@ func (blitter *AAClipBlitter) BlitMask(mask *Mask, clip Rect) {
 
 func (blitter *AAClipBlitter) JustAnOpaqueColor(value *uint32) *Pixmap {
 	toimpl()
-	return
+	return nil
+}
+
+type AAClipRunHead struct {
+
 }
