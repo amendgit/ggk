@@ -158,57 +158,57 @@ type ImageInfo struct {
 
 	colorType   ColorType
 	alphaType   AlphaType
-	profileType ColorProfileType
+	colorSpace  *ColorSpace
 }
 
-func NewImageInfo(width, height Scalar, colorType ColorType, alphaType AlphaType, profileType ColorProfileType) *ImageInfo {
+func NewImageInfo(width, height Scalar, colorType ColorType, alphaType AlphaType, colorSpace *ColorSpace) *ImageInfo {
 	var imageInfo = &ImageInfo{
-		width:       width,
-		height:      height,
-		colorType:   colorType,
-		alphaType:   alphaType,
-		profileType: profileType,
+		width:      width,
+		height:     height,
+		colorType:  colorType,
+		alphaType:  alphaType,
+		colorSpace: colorSpace,
 	}
 
 	return imageInfo
 }
 
-func NewImageInfoN32(width, height Scalar, at AlphaType, pt ColorProfileType) *ImageInfo {
-	return NewImageInfo(width, height, KColorTypeN32, at, pt)
+func NewImageInfoN32(width, height Scalar, at AlphaType, cs *ColorSpace) *ImageInfo {
+	return NewImageInfo(width, height, KColorTypeN32, at, cs)
 }
 
-func NewImageInfoN32Premul(width, height Scalar, pt ColorProfileType) *ImageInfo {
-	return NewImageInfo(width, height, KColorTypeN32, KAlphaTypePremul, pt)
+func NewImageInfoN32Premul(width, height Scalar, cs *ColorSpace) *ImageInfo {
+	return NewImageInfo(width, height, KColorTypeN32, KAlphaTypePremul, cs)
 }
 
 func NewImageInfoA8(width, height Scalar) *ImageInfo {
-	return NewImageInfo(width, height, KColorTypeAlpha8, KAlphaTypePremul, KColorProfileTypeLinear)
+	return NewImageInfo(width, height, KColorTypeAlpha8, KAlphaTypePremul, nil)
 }
 
 func NewImageInfoUnknown(width, height Scalar) *ImageInfo {
-	return NewImageInfo(width, height, KColorTypeUnknown, KAlphaTypeUnknown, KColorProfileTypeLinear)
+	return NewImageInfo(width, height, KColorTypeUnknown, KAlphaTypeUnknown, nil)
 }
 
-func (ii *ImageInfo) Make(width, height Scalar, ct ColorType, at AlphaType, pt ColorProfileType) *ImageInfo {
+func (ii *ImageInfo) Make(width, height Scalar, ct ColorType, at AlphaType, cs *ColorSpace) *ImageInfo {
 	var newInfo = new(ImageInfo)
 	newInfo.width = width
 	newInfo.height = height
 	newInfo.colorType = ct
 	newInfo.alphaType = at
-	newInfo.profileType = pt
+	newInfo.colorSpace = cs
 	return newInfo
 }
 
 func (ii *ImageInfo) MakeWH(width, height Scalar) *ImageInfo {
-	return ii.Make(width, height, ii.colorType, ii.alphaType, ii.profileType)
+	return ii.Make(width, height, ii.colorType, ii.alphaType, ii.colorSpace)
 }
 
 func (ii *ImageInfo) MakeColorType(ct ColorType) *ImageInfo {
-	return ii.Make(ii.width, ii.height, ct, ii.alphaType, ii.profileType)
+	return ii.Make(ii.width, ii.height, ct, ii.alphaType, ii.colorSpace)
 }
 
 func (ii *ImageInfo) MakeAlphaType(at AlphaType) *ImageInfo {
-	return ii.Make(ii.width, ii.height, ii.colorType, at, ii.profileType)
+	return ii.Make(ii.width, ii.height, ii.colorType, at, ii.colorSpace)
 }
 
 func (ii *ImageInfo) Width() Scalar {
@@ -235,8 +235,8 @@ func (ii *ImageInfo) SetAlphaType(alphaType AlphaType) {
 	ii.alphaType = alphaType
 }
 
-func (ii *ImageInfo) ProfileType() ColorProfileType {
-	return ii.profileType
+func (ii *ImageInfo) ColorSpace() *ColorSpace {
+	return ii.colorSpace
 }
 
 func (ii *ImageInfo) IsValid() bool {
@@ -260,14 +260,6 @@ func (ii *ImageInfo) IsOpaque() bool {
 	return ii.alphaType.IsOpaque()
 }
 
-func (ii *ImageInfo) IsLinear() bool {
-	return ii.profileType == KColorProfileTypeLinear
-}
-
-func (ii *ImageInfo) IsSRGB() bool {
-	return ii.profileType == KColorProfileTypeSRGB
-}
-
 func (ii *ImageInfo) ComputeOffset(x, y int, rowBytes uint) (uint, error) {
 	if uint(x) >= uint(ii.width) || uint(y) >= uint(ii.height) {
 		return 0, fmt.Errorf("OOR: ggk.ImageInfo(0x%x).ComputeOffset(%d, %d, %d)",
@@ -281,7 +273,7 @@ func (ii *ImageInfo) Equal(other *ImageInfo) bool {
 	var equal = false
 	equal = (ii.colorType == other.colorType)
 	equal = equal && (ii.alphaType == other.alphaType)
-	equal = equal && (ii.profileType == other.profileType)
+	equal = equal && (ii.colorSpace == other.colorSpace)
 	equal = equal && (ii.width == other.width)
 	equal = equal && (ii.height == other.height)
 	return equal

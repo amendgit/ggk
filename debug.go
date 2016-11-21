@@ -6,12 +6,12 @@ import (
 )
 
 func toimpl() {
-	var pc, file, line, ok = runtime.Caller(1)
+	var pc, _, line, ok = runtime.Caller(1)
 	if !ok {
 		return
 	}
 	var fn = runtime.FuncForPC(pc).Name()
-	fmt.Printf("toimpl %v %v %v", file, fn, line)
+	fmt.Println("toimpl", fn, line)
 }
 
 func warning(format string, a ...interface{}) {
@@ -21,7 +21,7 @@ func warning(format string, a ...interface{}) {
 	}
 	var fn = runtime.FuncForPC(pc).Name()
 	var msg = fmt.Sprintf(format, a)
-	fmt.Printf("warning %v %v %v %v", file, fn, line, msg)
+	fmt.Println("warning %v %v %v %v", file, fn, line, msg)
 }
 
 func errorf(format string, a ...interface{}) error {

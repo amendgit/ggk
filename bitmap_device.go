@@ -8,10 +8,10 @@ type BitmapDevice struct {
 // for the bitmap to have no pixels associated with it. In that case, any
 // drawing to this device will have no effect.
 func NewBitmapDevice(bmp *Bitmap, props SurfaceProps) *BitmapDevice {
-	var d = new(BitmapDevice)
-	d.BaseDevice = NewBaseDevice()
-	d.Device = d
-	return nil
+	var bitmapDevice = new(BitmapDevice)
+	bitmapDevice.BaseDevice = NewBaseDevice()
+	bitmapDevice.Device = bitmapDevice
+	return bitmapDevice
 }
 
 func (dev *BitmapDevice) ImageInfo() *ImageInfo {

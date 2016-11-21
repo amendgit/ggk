@@ -82,8 +82,8 @@ func (bmp *Bitmap) AlphaType() AlphaType {
 	return bmp.info.alphaType
 }
 
-func (bmp *Bitmap) ProfileType() ColorProfileType {
-	return bmp.info.profileType
+func (bmp *Bitmap) ColorSpace() *ColorSpace {
+	return bmp.info.colorSpace
 }
 
 // Return the number of bytes per pixel based on the colortype. If the colortype is
@@ -301,22 +301,25 @@ func (bmp *Bitmap) Subset() Rect {
 	return RectZero
 }
 
-func (bmp *Bitmap) SetInfo(imageInfo ImageInfo, rowBytes int) bool {
+func (bmp *Bitmap) SetInfo(imageInfo *ImageInfo, rowBytes int) bool {
 	alphaType, err := imageInfo.ColorType().ValidateAlphaType(imageInfo.AlphaType())
 	if err != nil {
 		bmp.Reset()
 		return false
 	}
+
 	// alphaType is the real value.
 	var minRowBytes int64 = imageInfo.MinRowBytes64()
 	if int64(int32(minRowBytes)) != minRowBytes {
 		bmp.Reset()
 		return false
 	}
+
 	if imageInfo.Width() < 0 || imageInfo.Height() < 0 {
 		bmp.Reset()
 		return false
 	}
+
 	if imageInfo.ColorType() == KColorTypeUnknown {
 		rowBytes = 0
 	} else if rowBytes == 0 {
@@ -325,9 +328,11 @@ func (bmp *Bitmap) SetInfo(imageInfo ImageInfo, rowBytes int) bool {
 		bmp.Reset()
 		return false
 	}
+
 	bmp.FreePixels()
 	bmp.info = imageInfo.MakeAlphaType(alphaType)
 	bmp.rowBytes = rowBytes
+
 	return true
 }
 
@@ -342,31 +347,46 @@ func (bmp *Bitmap) TryAllocPixels(info *ImageInfo, factory *PixelRefFactory, ct 
 
 var ErrAllocPixels = errors.New(`ERROR: bad imageInfo, rowBytes. or allocate failed`)
 
-func (bmp *Bitmap) AllocPixels(requestedInfo ImageInfo, rowBytes int) error {
+func (bmp *Bitmap) AllocPixels(requestedInfo *ImageInfo, rowBytes int) error {
 	if requestedInfo.ColorType() == KColorTypeIndex8 {
 		bmp.Reset()
 		return ErrAllocPixels
 	}
+
 	if !bmp.SetInfo(requestedInfo, rowBytes) {
 		bmp.Reset()
 		return ErrAllocPixels
 	}
+
 	// SetInfo may have corrected info (e.g. 565 is always opaque).
 	var correctedInfo = bmp.Info()
+
 	// SetInfo may have computed a valid rowBytes if 0 were passed in
 	rowBytes = bmp.RowBytes()
+
 	// Allocate memories.
 	var pixels = NewMemoryPixelsAlloc(correctedInfo, rowBytes)
 	if pixels == nil {
 		bmp.Reset()
 		return ErrAllocPixels
 	}
+
 	bmp.pixels = pixels.Pixels
 	if bmp.LockPixels() != nil {
 		bmp.Reset()
 		return ErrAllocPixels
 	}
-	return ErrAllocPixels
+
+	return nil
+}
+
+func (bmp *Bitmap) AllocN32Pixels(width, height int, isOpaque bool) error {
+	var colorType = KAlphaTypePremul
+	if isOpaque {
+		colorType = KAlphaTypeOpaque
+	}
+	var info = NewImageInfoN32(Scalar(width), Scalar(height), colorType, nil)
+	return bmp.AllocPixels(info, info.MinRowBytes())
 }
 
 // Install a pixelref that wraps the specified pixels and rowBytes, and
@@ -386,27 +406,32 @@ func (bmp *Bitmap) AllocPixels(requestedInfo ImageInfo, rowBytes int) error {
 // Call installPixels with no ReleaseProc specified. This means that the
 // caller must ensure that the specified pixels are valid for the lifetime
 // of the created bitmap (and its pixelRef).
-func (bmp *Bitmap) InstallPixels(requestedInfo ImageInfo, pixelsBytes []byte, rowBytes int, ct *ColorTable) bool {
+func (bmp *Bitmap) InstallPixels(requestedInfo *ImageInfo, pixelsBytes []byte, rowBytes int, ct *ColorTable) bool {
 	if !bmp.SetInfo(requestedInfo, rowBytes) {
 		// release pixels
 		bmp.Reset()
 		return false
 	}
+
 	if pixelsBytes == nil {
 		// release pixels
 		return true // we behaved as if they called setInfo()
 	}
+
 	var pixels = NewMemoryPixelsDirect(pixelsBytes)
 	if pixels == nil {
 		bmp.Reset()
 		return false
 	}
+
 	bmp.pixels = pixels.Pixels
+
 	// since we're already allocated, we LockPixels right away.
 	bmp.LockPixels()
 	if !bmp.IsValid() {
 		// 	log.Printf(`xyz`)
 	}
+
 	return true
 }
 

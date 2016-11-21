@@ -48,6 +48,14 @@ func (p *Paint) SetLooper(looper *DrawLooper) {
 	p.looper = looper
 }
 
+func (paint *Paint) SetColor(color Color) {
+	toimpl()
+}
+
+func (paint *Paint) SetXfermodeMode(mode XfermodeMode) {
+	toimpl()
+}
+
 type PaintFlags int
 
 const (
@@ -129,11 +137,11 @@ func (paint *Paint) SetImageFilter(imageFilter *ImageFilter) {
 	toimpl()
 }
 
-func (paint *Paint) SetXfermode(xfermode *tXfermode) {
+func (paint *Paint) SetXfermode(xfermode *Xfermode) {
 	toimpl()
 }
 
-func (paint *Paint) Xfermode() *tXfermode {
+func (paint *Paint) Xfermode() *Xfermode {
 	toimpl()
 	return nil
 }

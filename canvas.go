@@ -31,11 +31,12 @@ type Canvas struct {
 	conservativeRasterClip bool
 }
 
+// Construct a canvas with the specified bitmap to draw into.
+// @param bitmap   Specifies a bitmap for the canvas to draw into. Its
+//                 structure are copied to the canvas.
 func NewCanvas(bmp *Bitmap) *Canvas {
 	var canvas = new(Canvas)
-
-	canvas.surfaceProps = MakeSurfaceProps(KSurfacePropsFlagNone,
-		KSurfacePropsInitTypeLegacyFontHost)
+	canvas.surfaceProps = MakeSurfaceProps(KSurfacePropsFlagNone, KSurfacePropsInitTypeLegacyFontHost)
 	canvas.mcStack = list.New()
 	var device = NewBitmapDevice(bmp, canvas.surfaceProps)
 	canvas.init(device.BaseDevice, KCanvasInitFlagDefault)
@@ -143,8 +144,21 @@ func (canvas *Canvas) DrawPoint(x, y Scalar, paint *Paint) {
 	canvas.DrawPoints(KCanvasPointModePoints, 1, []Point{pt}, paint)
 }
 
+func (canvas *Canvas) DrawColor(color Color, mode XfermodeMode) {
+	var paint = NewPaint()
+	paint.SetColor(color)
+	if KXfermodeModeSrcOver == mode {
+		paint.SetXfermodeMode(mode)
+	}
+	canvas.DrawPaint(paint)
+}
+
 func (canvas *Canvas) DrawPoints(mode CanvasPointMode, count int, pts []Point, paint *Paint) {
 	canvas.OnDrawPoints(mode, count, pts, paint)
+}
+
+func (canvas *Canvas) DrawPaint(paint *Paint) {
+	toimpl()
 }
 
 func (canvas *Canvas) OnDrawPoints(mode CanvasPointMode, count int, pts []Point, paint *Paint) {

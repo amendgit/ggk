@@ -56,7 +56,7 @@ func BitmapFromReader(r io.Reader) (*Bitmap, error) {
 	info.SetColorType(ct)
 	info.SetAlphaType(at)
 	var bmp Bitmap
-	bmp.InstallPixels(info, pixels, rowBytes, nil)
+	bmp.InstallPixels(&info, pixels, rowBytes, nil)
 	return &bmp, nil
 }
 
