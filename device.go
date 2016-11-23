@@ -17,7 +17,7 @@ type Device interface {
 
 	// OnDetachFromCanvas()
 	// SetMatrixClip(*Matrix, *Region, *ClipStack)
-	// DrawPaint(*Draw, *Paint)
+	DrawPaint(draw *Draw, paint *Paint)
 	DrawPoints(draw *Draw, mode CanvasPointMode, count int, pts []Point, paint *Paint)
 	DrawRect(draw *Draw, rect Rect, paint *Paint)
 	// DrawOval(draw *Draw, oval Rect, paint *Paint)
@@ -96,4 +96,8 @@ func (b *BaseDevice) DrawRect(draw *Draw, rect Rect, paint *Paint) {
 func (b *BaseDevice) DrawPoints(draw *Draw, mode CanvasPointMode, count int, pts []Point, paint *Paint) {
 	toimpl()
 	return
+}
+
+func (b *BaseDevice) DrawPaint(draw *Draw, paint *Paint) {
+	toimpl()
 }

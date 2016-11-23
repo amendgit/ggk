@@ -3,7 +3,7 @@ package ggk
 type DrawFilterType int
 
 const (
-	KDrawFilterTypePaint DrawFilterType = iota
+	KDrawFilterTypePaint = DrawFilterType(iota)
 	KDrawFilterTypePoint
 	KDrawFilterTypeLine
 	KDrawFilterTypeBitmap

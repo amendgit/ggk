@@ -10,8 +10,8 @@ type Paint struct {
 }
 
 func NewPaint() *Paint {
-	toimpl()
-	return nil
+	var paint = &Paint{}
+	return paint
 }
 
 // PaintHinting specifies the level of hinting to be performed. These names are
@@ -59,33 +59,33 @@ func (paint *Paint) SetXfermodeMode(mode XfermodeMode) {
 type PaintFlags int
 
 const (
-	KPaintFlagAntiAlias          = 0x01
-	KPaintFlagDither             = 0x04
-	KPaintFlagUnderline          = 0x08
-	KPaintFlagStrikeThruText     = 0x10
-	KPaintFlagFakeBoldText       = 0x20
-	KPaintFlagLinearText         = 0x40
-	KPaintFlagSubpixelText       = 0x80
-	KPaintFlagDevKernText        = 0x100
-	KPaintFlagLCDRenderText      = 0x200
-	KPaintFlagEmbeddedBitmapText = 0x400
-	KPaintFlagAutoHinting        = 0x800
-	KPaintFlagVerticalText       = 0x1000
+	KPaintFlagAntiAlias          PaintFlags = 0x01
+	KPaintFlagDither             PaintFlags = 0x04
+	KPaintFlagUnderline          PaintFlags = 0x08
+	KPaintFlagStrikeThruText     PaintFlags = 0x10
+	KPaintFlagFakeBoldText       PaintFlags = 0x20
+	KPaintFlagLinearText         PaintFlags = 0x40
+	KPaintFlagSubpixelText       PaintFlags = 0x80
+	KPaintFlagDevKernText        PaintFlags = 0x100
+	KPaintFlagLCDRenderText      PaintFlags = 0x200
+	KPaintFlagEmbeddedBitmapText PaintFlags = 0x400
+	KPaintFlagAutoHinting        PaintFlags = 0x800
+	KPaintFlagVerticalText       PaintFlags = 0x1000
 
 	// hack for GDI -- do not use if you can help it when adding extra flags,
 	// note that the flags member is specified with a bit-width and you'll have
 	// expand it.
-	KPaintFlagGenA8FromLCD = 0x2000
+	KPaintFlagGenA8FromLCD PaintFlags = 0x2000
 
-	KPaintFlagAllFlags = 0xFFFF
+	KPaintFlagAllFlags PaintFlags = 0xFFFF
 )
 
 type PaintStyle int
 
 const (
-	KPaintStyleFill          = iota // < fill the geometry
-	KPaintStyleStroke               // < stroke the geometry
-	KPaintStyleStrokeAndFill        // < fill and stroke the geometry
+	KPaintStyleFill          = PaintStyle(iota) // < fill the geometry
+	KPaintStyleStroke                           // < stroke the geometry
+	KPaintStyleStrokeAndFill                    // < fill and stroke the geometry
 )
 
 func (p *Paint) Flags() PaintFlags {

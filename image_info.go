@@ -50,7 +50,7 @@ func (at AlphaType) IsValid() bool {
 type ColorType int
 
 const (
-	KColorTypeUnknown ColorType = iota
+	KColorTypeUnknown = ColorType(iota)
 	KColorTypeAlpha8
 	KColorTypeRGB565
 	KColorTypeARGB4444
@@ -126,10 +126,12 @@ type YUVColorSpace int
 
 const (
 	// Standard JPEG color space.
-	KYUVColorSpaceJPEG YUVColorSpace = iota
+	KYUVColorSpaceJPEG = YUVColorSpace(iota)
+
 	// SDTV standard Rec. 601 color space. Uses "studio swing" [16, 245] color
 	// range. See http://en.wikipedia.org/wiki/Rec._601 for details.
 	KYUVColorSpaceRec601
+
 	// HDTV standard Rec. 709 color space. Uses "studio swing" [16, 235] color
 	// range. See http://en.wikipedia.org/wiki/Rec._709 for details.
 	KYUVColorSpaceRec709
@@ -141,7 +143,7 @@ const (
 type ColorProfileType int
 
 const (
-	KColorProfileTypeLinear ColorProfileType = iota
+	KColorProfileTypeLinear = ColorProfileType(iota)
 	KColorProfileTypeSRGB
 	KColorProfileTypeLastEnum = KColorProfileTypeSRGB
 )
@@ -156,9 +158,9 @@ type ImageInfo struct {
 	width  Scalar
 	height Scalar
 
-	colorType   ColorType
-	alphaType   AlphaType
-	colorSpace  *ColorSpace
+	colorType  ColorType
+	alphaType  AlphaType
+	colorSpace *ColorSpace
 }
 
 func NewImageInfo(width, height Scalar, colorType ColorType, alphaType AlphaType, colorSpace *ColorSpace) *ImageInfo {
@@ -269,14 +271,14 @@ func (ii *ImageInfo) ComputeOffset(x, y int, rowBytes uint) (uint, error) {
 	return ii.colorType.ComputeOffset(x, y, rowBytes), nil
 }
 
-func (ii *ImageInfo) Equal(other *ImageInfo) bool {
-	var equal = false
-	equal = (ii.colorType == other.colorType)
-	equal = equal && (ii.alphaType == other.alphaType)
-	equal = equal && (ii.colorSpace == other.colorSpace)
-	equal = equal && (ii.width == other.width)
-	equal = equal && (ii.height == other.height)
-	return equal
+func (ii *ImageInfo) Equal(otr *ImageInfo) bool {
+	var eq = false
+	eq = (ii.colorType == otr.colorType)
+	eq = eq && (ii.alphaType == otr.alphaType)
+	eq = eq && (ii.colorSpace.Equal(otr.colorSpace))
+	eq = eq && (ii.width == otr.width)
+	eq = eq && (ii.height == otr.height)
+	return eq
 }
 
 func (ii *ImageInfo) BytesPerPixel() int {
@@ -312,7 +314,7 @@ func (ii *ImageInfo) SafeSize(rowBytes int) uint {
 	return uint(size)
 }
 
-// ReadPixelsHlp is helper to package and trim the parameters passed to
+// ReadPixelsRec is helper to package and trim the parameters passed to
 // ReadPixels()
 type tReadPixelsRec struct {
 	Pixels   []byte
@@ -340,18 +342,18 @@ func newReadPixelsRec(info *ImageInfo, pixels []byte, rowBytes int, x, y Scalar)
 func (h *tReadPixelsRec) Trim(srcWidth, srcHeight Scalar) error {
 	var ct = h.Info.ColorType()
 	if ct == KColorTypeUnknown || ct == KColorTypeIndex8 {
-		return errors.New("tReadPixelsHlp Trim: bad color type")
+		return errors.New("tReadPixelsRec.Trim: bad color type")
 	}
 	if h.Pixels == nil || h.RowBytes < h.Info.MinRowBytes() {
-		return errors.New("tReadPixelsHlp Trim: bad pixels or rowBytes")
+		return errors.New("tReadPixelsRec Trim: bad pixels or rowBytes")
 	}
 	if h.Info.Width() == 0 || h.Info.Width() == 0 {
-		return errors.New("tReadPixelsHlp Trim: bad width or height")
+		return errors.New("tReadPixelsRec.Trim: bad width or height")
 	}
 	var x, y = h.X, h.Y
 	var srcRect = MakeRect(x, y, h.Info.Width(), h.Info.Height())
 	if !srcRect.IntersectXYWH(0, 0, srcWidth, srcHeight) {
-		return errors.New("tReadPixelsHlp Trim: bad srcRect")
+		return errors.New("tReadPixelsRec Trim: bad srcRect")
 	}
 	// if x or y are negative, then we have to adjust pixels.
 	if x > 0 {

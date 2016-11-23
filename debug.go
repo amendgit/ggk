@@ -3,25 +3,28 @@ package ggk
 import (
 	"fmt"
 	"runtime"
+	"path/filepath"
 )
 
 func toimpl() {
-	var pc, _, line, ok = runtime.Caller(1)
-	if !ok {
-		return
-	}
-	var fn = runtime.FuncForPC(pc).Name()
-	fmt.Println("toimpl", fn, line)
-}
-
-func warning(format string, a ...interface{}) {
 	var pc, file, line, ok = runtime.Caller(1)
 	if !ok {
 		return
 	}
-	var fn = runtime.FuncForPC(pc).Name()
+	var _, filename = filepath.Split(file)
+	var funcname = runtime.FuncForPC(pc).Name()
+	fmt.Printf("toimpl\t%v\t%v\t%v\n", filename, line, funcname)
+}
+
+func warn(format string, a ...interface{}) {
+	var pc, file, line, ok = runtime.Caller(1)
+	if !ok {
+		return
+	}
+	var _, filename = filepath.Split(file)
+	var funcname = runtime.FuncForPC(pc).Name()
 	var msg = fmt.Sprintf(format, a)
-	fmt.Println("warning %v %v %v %v", file, fn, line, msg)
+	fmt.Println("warn %v %v %v %v", filename, line, funcname, msg)
 }
 
 func errorf(format string, a ...interface{}) error {
@@ -29,7 +32,8 @@ func errorf(format string, a ...interface{}) error {
 	if !ok {
 		return nil
 	}
-	var fn = runtime.FuncForPC(pc).Name()
+	var _, filename = filepath.Split(file)
+	var funcname = runtime.FuncForPC(pc).Name()
 	var msg = fmt.Sprintf(format, a)
-	return fmt.Errorf("%v %v %v %v", file, fn, line, msg)
+	return fmt.Errorf("%v %v %v %v", filename, line, funcname, msg)
 }

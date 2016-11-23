@@ -3,7 +3,7 @@ package ggk
 type XfermodeMode int
 
 const (
-	KXfermodeModeSrcOver = XfermodeMode(iota) //!< [Sa + Da * (1 - Sa), Sc + Dc * (1 - Sa)]
+	KXfermodeModeSrcOver XfermodeMode = iota //!< [Sa + Da * (1 - Sa), Sc + Dc * (1 - Sa)]
 )
 
 // Xfermode

@@ -8,8 +8,16 @@ import (
 type CanvasInitFlags int
 
 const (
-	KCanvasInitFlagDefault = 1 << iota
+	KCanvasInitFlagDefault = CanvasInitFlags(1 << iota)
 	KCanvasInitFlagConservativeRasterClip
+)
+
+type ShaderOverrideOpacity int
+
+const (
+	KShaderOverrideOpacityNone      = ShaderOverrideOpacity(1 << iota) //!< there is no overriding shader (bitmap or image)
+	KShaderOverrideOpacityOpaque                                       //!< the overriding shader is opaque
+	KShaderOverrideOpacityNotOpaque                                    //!< the overriding shader may not be opaque
 )
 
 type Canvas struct {
@@ -109,7 +117,7 @@ func (c *Canvas) ReadPixels(dstInfo *ImageInfo, dstData []byte, rowBytes int,
 // This call can fail, returing false, for several reasons:
 // - If the src colortype/alpahtype cannot be converted to the canvas' types
 // - If this canvas is not backed by pixels (e.g. picture or PDF)
-func WritePixels(info *ImageInfo, pixels []byte, rowBytes int, x, y int) error {
+func (c *Canvas) WritePixels(info *ImageInfo, pixels []byte, rowBytes int, x, y int) error {
 	return nil
 }
 
@@ -158,7 +166,7 @@ func (canvas *Canvas) DrawPoints(mode CanvasPointMode, count int, pts []Point, p
 }
 
 func (canvas *Canvas) DrawPaint(paint *Paint) {
-	toimpl()
+	canvas.OnDrawPaint(paint)
 }
 
 func (canvas *Canvas) OnDrawPoints(mode CanvasPointMode, count int, pts []Point, paint *Paint) {
@@ -191,12 +199,28 @@ func (canvas *Canvas) OnDrawPoints(mode CanvasPointMode, count int, pts []Point,
 	// }
 }
 
+func (canvas *Canvas) OnDrawPaint(paint *Paint) {
+	canvas.internalDrawPaint(paint)
+}
+
+func (canvas *Canvas) internalDrawPaint(paint *Paint) {
+	canvas.PredrawNotify(nil, paint, KShaderOverrideOpacityNotOpaque)
+
+	var looper = newAutoDrawLooper(canvas, paint, false, nil)
+	for looper.Next(KDrawFilterTypePaint) {
+		var iter = newDrawIter(canvas)
+		for iter.Next() {
+			iter.Device().DrawPaint(iter.Draw, looper.Paint())
+		}
+	}
+}
+
 func (canvas *Canvas) QuickReject(src Rect) bool {
 	toimpl()
 	return false
 }
 
-func (canvas *Canvas) PredrawNotify() {
+func (canvas *Canvas) PredrawNotify(rect *Rect, paint *Paint, overrideOpacity ShaderOverrideOpacity) {
 	toimpl()
 }
 
