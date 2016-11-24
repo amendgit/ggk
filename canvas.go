@@ -12,12 +12,12 @@ const (
 	KCanvasInitFlagConservativeRasterClip
 )
 
-type ShaderOverrideOpacity int
+type CanvasShaderOverrideOpacity int
 
 const (
-	KShaderOverrideOpacityNone      = ShaderOverrideOpacity(1 << iota) //!< there is no overriding shader (bitmap or image)
-	KShaderOverrideOpacityOpaque                                       //!< the overriding shader is opaque
-	KShaderOverrideOpacityNotOpaque                                    //!< the overriding shader may not be opaque
+	KCanvasShaderOverrideOpacityNone      = CanvasShaderOverrideOpacity(1 << iota) //!< there is no overriding shader (bitmap or image)
+	KCanvasShaderOverrideOpacityOpaque                                             //!< the overriding shader is opaque
+	KCanvasShaderOverrideOpacityNotOpaque                                          //!< the overriding shader may not be opaque
 )
 
 type Canvas struct {
@@ -204,7 +204,7 @@ func (canvas *Canvas) OnDrawPaint(paint *Paint) {
 }
 
 func (canvas *Canvas) internalDrawPaint(paint *Paint) {
-	canvas.PredrawNotify(nil, paint, KShaderOverrideOpacityNotOpaque)
+	canvas.PredrawNotify(nil, paint, KCanvasShaderOverrideOpacityNotOpaque)
 
 	var looper = newAutoDrawLooper(canvas, paint, false, nil)
 	for looper.Next(KDrawFilterTypePaint) {
@@ -220,7 +220,7 @@ func (canvas *Canvas) QuickReject(src Rect) bool {
 	return false
 }
 
-func (canvas *Canvas) PredrawNotify(rect *Rect, paint *Paint, overrideOpacity ShaderOverrideOpacity) {
+func (canvas *Canvas) PredrawNotify(rect *Rect, paint *Paint, overrideOpacity CanvasShaderOverrideOpacity) {
 	toimpl()
 }
 
@@ -356,6 +356,7 @@ func newAutoDrawLooper(canvas *Canvas, paint *Paint, skipLayerForImageFilter boo
 		tempLayerForImageFilter: false,
 		done: false,
 	}
+
 	var simplifiedCF = imageToColorFilter(looper.origPaint)
 	if simplifiedCF != nil {
 		var paint = setIfNeeded(looper.lazyPaintInit, looper.origPaint)
@@ -363,6 +364,7 @@ func newAutoDrawLooper(canvas *Canvas, paint *Paint, skipLayerForImageFilter boo
 		paint.SetImageFilter(nil)
 		looper.paint = paint
 	}
+
 	if !skipLayerForImageFilter && looper.paint.ImageFilter() != nil {
 		// We implement ImageFilters for a given draw by creating a layer, then applying the
 		// imagefilter to the pixels of that layer (its backing surface/image), and then
@@ -389,6 +391,7 @@ func newAutoDrawLooper(canvas *Canvas, paint *Paint, skipLayerForImageFilter boo
 		looper.tempLayerForImageFilter = false
 		// we remove the imagefilter/xfermode inside doNext()
 	}
+
 	if paint.Looper() != nil {
 		// looper.drawLooperContext = paint.Looper().CreateContext(canvas)
 		looper.isSimple = false
@@ -397,6 +400,7 @@ func newAutoDrawLooper(canvas *Canvas, paint *Paint, skipLayerForImageFilter boo
 		// can we be marked as simple?
 		looper.isSimple = looper.filter != nil && !looper.tempLayerForImageFilter
 	}
+
 	return looper
 }
 

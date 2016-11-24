@@ -1,8 +1,8 @@
 package ggk_test
 
 import (
-	"gwk/ggk"
 	"testing"
+	"github.com/amendgit/ggk"
 )
 
 var atTests = []struct {
@@ -83,13 +83,13 @@ var imageInfoEqTests = []struct {
 	isEqual bool
 }{
 	{
-		ggk.NewImageInfo(100, 100, ggk.KColorTypeRGBA8888, ggk.KAlphaTypeOpaque, ggk.KColorProfileTypeLinear),
-		ggk.NewImageInfo(100, 100, ggk.KColorTypeRGBA8888, ggk.KAlphaTypeOpaque, ggk.KColorProfileTypeLinear),
+		ggk.NewImageInfo(100, 100, ggk.KColorTypeRGBA8888, ggk.KAlphaTypeOpaque, nil),
+		ggk.NewImageInfo(100, 100, ggk.KColorTypeRGBA8888, ggk.KAlphaTypeOpaque, nil),
 		true,
 	},
 	{
-		ggk.NewImageInfo(100, 100, ggk.KColorTypeRGBA8888, ggk.KAlphaTypeOpaque, ggk.KColorProfileTypeLinear),
-		ggk.NewImageInfo(100, 100, ggk.KColorTypeBGRA8888, ggk.KAlphaTypeOpaque, ggk.KColorProfileTypeLinear),
+		ggk.NewImageInfo(100, 100, ggk.KColorTypeRGBA8888, ggk.KAlphaTypeOpaque, nil),
+		ggk.NewImageInfo(100, 100, ggk.KColorTypeBGRA8888, ggk.KAlphaTypeOpaque, nil),
 		false,
 	},
 }
@@ -100,12 +100,12 @@ var imageInfoMinRowBytesTests = []struct {
 	minRowBytes   int
 }{
 	{
-		ggk.NewImageInfo(100, 100, ggk.KColorTypeN32, ggk.KAlphaTypeOpaque, ggk.KColorProfileTypeLinear),
+		ggk.NewImageInfo(100, 100, ggk.KColorTypeN32, ggk.KAlphaTypeOpaque, nil),
 		400,
 		400,
 	},
 	{
-		ggk.NewImageInfo(5000, 100, ggk.KColorTypeN32, ggk.KAlphaTypeOpaque, ggk.KColorProfileTypeLinear),
+		ggk.NewImageInfo(5000, 100, ggk.KColorTypeN32, ggk.KAlphaTypeOpaque, nil),
 		20000,
 		20000,
 	},
@@ -118,7 +118,7 @@ var imageInfoSafeSizeTests = []struct {
 	safeSize64 uint64
 }{
 	{
-		ggk.NewImageInfo(900, 601, ggk.KColorTypeN32, ggk.KAlphaTypeOpaque, ggk.KColorProfileTypeLinear),
+		ggk.NewImageInfo(900, 601, ggk.KColorTypeN32, ggk.KAlphaTypeOpaque, nil),
 		5000,
 		3003600,
 		3003600,

@@ -26,3 +26,8 @@ func (r *RasterClip) IsBW() bool {
 func (r *RasterClip) SetRect(rect Rect) {
 	toimpl()
 }
+
+func (r *RasterClip) BWRgn() *Region {
+	toimpl()
+	return nil
+}

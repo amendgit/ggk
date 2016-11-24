@@ -1,8 +1,8 @@
 package ggk_test
 
 import (
-	"gwk/ggk"
 	"testing"
+	"github.com/amendgit/ggk"
 )
 
 var scalarBasicTests = []struct {

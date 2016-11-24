@@ -8,7 +8,7 @@ func TestBitmapFromFile(t *testing.T) {
 	if err != nil {
 		t.Errorf("BitmapFromFile(%v) got %v", fp, err)
 	}
-	err = BitmapToFilePath(bmp, "./testdata/TestBitmapToPNGFile.png", KImageFormatPng)
+	err = BitmapToFilePath(bmp, "./testdata/TestBitmapToPNGFile.png", KImageFormatTypePng)
 	if err != nil {
 		t.Errorf("BitmapToPNGFile %v %v", fp, err)
 	}

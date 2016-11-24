@@ -129,3 +129,27 @@ func (h *tRegionGridHead) IntervalCount() int32 {
 func (h *tRegionGridHead) CompactLTRBs() []Scalar {
 	return h.compactLTRBs
 }
+
+type RegionIter struct {
+
+}
+
+func NewRegionIter(region *Region) *RegionIter {
+	toimpl()
+	return nil
+}
+
+func (iter *RegionIter) Next() bool {
+	toimpl()
+	return false
+}
+
+func (iter *RegionIter) Done() bool {
+	toimpl()
+	return false
+}
+
+func (iter *RegionIter) Rect() Rect {
+	toimpl()
+	return RectZero
+}
