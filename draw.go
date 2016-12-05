@@ -10,39 +10,6 @@ type Draw struct {
 	// procs      *DrawProcs
 }
 
-type tBitmapXferProc interface {
-	Xfer(pixels []byte, data uint32)
-}
-
-type tBitmapXferClear int
-func (*tBitmapXferClear)Xfer(pixels []byte, data uint32) {
-	for i := 0; i < len(pixels); i++ {
-		pixels[i] = 0
-	}
-}
-
-type tBitmapXferDst int
-func (*tBitmapXferDst)Xfer(pixels []byte, data uint32) {
-	toimpl()
-}
-
-type tBitmapXferSrc32 int
-func (*tBitmapXferSrc32) Xfer(pixels []byte, data uint32) {
-	toimpl()
-}
-
-type tBitmapXferSrc16 int
-func (*tBitmapXferSrc16) Xfer(pixels []byte, data uint32) {
-	toimpl()
-}
-
-type tBitmapXferSrc8 int
-func (*tBitmapXferSrc8) Xfer(pixels []byte, data uint32) {
-	for i := 0; i < len(pixels); i++ {
-		pixels[i] = byte(data)
-	}
-}
-
 func chooseBitmapXferProc(dst *Pixmap, paint *Paint, data *uint32) tBitmapXferProc {
 	toimpl()
 	return nil
@@ -61,17 +28,17 @@ func (draw *Draw) DrawPaint(paint *Paint) {
 	devRect.SetXYWH(0, 0, draw.dst.Width(), draw.dst.Height())
 
 	if draw.rasterClip.IsBW() {
-		/*  If we don't have a shader (i.e. we're just a solid color) we may
-		    be faster to operate directly on the device bitmap, rather than invoking
-		    a blitter. Esp. true for xfermodes, which require a colorshader to be
-		    present, which is just redundant work. Since we're drawing everywhere
-		    in the clip, we don't have to worry about antialiasing.
-		*/
+		/* If we don't have a shader (i.e. we're just a solid color) we may
+		   be faster to operate directly on the device bitmap, rather than invoking
+		   a blitter. Esp. true for xfermodes, which require a colorshader to be
+		   present, which is just redundant work. Since we're drawing everywhere
+		   in the clip, we don't have to worry about antialiasing.
+		   */
 		var xferData uint32 = 0
 		var xferProc = chooseBitmapXferProc(draw.dst, paint, &xferData)
 		if xferProc != nil {
 			_, ok := xferProc.(*tBitmapXferDst)
-			if ok { // nothing to draw.
+			if ok { // < nothing to draw.
 				return
 			}
 

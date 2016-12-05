@@ -61,6 +61,11 @@ type tDrawLooperContext struct {
 
 }
 
+func (context *tDrawLooperContext) Next(canvas *Canvas, paint *Paint) bool {
+	toimpl()
+	return false
+}
+
 type tDrawLooperBlurShadowRec struct {
 
 }

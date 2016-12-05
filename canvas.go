@@ -65,7 +65,8 @@ func (canvas *Canvas) ReadPixelsInRectToBitmap(bmp *Bitmap, srcRect Rect) error 
 	return nil
 }
 
-// ReadPixels copy the pixels from the base-layer into the specified buffer
+/**
+ ReadPixels copy the pixels from the base-layer into the specified buffer
 // (pixels + rowBytes). converting them into the requested format (ImageInfo).
 // The base-layer are read starting at the specified (srcX, srcY) location in
 // the coordinate system of the base-layer.
@@ -84,6 +85,7 @@ func (canvas *Canvas) ReadPixelsInRectToBitmap(bmp *Bitmap, srcRect Rect) error 
 // - If srcR does not intersect the base-layer bounds.
 // - If the requested colortype/alphatype cannot be converted from the base-layer's types.
 // - If this canvas is not backed by pixels (e.g. picture or PDF)
+ */
 func (c *Canvas) ReadPixels(dstInfo *ImageInfo, dstData []byte, rowBytes int,
 	x, y Scalar) error {
 	var dev = c.Device()
@@ -198,6 +200,8 @@ func (canvas *Canvas) OnDrawPoints(mode CanvasPointMode, count int, pts []Point,
 	// 	}
 	// }
 }
+
+type LazyPaint Lazy
 
 func (canvas *Canvas) OnDrawPaint(paint *Paint) {
 	canvas.internalDrawPaint(paint)
@@ -333,17 +337,17 @@ const (
 )
 
 type tAutoDrawLooper struct {
-	lazyPaintInit           *LazyPaint
-	lazyPaintPerLooper      *LazyPaint
+	lazyPaintInit           *Lazy
+	lazyPaintPerLooper      *Lazy
 	canvas                  *Canvas
 	origPaint               *Paint
 	paint                   *Paint
-	filter                  *DrawFilter
+	filter                  DrawFilter
 	saveCount               int
 	tempLayerForImageFilter bool
 	done                    bool
 	isSimple                bool
-	drawLooperContext       *tDrawLooperContext
+	looperContext           *tDrawLooperContext
 }
 
 func newAutoDrawLooper(canvas *Canvas, paint *Paint, skipLayerForImageFilter bool, rawBounds *Rect) *tAutoDrawLooper {
@@ -366,19 +370,20 @@ func newAutoDrawLooper(canvas *Canvas, paint *Paint, skipLayerForImageFilter boo
 	}
 
 	if !skipLayerForImageFilter && looper.paint.ImageFilter() != nil {
-		// We implement ImageFilters for a given draw by creating a layer, then applying the
-		// imagefilter to the pixels of that layer (its backing surface/image), and then
-		// we call restore() to xfer that layer to the main canvas.
-		//
-		// 1. SaveLayer (with a paint containing the current imagefilter and xfermode)
-		// 2. Generate the src pixels:
-		//     Remove the imagefilter and the xfermode from the paint that we (AutoDrawLooper)
-		//     return (fPaint). We then draw the primitive (using srcover) into a cleared
-		//     buffer/surface.
-		// 3. Restore the layer created in #1
-		//     The imagefilter is passed the buffer/surface from the layer (now filled with the
-		//     src pixels of the primitive). It returns a new "filtered" buffer, which we
-		//     draw onto the previous layer using the xfermode from the original paint.
+		/* We implement ImageFilters for a given draw by creating a layer, then applying the
+		   imagefilter to the pixels of that layer (its backing surface/image), and then
+		   we call restore() to xfer that layer to the main canvas.
+
+		   1. SaveLayer (with a paint containing the current imagefilter and xfermode)
+		   2. Generate the src pixels:
+		       Remove the imagefilter and the xfermode from the paint that we (AutoDrawLooper)
+		       return (fPaint). We then draw the primitive (using srcover) into a cleared
+		       buffer/surface.
+		   3. Restore the layer created in #1
+		       The imagefilter is passed the buffer/surface from the layer (now filled with the
+		       src pixels of the primitive). It returns a new "filtered" buffer, which we
+		       draw onto the previous layer using the xfermode from the original paint.
+		*/
 		var tmp = NewPaint()
 		tmp.SetImageFilter(looper.paint.ImageFilter())
 		tmp.SetXfermode(looper.paint.Xfermode())
@@ -393,10 +398,10 @@ func newAutoDrawLooper(canvas *Canvas, paint *Paint, skipLayerForImageFilter boo
 	}
 
 	if paint.Looper() != nil {
-		// looper.drawLooperContext = paint.Looper().CreateContext(canvas)
+		// looper.looperContext = paint.Looper().CreateContext(canvas)
 		looper.isSimple = false
 	} else {
-		looper.drawLooperContext = nil
+		looper.looperContext = nil
 		// can we be marked as simple?
 		looper.isSimple = looper.filter != nil && !looper.tempLayerForImageFilter
 	}
@@ -415,13 +420,54 @@ func (looper *tAutoDrawLooper) Next(drawType DrawFilterType) bool {
 		looper.done = false
 		return !looper.paint.NothingToDraw()
 	} else {
-		return looper.DoNext(drawType)
+		return looper.doNext(drawType)
 	}
 }
 
-func (looper *tAutoDrawLooper) DoNext(drawType DrawFilterType) bool {
-	toimpl()
-	return false
+func (looper *tAutoDrawLooper) doNext(drawType DrawFilterType) bool {
+	looper.paint = nil
+
+	var origPaint = looper.origPaint
+	if looper.lazyPaintInit.IsValid() {
+		origPaint, _ = looper.lazyPaintInit.Get().(*Paint)
+	}
+
+	var paint, _ = looper.lazyPaintPerLooper.Set(origPaint).(*Paint)
+
+	if looper.tempLayerForImageFilter {
+		paint.SetImageFilter(nil)
+		paint.SetXfermode(nil)
+	}
+
+	if looper.looperContext != nil && looper.looperContext.Next(looper.canvas, paint) {
+		looper.done = true
+		return false
+	}
+
+	if looper.filter != nil {
+		if looper.filter.Filter(paint, drawType) == false {
+			looper.done = true
+			return false
+		}
+		if looper.looperContext == nil {
+			// no looper means we only draw once.
+			looper.done = true
+		}
+	}
+	looper.paint = paint
+
+	// if we only came in here for the imagefilter, mark us as done.
+	if looper.looperContext == nil && looper.filter == nil {
+		looper.done = true
+	}
+
+	// call this after any possible paint modifiers.
+	if looper.paint.NothingToDraw() {
+		looper.paint = nil
+		return false
+	}
+
+	return true
 }
 
 func (looper *tAutoDrawLooper) Finalizer() {
@@ -472,15 +518,12 @@ func (iter *tDrawIter) Next() bool {
 	return false
 }
 
-type LazyPaint struct {
-}
-
 func imageToColorFilter(paint *Paint) *ColorFilter {
 	toimpl()
 	return nil
 }
 
-func setIfNeeded(lazyPaint *LazyPaint, paint *Paint) *Paint {
+func setIfNeeded(lazyPaint *Lazy, paint *Paint) *Paint {
 	toimpl()
 	return nil
 }
