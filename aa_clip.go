@@ -130,7 +130,7 @@ func (clip *AAClip) Debug(compressY bool) {
 }
 
 func (clip *AAClip) FreeRuns() {
-	toimpl()
+	clip.runHead = nil
 }
 
 const kAAClipBlitterGrayMaskScratchSize = 32 * 32

@@ -83,7 +83,7 @@ func (r Rect) IsEmpty() bool {
 }
 
 func (r Rect) SetEmpty() {
-	toimpl()
+	r.SetXYWH(0, 0, 0, 0)
 }
 
 // Return true if the two rectangles have same position and size.
