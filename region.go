@@ -23,15 +23,15 @@ const (
 	KRegionOpLastEnum = KRegionOpReplace
 )
 
-func (r *Region) FromRegionOpRegion(rgna *Region, op RegionOp, rgnb *Region) bool {
+func (rgn *Region) FromRegionOpRegion(rgna *Region, op RegionOp, otr *Region) bool {
 	return false
 }
 
-func (r *Region) FromRegionOpRect(rgn *Region, op RegionOp, rect Rect) bool {
+func (rgn *Region) FromRegionOpRect(r *Region, op RegionOp, rect Rect) bool {
 	return false
 }
 
-func (r *Region) FromRectOpRegion(rect Rect, op RegionOp, rgn *Region) bool {
+func (rgn *Region) FromRectOpRegion(rect Rect, op RegionOp, otr *Region) bool {
 	return false
 }
 
@@ -49,12 +49,12 @@ func (rgn *Region) SetLTRB(l, t, r, b Scalar) bool {
 	return true
 }
 
-func (region *Region) SetEmpty() bool {
+func (rgn *Region) SetEmpty() bool {
 	toimpl()
 	return false
 }
 
-func (region *Region) FreeRuns() {
+func (rgn *Region) FreeRuns() {
 	toimpl()
 }
 
@@ -122,13 +122,13 @@ func (rgn *Region) Iter(iterFunc RegionIterFunc) {
 
 type RegionClipFunc func(rect Rect, skip *int, stop *bool)
 
-func (r *Region) Clip(clip Rect, clipFunc RegionClipFunc) {
+func (rgn *Region) Clip(clip Rect, clipFunc RegionClipFunc) {
 	return
 }
 
 type RegionSpanFunc func(left, right *int)
 
-func (r *Region) Span(y, left, right int, spanFunc RegionSpanFunc) {
+func (rgn *Region) Span(y, left, right int, spanFunc RegionSpanFunc) {
 	return
 }
 
@@ -145,16 +145,16 @@ type RegionRunHead struct {
 	compactLTRBs []Scalar
 }
 
-func (h *RegionRunHead) YSpanCount() int32 {
-	return h.yspanCount
+func (runHead *RegionRunHead) YSpanCount() int32 {
+	return runHead.yspanCount
 }
 
-func (h *RegionRunHead) IntervalCount() int32 {
-	return h.intervalCount
+func (runHead *RegionRunHead) IntervalCount() int32 {
+	return runHead.intervalCount
 }
 
-func (h *RegionRunHead) CompactLTRBs() []Scalar {
-	return h.compactLTRBs
+func (runHead *RegionRunHead) CompactLTRBs() []Scalar {
+	return runHead.compactLTRBs
 }
 
 type RegionIter struct {
