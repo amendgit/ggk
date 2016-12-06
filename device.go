@@ -48,6 +48,18 @@ type Device interface {
 	// OnCreateDevice(CreateInfo, Paint) Device
 	// Flush()
 	// GetImageFilterCache() *ImageFilterCache
+
+	// used to change the backend's pixels (and possibly config/rowbytes)
+	// but cannot change the width/height, so there should be no change to
+	// any clip information.
+	// TODO: move to SkBitmapDevice
+	//replaceBitmapBackendForRasterSurface(bmp *Bitmap)
+
+	forceConservativeRasterClip() bool
+
+	// Causes any deferred drawing to the device to be completed.
+	// flush()
+
 }
 
 type BaseDevice struct {
@@ -62,6 +74,11 @@ func NewBaseDevice() *BaseDevice {
 func (b *BaseDevice) Width() Scalar {
 	toimpl()
 	return 0
+}
+
+func (b *BaseDevice) GlobalBounds() Rect {
+	toimpl()
+	return RectZero
 }
 
 func (b *BaseDevice) Height() Scalar {
@@ -100,4 +117,8 @@ func (b *BaseDevice) DrawPoints(draw *Draw, mode CanvasPointMode, count int, pts
 
 func (b *BaseDevice) DrawPaint(draw *Draw, paint *Paint) {
 	toimpl()
+}
+
+func (b *BaseDevice) forceConservativeRasterClip() bool {
+	return false
 }

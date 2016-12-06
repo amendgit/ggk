@@ -2,7 +2,6 @@ package ggk
 
 import (
 	"container/list"
-	"runtime"
 )
 
 type CanvasInitFlags int
@@ -37,6 +36,9 @@ type Canvas struct {
 	allowSoftClip          bool
 	allowSimplifyClip      bool
 	conservativeRasterClip bool
+
+	isScaleTranslate bool
+	deviceClipBounds Rect
 }
 
 // Construct a canvas with the specified bitmap to draw into.
@@ -51,8 +53,32 @@ func NewCanvas(bmp *Bitmap) *Canvas {
 	return canvas
 }
 
-func (canvas *Canvas) init(dev *BaseDevice, flags CanvasInitFlags) {
-	toimpl()
+func (canvas *Canvas) init(device *BaseDevice, flags CanvasInitFlags) *BaseDevice {
+	if device != nil && device.forceConservativeRasterClip() {
+		flags = flags | KCanvasInitFlagConservativeRasterClip
+	}
+	canvas.conservativeRasterClip = (flags & KCanvasInitFlagConservativeRasterClip != 0)
+	canvas.allowSoftClip = true
+	canvas.allowSimplifyClip = false
+	canvas.deviceCMDirty = true
+	canvas.saveCount = 1
+	canvas.metaData = nil
+	canvas.clipStack.Reset(NewClipStack())
+	canvas.mcRec = newCanvasMCRec(canvas.conservativeRasterClip)
+	canvas.mcRec.Layer = newDeivceCM(nil, nil, nil, canvas.conservativeRasterClip, canvas.mcRec.Matrix)
+	canvas.mcStack = list.New()
+	canvas.mcStack.PushBack(canvas.mcRec)
+	canvas.isScaleTranslate = true
+	canvas.mcRec.TopLayer = canvas.mcRec.Layer
+	canvas.baseSurface = nil
+
+	if device != nil {
+		canvas.mcRec.Layer.Device = device
+		canvas.mcRec.RasterClip.SetRect(device.GlobalBounds())
+		canvas.deviceClipBounds = quickRejectClipBounds(device.GlobalBounds())
+	}
+
+	return device
 }
 
 func (canvas *Canvas) ReadPixelsToBitmap(bmp *Bitmap, x, y Scalar) error {
@@ -263,23 +289,21 @@ type tDeviceCM struct {
 	Paint                *Paint
 	Matrix               *Matrix
 	MatrixStroage        *Matrix
-	DeviceIsBitmapDevice bool
+	StashedMatrix        *Matrix
 }
 
-func newDeivceCM(dev *BaseDevice, paint *Paint, canvas *Canvas,
-	conservativeRasterClip bool, deviceIsBitmapDevice bool) {
+func newDeivceCM(dev *BaseDevice, paint *Paint, canvas *Canvas, conservativeRasterClip bool, stashed *Matrix) *tDeviceCM {
 	var deviceCM = new(tDeviceCM)
 	deviceCM.Next = nil
 	deviceCM.Clip = NewRasterClip(conservativeRasterClip)
-	deviceCM.DeviceIsBitmapDevice = deviceIsBitmapDevice
-	if dev != nil {
-		dev.OnAttachToCanvas(canvas)
-	}
-	runtime.SetFinalizer(deviceCM, func(d *tDeviceCM) {
-		d.Device.OnDetachFromCanvas()
-	})
+	deviceCM.StashedMatrix = stashed
 	deviceCM.Device = dev
-	deviceCM.Paint = paint
+	if paint != nil {
+		deviceCM.Paint = paint
+	} else {
+		deviceCM.Paint = nil
+	}
+	return deviceCM
 }
 
 func (d *tDeviceCM) Reset(bounds Rect) {
@@ -529,6 +553,11 @@ func setIfNeeded(lazyPaint *Lazy, paint *Paint) *Paint {
 }
 
 func applyPaintToBoundsSansImageFilter(paint *Paint, rowBounds Rect, storage Rect) Rect {
+	toimpl()
+	return RectZero
+}
+
+func quickRejectClipBounds(bounds Rect) Rect {
 	toimpl()
 	return RectZero
 }
