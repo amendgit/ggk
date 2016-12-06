@@ -10,9 +10,14 @@ type RasterClip struct {
 	isRect  bool
 }
 
-func NewRasterClip(conservativeRasterClip bool) *RasterClip {
-	toimpl()
-	return nil
+func NewRasterClip(forceConservativeRects bool) *RasterClip {
+	var clip = &RasterClip{
+		forceConservativeRects: forceConservativeRects,
+		isBW:    true,
+		isEmpty: true,
+		isRect:  false,
+	}
+	return clip
 }
 
 func (r *RasterClip) IsEmpty() bool {
@@ -23,8 +28,12 @@ func (r *RasterClip) IsBW() bool {
 	return r.isBW
 }
 
-func (r *RasterClip) SetRect(rect Rect) {
-	toimpl()
+func (clip *RasterClip) SetRect(rect Rect) bool {
+	clip.isBW = true
+	clip.aaclip.SetEmpty()
+	clip.isRect = clip.bw.SetRect(rect)
+	clip.isEmpty = !clip.isRect
+	return clip.isRect
 }
 
 func (r *RasterClip) BWRgn() *Region {

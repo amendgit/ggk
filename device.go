@@ -64,31 +64,47 @@ type Device interface {
 
 type BaseDevice struct {
 	Device Device
+	origin Point
+	imageInfo *ImageInfo
 }
 
 func NewBaseDevice() *BaseDevice {
-	var baseDevice = new(BaseDevice)
+	var baseDevice = &BaseDevice {
+		imageInfo: NewImageInfoUnknown(0, 0),
+	}
 	return baseDevice
 }
 
 func (b *BaseDevice) Width() Scalar {
-	toimpl()
-	return 0
-}
-
-func (b *BaseDevice) GlobalBounds() Rect {
-	toimpl()
-	return RectZero
+	return b.imageInfo.Width()
 }
 
 func (b *BaseDevice) Height() Scalar {
-	toimpl()
-	return 0
+	return b.imageInfo.Height()
 }
 
 func (b *BaseDevice) ImageInfo() *ImageInfo {
-	toimpl()
-	return nil
+	return b.imageInfo
+}
+
+/**
+ *  Return the bounds of the device in the coordinate space of the root
+ *  canvas. The root device will have its top-left at 0,0, but other devices
+ *  such as those associated with saveLayer may have a non-zero origin.
+ */
+func (b *BaseDevice) GlobalBounds() Rect {
+	var origin = b.Origin()
+	var bounds Rect
+	bounds.SetXYWH(origin.X, origin.Y, b.Width(), b.Height())
+	return bounds
+}
+
+/**
+ *  Return the device's origin: its offset in device coordinates from
+ *  the default origin in its canvas' matrix/clip
+ */
+func (b *BaseDevice) Origin() Point {
+	return b.origin
 }
 
 func (b *BaseDevice) OnAttachToCanvas(canvas *Canvas) {

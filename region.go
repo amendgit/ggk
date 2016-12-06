@@ -1,10 +1,14 @@
 package ggk
 
+var (
+	gRegionRectRunHeadPtr *RegionRunHead = nil
+)
+
 // Region encapsulates the geometric region used to specify clippint areas for
 // drawing.
 type Region struct {
 	bounds   Rect
-	gridHead *tRegionGridHead
+	runHead *RegionRunHead
 }
 
 type RegionOp int
@@ -31,6 +35,29 @@ func (r *Region) FromRectOpRegion(rect Rect, op RegionOp, rgn *Region) bool {
 	return false
 }
 
+func (rgn *Region) SetRect(r Rect) bool {
+	return rgn.SetLTRB(r.L(), r.T(), r.R(), r.B())
+}
+
+func (rgn *Region) SetLTRB(l, t, r, b Scalar) bool {
+	if l >= r || t >= b {
+		return rgn.SetEmpty()
+	}
+	rgn.FreeRuns()
+	rgn.bounds.SetLTRB(l, t, r, b)
+	rgn.runHead = gRegionRectRunHeadPtr;
+	return true
+}
+
+func (region *Region) SetEmpty() bool {
+	toimpl()
+	return false
+}
+
+func (region *Region) FreeRuns() {
+	toimpl()
+}
+
 type RegionIterFunc func(rect Rect, skip *int, stop *bool)
 
 func (rgn *Region) Iter(iterFunc RegionIterFunc) {
@@ -43,7 +70,7 @@ func (rgn *Region) Iter(iterFunc RegionIterFunc) {
 		stop bool
 		idx  int
 		rect Rect
-		ltrb []Scalar = rgn.gridHead.CompactLTRBs()
+		ltrb []Scalar = rgn.runHead.CompactLTRBs()
 	)
 
 	var l, r, t, b = ltrb[3], ltrb[4], ltrb[0], ltrb[1]
@@ -63,14 +90,14 @@ func (rgn *Region) Iter(iterFunc RegionIterFunc) {
 			break
 		}
 
-		if ltrb[idx] < KRegionGridLRTBSentinel {
+		if ltrb[idx] < KRegionRunHeadLRTBSentinel {
 			// valid X value
 			l, r = ltrb[idx], ltrb[idx+1]
 			idx += 2
 		} else {
 			// we're at the end of a line
 			idx += 1
-			if ltrb[idx] < KRegionGridLRTBSentinel {
+			if ltrb[idx] < KRegionRunHeadLRTBSentinel {
 				// valid Y value
 				var intervals = ltrb[idx+1]
 
@@ -105,9 +132,9 @@ func (r *Region) Span(y, left, right int, spanFunc RegionSpanFunc) {
 	return
 }
 
-const KRegionGridLRTBSentinel = KScalarMax
+const KRegionRunHeadLRTBSentinel = KScalarMax
 
-type tRegionGridHead struct {
+type RegionRunHead struct {
 	RefCount  int32
 	GridCount int32
 
@@ -118,15 +145,15 @@ type tRegionGridHead struct {
 	compactLTRBs []Scalar
 }
 
-func (h *tRegionGridHead) YSpanCount() int32 {
+func (h *RegionRunHead) YSpanCount() int32 {
 	return h.yspanCount
 }
 
-func (h *tRegionGridHead) IntervalCount() int32 {
+func (h *RegionRunHead) IntervalCount() int32 {
 	return h.intervalCount
 }
 
-func (h *tRegionGridHead) CompactLTRBs() []Scalar {
+func (h *RegionRunHead) CompactLTRBs() []Scalar {
 	return h.compactLTRBs
 }
 

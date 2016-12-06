@@ -57,7 +57,8 @@ func (canvas *Canvas) init(device *BaseDevice, flags CanvasInitFlags) *BaseDevic
 	if device != nil && device.forceConservativeRasterClip() {
 		flags = flags | KCanvasInitFlagConservativeRasterClip
 	}
-	canvas.conservativeRasterClip = (flags & KCanvasInitFlagConservativeRasterClip != 0)
+
+	canvas.conservativeRasterClip = (flags&KCanvasInitFlagConservativeRasterClip != 0)
 	canvas.allowSoftClip = true
 	canvas.allowSimplifyClip = false
 	canvas.deviceCMDirty = true
@@ -111,7 +112,7 @@ func (canvas *Canvas) ReadPixelsInRectToBitmap(bmp *Bitmap, srcRect Rect) error 
 // - If srcR does not intersect the base-layer bounds.
 // - If the requested colortype/alphatype cannot be converted from the base-layer's types.
 // - If this canvas is not backed by pixels (e.g. picture or PDF)
- */
+*/
 func (c *Canvas) ReadPixels(dstInfo *ImageInfo, dstData []byte, rowBytes int,
 	x, y Scalar) error {
 	var dev = c.Device()
@@ -283,13 +284,13 @@ const (
 // they reflect the top of the save stack, but translated and clipped by the
 // device's XY offset and bitmap-bounds.
 type tDeviceCM struct {
-	Next                 *tDeviceCM
-	Device               *BaseDevice
-	Clip                 *RasterClip
-	Paint                *Paint
-	Matrix               *Matrix
-	MatrixStroage        *Matrix
-	StashedMatrix        *Matrix
+	Next          *tDeviceCM
+	Device        *BaseDevice
+	Clip          *RasterClip
+	Paint         *Paint
+	Matrix        *Matrix
+	MatrixStroage *Matrix
+	StashedMatrix *Matrix
 }
 
 func newDeivceCM(dev *BaseDevice, paint *Paint, canvas *Canvas, conservativeRasterClip bool, stashed *Matrix) *tDeviceCM {
@@ -334,20 +335,24 @@ type tCanvasMCRec struct {
 	RasterClip        *RasterClip
 	Matrix            *Matrix
 	DeferredSaveCount int
+	CurDrawDepth      int
 }
 
 func newCanvasMCRec(conservativeRasterClip bool) *tCanvasMCRec {
-	var rec = new(tCanvasMCRec)
-	rec.RasterClip = NewRasterClip(conservativeRasterClip)
-	rec.Filter = nil
-	rec.Layer = nil
-	rec.TopLayer = nil
-	rec.Matrix.Reset()
-	rec.DeferredSaveCount = 0
-	// don't bother initializing Next
-	// inc_rec()
-	toimpl()
-	return nil
+	var rec = &tCanvasMCRec{
+		RasterClip:        NewRasterClip(conservativeRasterClip),
+		Filter:            nil,
+		Layer:             nil,
+		TopLayer:          nil,
+		Matrix:            NewMatrix(),
+		DeferredSaveCount: 0,
+		CurDrawDepth:      0,
+	}
+
+	// don't bother initializing fNext
+	// todo: inc_rec()
+
+	return rec
 }
 
 // Subclass save/restore notifiers.

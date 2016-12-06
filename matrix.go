@@ -22,6 +22,11 @@ type Matrix struct {
 	typeMask uint32
 }
 
+func NewMatrix() *Matrix {
+	var matrix = new(Matrix)
+	return matrix
+}
+
 const (
 	KMScaleX = iota
 	KMSkewX
