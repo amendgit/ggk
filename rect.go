@@ -82,6 +82,10 @@ func (r Rect) IsEmpty() bool {
 	return r.Left <= 0 || r.Height <= 0
 }
 
+func (r Rect) SetEmpty() {
+	toimpl()
+}
+
 // Return true if the two rectangles have same position and size.
 func (a Rect) Equal(b Rect) bool {
 	return a.Left == b.Left && a.Top == b.Top && a.Width == b.Width && a.Height == b.Height

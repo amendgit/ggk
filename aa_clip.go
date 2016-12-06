@@ -6,6 +6,15 @@ type AAClip struct {
 	runHead *AAClipRunHead
 }
 
+func NewAAClip() *AAClip {
+	toimpl()
+	var clip = &AAClip{
+		bounds: RectZero,
+		runHead: nil,
+	}
+	return clip
+}
+
 func (clip *AAClip) Assign(otr *AAClip) *AAClip {
 	toimpl()
 	return nil
@@ -39,7 +48,9 @@ func (clip *AAClip) IsRect() bool {
 }
 
 func (clip *AAClip) SetEmpty() bool {
-	toimpl()
+	clip.FreeRuns()
+	clip.bounds.SetEmpty()
+	clip.runHead = nil
 	return false
 }
 
@@ -115,6 +126,10 @@ func (clip *AAClip) Validate() {
 }
 
 func (clip *AAClip) Debug(compressY bool) {
+	toimpl()
+}
+
+func (clip *AAClip) FreeRuns() {
 	toimpl()
 }
 

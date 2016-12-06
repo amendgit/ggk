@@ -16,6 +16,7 @@ func NewRasterClip(forceConservativeRects bool) *RasterClip {
 		isBW:    true,
 		isEmpty: true,
 		isRect:  false,
+		aaclip: NewAAClip(),
 	}
 	return clip
 }
