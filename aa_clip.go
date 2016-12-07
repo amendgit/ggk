@@ -7,9 +7,8 @@ type AAClip struct {
 }
 
 func NewAAClip() *AAClip {
-	toimpl()
 	var clip = &AAClip{
-		bounds: RectZero,
+		bounds:  RectZero,
 		runHead: nil,
 	}
 	return clip
@@ -142,8 +141,8 @@ type AAClipBlitter struct {
 	aaclip       *AAClip
 	aaclipBounds Rect
 	// point into scanlineScratch
-	runs *int16
-	aa   *Alpha
+	runs            *int16
+	aa              *Alpha
 	grayMaskScratch []uint8
 }
 
@@ -154,10 +153,10 @@ func (blitter *AAClipBlitter) BlitH(x, y, width int) {
 
 func (blitter *AAClipBlitter) BlitAntiH(x, y int, alphas []Alpha, runs []int16) {
 	toimpl()
-	return 
+	return
 }
 
-func (blitter *AAClipBlitter) BlitV(x, y ,height int, alpha Alpha) {
+func (blitter *AAClipBlitter) BlitV(x, y, height int, alpha Alpha) {
 	toimpl()
 	return
 }
@@ -178,5 +177,4 @@ func (blitter *AAClipBlitter) JustAnOpaqueColor(value *uint32) *Pixmap {
 }
 
 type AAClipRunHead struct {
-
 }
