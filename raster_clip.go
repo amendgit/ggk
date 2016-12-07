@@ -13,6 +13,7 @@ type RasterClip struct {
 func NewRasterClip(forceConservativeRects bool) *RasterClip {
 	var clip = &RasterClip{
 		forceConservativeRects: forceConservativeRects,
+		bw: NewRegion(),
 		isBW:    true,
 		isEmpty: true,
 		isRect:  false,

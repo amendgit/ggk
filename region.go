@@ -1,13 +1,14 @@
 package ggk
 
 var (
-	gRegionRectRunHeadPtr *RegionRunHead = nil
+	gRegionRectRunHeadPtr  *RegionRunHead = nil
+	gRegionEmptyRunHeadPtr *RegionRunHead = nil
 )
 
 // Region encapsulates the geometric region used to specify clippint areas for
 // drawing.
 type Region struct {
-	bounds   Rect
+	bounds  Rect
 	runHead *RegionRunHead
 }
 
@@ -23,15 +24,26 @@ const (
 	KRegionOpLastEnum = KRegionOpReplace
 )
 
+func NewRegion() *Region {
+	var rgn = &Region{
+		bounds:  RectZero,
+		runHead: nil,
+	}
+	return rgn
+}
+
 func (rgn *Region) FromRegionOpRegion(rgna *Region, op RegionOp, otr *Region) bool {
+	toimpl()
 	return false
 }
 
 func (rgn *Region) FromRegionOpRect(r *Region, op RegionOp, rect Rect) bool {
+	toimpl()
 	return false
 }
 
 func (rgn *Region) FromRectOpRegion(rect Rect, op RegionOp, otr *Region) bool {
+	toimpl()
 	return false
 }
 
@@ -45,12 +57,18 @@ func (rgn *Region) SetLTRB(l, t, r, b Scalar) bool {
 	}
 	rgn.FreeRuns()
 	rgn.bounds.SetLTRB(l, t, r, b)
-	rgn.runHead = gRegionRectRunHeadPtr;
+	rgn.runHead = gRegionRectRunHeadPtr
 	return true
 }
 
+/**
+ *  Set the region to be empty, and return false, since the resulting
+ *  region is empty
+ */
 func (rgn *Region) SetEmpty() bool {
-	toimpl()
+	rgn.FreeRuns()
+	rgn.bounds.SetEmpty()
+	rgn.runHead = gRegionEmptyRunHeadPtr
 	return false
 }
 
@@ -123,12 +141,14 @@ func (rgn *Region) Iter(iterFunc RegionIterFunc) {
 type RegionClipFunc func(rect Rect, skip *int, stop *bool)
 
 func (rgn *Region) Clip(clip Rect, clipFunc RegionClipFunc) {
+	toimpl()
 	return
 }
 
 type RegionSpanFunc func(left, right *int)
 
 func (rgn *Region) Span(y, left, right int, spanFunc RegionSpanFunc) {
+	toimpl()
 	return
 }
 
@@ -158,10 +178,9 @@ func (runHead *RegionRunHead) CompactLTRBs() []Scalar {
 }
 
 type RegionIter struct {
-
 }
 
-func NewRegionIter(region *Region) *RegionIter {
+func NewRegionIter(rgn *Region) *RegionIter {
 	toimpl()
 	return nil
 }
