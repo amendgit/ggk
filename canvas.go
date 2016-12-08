@@ -239,9 +239,9 @@ func (canvas *Canvas) internalDrawPaint(paint *Paint) {
 
 	var looper = newAutoDrawLooper(canvas, paint, false, nil)
 	for looper.Next(KDrawFilterTypePaint) {
-		var iterator = NewDrawIterator(canvas)
-		for iterator.Next() {
-			iterator.Device().DrawPaint(iterator.Draw, looper.Paint())
+		var it = NewDrawIterator(canvas)
+		for it.Next() {
+			it.Device().DrawPaint(it.Draw, looper.Paint())
 		}
 	}
 }
