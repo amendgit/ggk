@@ -267,6 +267,18 @@ func (canvas *Canvas) internalRestore() {
 	toimpl()
 }
 
+// Returns the canvas to be used by DrawIterator. Default implementation
+// returns this. Subclasses that encapsulate an indirect canvas may
+// need to overload this method. The impl must keep track of this, as it
+// is not released or deleted by the caller.
+func (canvas *Canvas) CanvasForDrawIterator() *Canvas {
+	return canvas
+}
+
+func (canvas *Canvas) UpdateDeviceCMCache() {
+	toimpl()
+}
+
 type CanvasSaveFlags int
 
 const (
@@ -539,7 +551,16 @@ type DrawIterator struct {
 }
 
 func NewDrawIterator(canvas *Canvas) *DrawIterator {
-	return nil
+	canvas = canvas.CanvasForDrawIterator()
+	canvas.UpdateDeviceCMCache()
+	var iterator = &DrawIterator{
+		canvas: canvas,
+		currLayer: canvas.mcRec.TopLayer,
+		Draw: &Draw{
+			clipStack: canvas.clipStack,
+		},
+	}
+	return iterator
 }
 
 func (iter *DrawIterator) Next() bool {

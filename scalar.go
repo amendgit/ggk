@@ -269,7 +269,7 @@ func ScalarInterpolateFunc(searchKey Scalar, keys, values []Scalar) Scalar {
 
 	for i := 1; i < length; i++ {
 		if keys[i] < keys[i-1] {
-			log.Printf("ScalarInterpolateFunc: keys should be increasing.")
+			log.Printf(`ScalarInterpolateFunc: keys should be increasing.`)
 			return 0
 		}
 	}
