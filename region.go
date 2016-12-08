@@ -32,6 +32,10 @@ func NewRegion() *Region {
 	return rgn
 }
 
+func (rgn *Region) Bounds() Rect {
+	return rgn.bounds
+}
+
 func (rgn *Region) FromRegionOpRegion(rgna *Region, op RegionOp, otr *Region) bool {
 	toimpl()
 	return false
@@ -47,10 +51,24 @@ func (rgn *Region) FromRectOpRegion(rect Rect, op RegionOp, otr *Region) bool {
 	return false
 }
 
+/** Return true if this region consists of more than 1 rectangular area */
+func (rgn *Region) IsComplex() bool {
+	toimpl()
+	return false
+}
+
+/**
+ *  If rect is non-empty, set this region to that rectangle and return true,
+ *  otherwise set this region to empty and return false.
+ */
 func (rgn *Region) SetRect(r Rect) bool {
 	return rgn.SetLTRB(r.L(), r.T(), r.R(), r.B())
 }
 
+/**
+ *  If left < right and top < bottom, set this region to that rectangle and
+ *  return true, otherwise set this region to empty and return false.
+ */
 func (rgn *Region) SetLTRB(l, t, r, b Scalar) bool {
 	if l >= r || t >= b {
 		return rgn.SetEmpty()
@@ -73,7 +91,9 @@ func (rgn *Region) SetEmpty() bool {
 }
 
 func (rgn *Region) FreeRuns() {
-	toimpl()
+	if !rgn.IsComplex() {
+		rgn.runHead = nil
+	}
 }
 
 type RegionIterFunc func(rect Rect, skip *int, stop *bool)
