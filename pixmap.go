@@ -4,20 +4,32 @@ package ggk
 // try to manage the lifetime of the pixel memory (nor the colortable if
 // provided).
 type Pixmap struct {
-	info       ImageInfo
+	imageInfo  *ImageInfo
 	colorTable *ColorTable
-	pixelsData []byte
+	pixels     []byte
 	rowBytes   int
 }
 
-func (p *Pixmap) Width() Scalar {
-	return p.info.Width()
+func NewPixmap() *Pixmap {
+	var pixmap = &Pixmap{}
+	toimpl()
+	return pixmap
 }
 
-func (p *Pixmap) Height() Scalar {
-	return p.info.Height()
+func (pixmap *Pixmap) Width() Scalar {
+	return pixmap.imageInfo.Width()
+}
+
+func (pixmap *Pixmap) Height() Scalar {
+	return pixmap.imageInfo.Height()
+}
+
+func (pixmap *Pixmap) Reset(imagInfo *ImageInfo, pixels []byte, rowBytes int, ct *ColorTable) {
+	pixmap.imageInfo = imagInfo
+	pixmap.pixels = pixels
+	pixmap.rowBytes = rowBytes
+	pixmap.colorTable = ct
 }
 
 type AutoPixmapUnlock struct {
-
 }

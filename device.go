@@ -121,6 +121,11 @@ func (b *BaseDevice) ReadPixels(info *ImageInfo, pixels []byte, rowBytes int,
 	return nil
 }
 
+func (b *BaseDevice) AccessPixels(pixmap *Pixmap) bool {
+	toimpl()
+	return false
+}
+
 func (b *BaseDevice) DrawRect(draw *Draw, rect Rect, paint *Paint) {
 	toimpl()
 	return

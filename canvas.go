@@ -553,18 +553,34 @@ type DrawIterator struct {
 func NewDrawIterator(canvas *Canvas) *DrawIterator {
 	canvas = canvas.CanvasForDrawIterator()
 	canvas.UpdateDeviceCMCache()
-	var iterator = &DrawIterator{
+	var it = &DrawIterator{
 		canvas: canvas,
 		currLayer: canvas.mcRec.TopLayer,
 		Draw: &Draw{
 			clipStack: canvas.clipStack,
 		},
 	}
-	return iterator
+	return it
 }
 
-func (iter *DrawIterator) Next() bool {
-	toimpl()
+func (it *DrawIterator) Next() bool {
+	for it.currLayer != nil && it.currLayer.Clip.IsEmpty() {
+		it.currLayer = it.currLayer.Next
+	}
+
+	var rec *tDeviceCM = it.currLayer
+	if rec != nil && rec.Device != nil {
+		it.matrix = rec.Matrix
+		it.rasterClip = rec.Clip
+		it.device = rec.Device
+		if !it.device.AccessPixels(it.dst) {
+			it.dst.Reset(it.device.imageInfo, nil, 0, nil)
+		}
+		it.paint = rec.Paint
+		it.currLayer = rec.Next
+
+		return true
+	}
 	return false
 }
 
