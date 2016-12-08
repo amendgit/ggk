@@ -197,25 +197,39 @@ func (runHead *RegionRunHead) CompactLTRBs() []Scalar {
 	return runHead.compactLTRBs
 }
 
-type RegionIter struct {
+type RunType int32
+
+const (
+	KRunTypeSentinel RunType = 0x7FFFFFFF
+)
+
+/**
+ *  Returns the sequence of rectangles, sorted in Y and X, that make up
+ *  this region.
+ */
+type RegionIterator struct {
+	rgn  *Region
+	runs *RunType
+	rect Rect
+	done bool
 }
 
-func NewRegionIter(rgn *Region) *RegionIter {
+func NewRegionIterator(rgn *Region) *RegionIterator {
 	toimpl()
 	return nil
 }
 
-func (iter *RegionIter) Next() bool {
+func (iter *RegionIterator) Next() bool {
 	toimpl()
 	return false
 }
 
-func (iter *RegionIter) Done() bool {
+func (iter *RegionIterator) Done() bool {
 	toimpl()
 	return false
 }
 
-func (iter *RegionIter) Rect() Rect {
+func (iter *RegionIterator) Rect() Rect {
 	toimpl()
 	return RectZero
 }

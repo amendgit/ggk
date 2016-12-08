@@ -42,10 +42,10 @@ func (draw *Draw) DrawPaint(paint *Paint) {
 				return
 			}
 
-			var iter = NewRegionIter(draw.rasterClip.BWRgn())
-			for !iter.Done() {
-				callBitmapXferProc(draw.dst, iter.Rect(), xferProc, xferData)
-				iter.Next()
+			var iterator = NewRegionIterator(draw.rasterClip.BWRgn())
+			for !iterator.Done() {
+				callBitmapXferProc(draw.dst, iterator.Rect(), xferProc, xferData)
+				iterator.Next()
 			}
 
 			return
