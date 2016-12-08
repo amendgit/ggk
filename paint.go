@@ -7,6 +7,7 @@ type Paint struct {
 	hinting uint8
 	looper  *DrawLooper
 	style   PaintStyle
+	color   Color
 }
 
 func NewPaint() *Paint {
@@ -49,7 +50,7 @@ func (p *Paint) SetLooper(looper *DrawLooper) {
 }
 
 func (paint *Paint) SetColor(color Color) {
-	toimpl()
+	paint.color = color
 }
 
 func (paint *Paint) SetXfermodeMode(mode XfermodeMode) {
