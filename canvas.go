@@ -239,9 +239,9 @@ func (canvas *Canvas) internalDrawPaint(paint *Paint) {
 
 	var looper = newAutoDrawLooper(canvas, paint, false, nil)
 	for looper.Next(KDrawFilterTypePaint) {
-		var iter = newDrawIter(canvas)
-		for iter.Next() {
-			iter.Device().DrawPaint(iter.Draw, looper.Paint())
+		var iterator = NewDrawIterator(canvas)
+		for iterator.Next() {
+			iterator.Device().DrawPaint(iterator.Draw, looper.Paint())
 		}
 	}
 }
@@ -531,18 +531,18 @@ func newCanvasSaveLayerRec(bounds *Rect, paint *Paint, backdrop *ImageFilter,
 	}
 }
 
-type tDrawIter struct {
+type DrawIterator struct {
 	*Draw
 	canvas    *Canvas
 	currLayer *tDeviceCM
 	paint     *Paint // May be nil
 }
 
-func newDrawIter(canvas *Canvas) *tDrawIter {
+func NewDrawIterator(canvas *Canvas) *DrawIterator {
 	return nil
 }
 
-func (iter *tDrawIter) Next() bool {
+func (iter *DrawIterator) Next() bool {
 	toimpl()
 	return false
 }
