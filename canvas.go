@@ -554,7 +554,7 @@ func NewDrawIterator(canvas *Canvas) *DrawIterator {
 	canvas = canvas.CanvasForDrawIterator()
 	canvas.UpdateDeviceCMCache()
 	var it = &DrawIterator{
-		canvas: canvas,
+		canvas:    canvas,
 		currLayer: canvas.mcRec.TopLayer,
 		Draw: &Draw{
 			clipStack: canvas.clipStack,
@@ -584,9 +584,30 @@ func (it *DrawIterator) Next() bool {
 	return false
 }
 
+/**
+ *  If the paint has an imagefilter, but it can be simplified to just a colorfilter, return that
+ *  colorfilter, else return nullptr.
+ */
 func imageToColorFilter(paint *Paint) *ColorFilter {
-	toimpl()
-	return nil
+	var imageFilter = paint.ImageFilter()
+	if imageFilter == nil {
+		return nil
+	}
+
+	var imageColorFilter, ok = imageFilter.AsAColorFilter()
+	if !ok {
+		return nil
+	}
+
+	var paintColorFilter *ColorFilter
+	if paintColorFilter = paint.ColorFilter(); paintColorFilter == nil {
+		// there is no existing paint colorfilter, so we can just return the imagefilter's
+		return imageColorFilter
+	}
+
+	// The paint has both a colorfilter(paintCF) and an imagefilter-which-is-a-colorfilter(imgCF)
+	// and we need to combine them into a single colorfilter.
+	return NewColorFilterFromComposeFilter(imageColorFilter, paintColorFilter)
 }
 
 func setIfNeeded(lazyPaint *Lazy, paint *Paint) *Paint {

@@ -130,6 +130,14 @@ func (paint *Paint) Rasterizer() bool {
 	return false
 }
 
+/** Get the paint's colorfilter. If there is a colorfilter, its reference
+	count is not changed.
+	@return the paint's colorfilter (or NULL)
+*/
+func (paint *Paint) ColorFilter() *ColorFilter {
+	return paint.ColorFilter()
+}
+
 func (paint *Paint) SetColorFilter(colorFilter *ColorFilter) {
 	toimpl()
 }

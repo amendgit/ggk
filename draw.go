@@ -32,13 +32,11 @@ func (draw *Draw) DrawPaint(paint *Paint) {
 		   be faster to operate directly on the device bitmap, rather than invoking
 		   a blitter. Esp. true for xfermodes, which require a colorshader to be
 		   present, which is just redundant work. Since we're drawing everywhere
-		   in the clip, we don't have to worry about antialiasing.
-		   */
+		   in the clip, we don't have to worry about antialiasing. */
 		var xferData uint32 = 0
 		var xferProc = chooseBitmapXferProc(draw.dst, paint, &xferData)
 		if xferProc != nil {
-			_, ok := xferProc.(*tBitmapXferDst)
-			if ok { // < nothing to draw.
+			if _, ok := xferProc.(*tBitmapXferDst); ok { // < nothing to draw.
 				return
 			}
 
