@@ -10,6 +10,11 @@ type RasterClip struct {
 	isRect  bool
 }
 
+func NewRasterClipClone(otr *RasterClip) *RasterClip {
+	toimpl()
+	return &RasterClip{}
+}
+
 func NewRasterClip(forceConservativeRects bool) *RasterClip {
 	var clip = &RasterClip{
 		forceConservativeRects: forceConservativeRects,

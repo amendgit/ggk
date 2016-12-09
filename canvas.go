@@ -160,12 +160,20 @@ func (c *Canvas) Device() *BaseDevice {
 }
 
 func (c *Canvas) BaseLayerSize() Size {
-	var dev = c.Device()
-	var sz Size
-	if dev != nil {
-		sz = MakeSize(dev.Width(), dev.Height())
+	var device = c.Device()
+	var size Size
+	if device != nil {
+		size = MakeSize(device.Width(), device.Height())
 	}
-	return sz
+	return size
+}
+
+/** Return the current matrix on the canvas.
+	This does not account for the translate in any of the devices.
+	@return The current matrix on the canvas.
+*/
+func (canvas *Canvas) TotalMatrix() *Matrix {
+	return canvas.mcRec.Matrix
 }
 
 type CanvasPointMode int
@@ -191,43 +199,43 @@ func (canvas *Canvas) DrawColor(color Color, mode XfermodeMode) {
 	canvas.DrawPaint(paint)
 }
 
-func (canvas *Canvas) DrawPoints(mode CanvasPointMode, count int, pts []Point, paint *Paint) {
-	canvas.OnDrawPoints(mode, count, pts, paint)
-}
-
+/**
+Fill the entire canvas (restricted to the current clip) with the
+specified paint.
+@param paint    The paint used to fill the canvas
+ */
 func (canvas *Canvas) DrawPaint(paint *Paint) {
 	canvas.OnDrawPaint(paint)
 }
 
+/**
+Draw a series of points, interpreted based on the PointMode mode. For
+all modes, the count parameter is interpreted as the total number of
+points. For kLine mode, count/2 line segments are drawn.
+For kPoint mode, each point is drawn centered at its coordinate, and its
+size is specified by the paint's stroke-width. It draws as a square,
+unless the paint's cap-type is round, in which the points are drawn as
+circles.
+For kLine mode, each pair of points is drawn as a line segment,
+respecting the paint's settings for cap/join/width.
+For kPolygon mode, the entire array is drawn as a series of connected
+line segments.
+Note that, while similar, kLine and kPolygon modes draw slightly
+differently than the equivalent path built with a series of moveto,
+lineto calls, in that the path will draw all of its contours at once,
+with no interactions if contours intersect each other (think XOR
+xfermode). drawPoints always draws each element one at a time.
+@param mode     PointMode specifying how to draw the array of points.
+@param count    The number of points in the array
+@param pts      Array of points to draw
+@param paint    The paint used to draw the points
+*/
+func (canvas *Canvas) DrawPoints(mode CanvasPointMode, count int, pts []Point, paint *Paint) {
+	canvas.OnDrawPoints(mode, count, pts, paint)
+}
+
 func (canvas *Canvas) OnDrawPoints(mode CanvasPointMode, count int, pts []Point, paint *Paint) {
 	toimpl()
-	// if count <= 0 {
-	// 	return
-	// }
-	// var r, storage Rect
-	// var bounds *Rect = nil
-	// if paint.CanComputeFastBounds() {
-	// 	// special-case 2 points (common for drawing a single line)
-	// 	if count == 2 {
-	// 		r.SetLTRBPoint(pts[0], pts[1])
-	// 	} else {
-	// 		// TODO(impl)
-	// 		// r.SetPoints(pts, count)
-	// 	}
-	// 	if canvas.QuickReject(paint.ComputeFastStrokeBounds(r, &storage)) {
-	// 		return
-	// 	}
-	// 	bounds = &r
-	// }
-	// canvas.PredrawNotify()
-	// var looper = newAutoDrawLooper(canvas, paint, false, bounds)
-	// defer looper.Finalizer()
-	// for looper.Next(KDrawFilterTypePoint) {
-	// 	var iter = newDrawIter(canvas)
-	// 	for iter.Next() {
-	// 		iter.Device().DrawPoints(iter, mode, count, pts, looper.Paint())
-	// 	}
-	// }
 }
 
 type LazyPaint Lazy
@@ -278,7 +286,21 @@ func (canvas *Canvas) CanvasForDrawIterator() *Canvas {
 }
 
 func (canvas *Canvas) UpdateDeviceCMCache() {
-	toimpl()
+	if canvas.deviceCMDirty {
+		var totalMatrix = canvas.TotalMatrix()
+		var totalClip = canvas.mcRec.RasterClip
+		var layer = canvas.mcRec.TopLayer
+
+		if layer.Next == nil { // < only one layer.
+			layer.UpdateMC(totalMatrix, totalClip, canvas.clipStack, nil)
+		} else {
+			var clip = NewRasterClipClone(totalClip)
+			for layer.Next != nil {
+				layer.UpdateMC(totalMatrix, clip, canvas.clipStack, clip)
+				layer = layer.Next
+			}
+		}
+	}
 }
 
 type CanvasSaveFlags int
