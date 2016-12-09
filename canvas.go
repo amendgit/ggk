@@ -41,9 +41,11 @@ type Canvas struct {
 	deviceClipBounds Rect
 }
 
-// Construct a canvas with the specified bitmap to draw into.
-// @param bitmap   Specifies a bitmap for the canvas to draw into. Its
-//                 structure are copied to the canvas.
+/**
+Construct a canvas with the specified bitmap to draw into.
+@param bitmap   Specifies a bitmap for the canvas to draw into. Its
+                structure are copied to the canvas.
+*/
 func NewCanvas(bmp *Bitmap) *Canvas {
 	var canvas = new(Canvas)
 	canvas.surfaceProps = MakeSurfaceProps(KSurfacePropsFlagNone, KSurfacePropsInitTypeLegacyFontHost)
@@ -93,25 +95,25 @@ func (canvas *Canvas) ReadPixelsInRectToBitmap(bmp *Bitmap, srcRect Rect) error 
 }
 
 /**
- ReadPixels copy the pixels from the base-layer into the specified buffer
-// (pixels + rowBytes). converting them into the requested format (ImageInfo).
-// The base-layer are read starting at the specified (srcX, srcY) location in
-// the coordinate system of the base-layer.
-//
-// The specified ImageInfo and (srcX, srcY) offset specifies a source rectangle.
-//
-//     srcR.SetXYWH(srcX, srcY, dstInfo.Width(), dstInfo.Height())
-//
-// srcR is intersected with the bounds of the base-layer. If this intersection
-// is not empty, then we have two sets of pixels (of equal size). Replace the
-// dst pixels with the corresponding src pixels, performing any
-// colortype/alphatype transformations needed (in the case where the src and dst
-// have different colortypes or alphatypes).
-//
-// This call can fail, returning false, for serveral reasons:
-// - If srcR does not intersect the base-layer bounds.
-// - If the requested colortype/alphatype cannot be converted from the base-layer's types.
-// - If this canvas is not backed by pixels (e.g. picture or PDF)
+ReadPixels copy the pixels from the base-layer into the specified buffer
+(pixels + rowBytes). converting them into the requested format (ImageInfo).
+The base-layer are read starting at the specified (srcX, srcY) location in
+the coordinate system of the base-layer.
+
+The specified ImageInfo and (srcX, srcY) offset specifies a source rectangle.
+
+    srcR.SetXYWH(srcX, srcY, dstInfo.Width(), dstInfo.Height())
+
+srcR is intersected with the bounds of the base-layer. If this intersection
+is not empty, then we have two sets of pixels (of equal size). Replace the
+dst pixels with the corresponding src pixels, performing any
+colortype/alphatype transformations needed (in the case where the src and dst
+have different colortypes or alphatypes).
+
+This call can fail, returning false, for serveral reasons:
+- If srcR does not intersect the base-layer bounds.
+- If the requested colortype/alphatype cannot be converted from the base-layer's types.
+- If this canvas is not backed by pixels (e.g. picture or PDF)
 */
 func (c *Canvas) ReadPixels(dstInfo *ImageInfo, dstData []byte, rowBytes int,
 	x, y Scalar) error {
@@ -129,23 +131,25 @@ func (c *Canvas) ReadPixels(dstInfo *ImageInfo, dstData []byte, rowBytes int,
 	return dev.ReadPixels(rec.Info, rec.Pixels, rec.RowBytes, rec.X, rec.Y)
 }
 
-// WritePixels affects the pixels in the base-layer, and operates in pixel
-// coordinates. ignoring the matrix and clip.
-//
-// The specified ImageInfo and (x, y) offset specifies a rectangle: target.
-//
-//     target.SetXYWH(x, y, info.width(), info.height());
-//
-// Target is intersected with the bounds of the base-layer. If this intersection
-// is not empty. then we have two sets of pixels (of equal size), the "src"
-// specified by info+pixels+rowBytes and the "dst" by the canvas' backend.
-// Replace the dst pixels with the corresponding src pixels, performing any
-// colortype/alphatype transformations needed (in the case where the src and
-// dst have different colirtypes or alphatypes).
-//
-// This call can fail, returing false, for several reasons:
-// - If the src colortype/alpahtype cannot be converted to the canvas' types
-// - If this canvas is not backed by pixels (e.g. picture or PDF)
+/**
+WritePixels affects the pixels in the base-layer, and operates in pixel
+coordinates. ignoring the matrix and clip.
+
+The specified ImageInfo and (x, y) offset specifies a rectangle: target.
+
+    target.SetXYWH(x, y, info.width(), info.height());
+
+Target is intersected with the bounds of the base-layer. If this intersection
+is not empty. then we have two sets of pixels (of equal size), the "src"
+specified by info+pixels+rowBytes and the "dst" by the canvas' backend.
+Replace the dst pixels with the corresponding src pixels, performing any
+colortype/alphatype transformations needed (in the case where the src and
+dst have different colirtypes or alphatypes).
+
+This call can fail, returing false, for several reasons:
+- If the src colortype/alpahtype cannot be converted to the canvas' types
+- If this canvas is not backed by pixels (e.g. picture or PDF)
+*/
 func (c *Canvas) WritePixels(info *ImageInfo, pixels []byte, rowBytes int, x, y int) error {
 	return nil
 }
@@ -167,12 +171,9 @@ func (c *Canvas) BaseLayerSize() Size {
 type CanvasPointMode int
 
 const (
-	// DrawPoints draws each point separately
-	KCanvasPointModePoints CanvasPointMode = iota
-	// DrawPoints draws each pair of points as a line segment
-	KCanvasPointModeLines
-	// DrawPoints draws the array of points as a polygon
-	KCanvasPointModePolygon
+	KCanvasPointModePoints  CanvasPointMode = iota // DrawPoints draws each point separately
+	KCanvasPointModeLines                          // DrawPoints draws each pair of points as a line segment
+	KCanvasPointModePolygon                        // DrawPoints draws the array of points as a polygon
 )
 
 func (canvas *Canvas) DrawPoint(x, y Scalar, paint *Paint) {
@@ -199,6 +200,7 @@ func (canvas *Canvas) DrawPaint(paint *Paint) {
 }
 
 func (canvas *Canvas) OnDrawPoints(mode CanvasPointMode, count int, pts []Point, paint *Paint) {
+	toimpl()
 	// if count <= 0 {
 	// 	return
 	// }
@@ -289,12 +291,14 @@ const (
 	KSaveFlagARGBClipLayer   = 0x1F
 )
 
-// tDeviceCM is the record we keep for each BaseDevice that the user installs.
-// The clip/matrix/proc are fields that reflect the top of the save/resotre
-// stack. Whenever the canvas changes, it makes a dirty flag, and then before
-// these are used (assuming we're not on a layer) we rebuild these cache values:
-// they reflect the top of the save stack, but translated and clipped by the
-// device's XY offset and bitmap-bounds.
+/**
+tDeviceCM is the record we keep for each BaseDevice that the user installs.
+The clip/matrix/proc are fields that reflect the top of the save/resotre
+stack. Whenever the canvas changes, it makes a dirty flag, and then before
+these are used (assuming we're not on a layer) we rebuild these cache values:
+they reflect the top of the save stack, but translated and clipped by the
+device's XY offset and bitmap-bounds.
+*/
 type tDeviceCM struct {
 	Next          *tDeviceCM
 	Device        *BaseDevice
@@ -328,21 +332,25 @@ func (d *tDeviceCM) UpdateMC(totalMatrix *Matrix, totlaClip *RasterClip,
 	toimpl()
 }
 
-// tCanvasMCRec is the record we keep for each save/restore level in the stack.
-// Since a level optionally copies the matrix and/or stack, we have pointers
-// for these fields. If the value is copied for this level, the copy is stored
-// in the ...Storage field, and the pointer points to that. If the value is not
-// copied for this level, we ignore ...Storage, and just point at the
-// corresponding value in the previous level in the stack.
+/**
+tCanvasMCRec is the record we keep for each save/restore level in the stack.
+Since a level optionally copies the matrix and/or stack, we have pointers
+for these fields. If the value is copied for this level, the copy is stored
+in the ...Storage field, and the pointer points to that. If the value is not
+copied for this level, we ignore ...Storage, and just point at the
+corresponding value in the previous level in the stack.
+*/
 type tCanvasMCRec struct {
 	Filter *DrawFilter // the current filter (or nil)
 	Layer  *tDeviceCM
 
-	// If there are any layers in the stack, this points to the top-most
-	// one that is at or below this level in the stack (so we know what
-	// bitmap/device to draw into from this level. This value is NOT
-	// reference counted, since the real owner is either our fLayer field,
-	// or a previous one in a lower level.)
+	/**
+	If there are any layers in the stack, this points to the top-most
+	one that is at or below this level in the stack (so we know what
+	bitmap/device to draw into from this level. This value is NOT
+	reference counted, since the real owner is either our fLayer field,
+	or a previous one in a lower level.)
+	*/
 	TopLayer          *tDeviceCM
 	RasterClip        *RasterClip
 	Matrix            *Matrix
@@ -367,9 +375,11 @@ func newCanvasMCRec(conservativeRasterClip bool) *tCanvasMCRec {
 	return rec
 }
 
-// Subclass save/restore notifiers.
-// Overriders should call the corresponding INHERITED method up the inheritance chain.
-// getSaveLayerStrategy()'s return value may suppress full layer allocation.
+/**
+Subclass save/restore notifiers.
+Overriders should call the corresponding INHERITED method up the inheritance chain.
+getSaveLayerStrategy()'s return value may suppress full layer allocation.
+*/
 type CanvasSaveLayerStrategy int
 
 const (
@@ -412,28 +422,28 @@ func newAutoDrawLooper(canvas *Canvas, paint *Paint, skipLayerForImageFilter boo
 
 	if !skipLayerForImageFilter && looper.paint.ImageFilter() != nil {
 		/* We implement ImageFilters for a given draw by creating a layer, then applying the
-		   imagefilter to the pixels of that layer (its backing surface/image), and then
-		   we call restore() to xfer that layer to the main canvas.
+		imagefilter to the pixels of that layer (its backing surface/image), and then
+		we call restore() to xfer that layer to the main canvas.
 
-		   1. SaveLayer (with a paint containing the current imagefilter and xfermode)
-		   2. Generate the src pixels:
-		       Remove the imagefilter and the xfermode from the paint that we (AutoDrawLooper)
-		       return (fPaint). We then draw the primitive (using srcover) into a cleared
-		       buffer/surface.
-		   3. Restore the layer created in #1
-		       The imagefilter is passed the buffer/surface from the layer (now filled with the
-		       src pixels of the primitive). It returns a new "filtered" buffer, which we
-		       draw onto the previous layer using the xfermode from the original paint.
-		*/
+		1. SaveLayer (with a paint containing the current imagefilter and xfermode)
+		2. Generate the src pixels:
+		    Remove the imagefilter and the xfermode from the paint that we (AutoDrawLooper)
+		    return (fPaint). We then draw the primitive (using srcover) into a cleared
+		    buffer/surface.
+		3. Restore the layer created in #1
+		    The imagefilter is passed the buffer/surface from the layer (now filled with the
+		    src pixels of the primitive). It returns a new "filtered" buffer, which we
+		    draw onto the previous layer using the xfermode from the original paint. */
 		var tmp = NewPaint()
 		tmp.SetImageFilter(looper.paint.ImageFilter())
 		tmp.SetXfermode(looper.paint.Xfermode())
-		// var storage Rect
+		var storage Rect
 		if rawBounds != nil {
 			// Make rawBounds include all paint outsets except for those due to image filters.
-			// rawBounds = applyPaintToBoundsSansImageFilter(looper.paint, *rawBounds, &storage)
+			*rawBounds = applyPaintToBoundsSansImageFilter(looper.paint, *rawBounds, &storage)
 		}
-		canvas.internalSaveLayer(newCanvasSaveLayerRec(rawBounds, tmp, nil, KCanvasSaveLayerFlagIsOpaque), KCanvasSaveLayerStrategyFullLayer)
+		canvas.internalSaveLayer(newCanvasSaveLayerRec(rawBounds, tmp, nil, KCanvasSaveLayerFlagIsOpaque),
+			KCanvasSaveLayerStrategyFullLayer)
 		looper.tempLayerForImageFilter = false
 		// we remove the imagefilter/xfermode inside doNext()
 	}
@@ -585,9 +595,9 @@ func (it *DrawIterator) Next() bool {
 }
 
 /**
- *  If the paint has an imagefilter, but it can be simplified to just a colorfilter, return that
- *  colorfilter, else return nullptr.
- */
+If the paint has an imagefilter, but it can be simplified to just a colorfilter, return that
+colorfilter, else return nullptr.
+*/
 func imageToColorFilter(paint *Paint) *ColorFilter {
 	var imageFilter = paint.ImageFilter()
 	if imageFilter == nil {
@@ -615,7 +625,7 @@ func setIfNeeded(lazyPaint *Lazy, paint *Paint) *Paint {
 	return nil
 }
 
-func applyPaintToBoundsSansImageFilter(paint *Paint, rowBounds Rect, storage Rect) Rect {
+func applyPaintToBoundsSansImageFilter(paint *Paint, rowBounds Rect, storage *Rect) Rect {
 	toimpl()
 	return RectZero
 }
