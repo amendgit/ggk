@@ -19,6 +19,21 @@ const (
 	KCanvasShaderOverrideOpacityNotOpaque                                          //!< the overriding shader may not be opaque
 )
 
+/** \class SkCanvas
+
+A Canvas encapsulates all of the state about drawing into a device (bitmap).
+This includes a reference to the device itself, and a stack of matrix/clip
+values. For any given draw call (e.g. drawRect), the geometry of the object
+being drawn is transformed by the concatenation of all the matrices in the
+stack. The transformed geometry is clipped by the intersection of all of
+the clips in the stack.
+
+While the Canvas holds the state of the drawing device, the state (style)
+of the object being drawn is held by the Paint, which is provided as a
+parameter to each of the draw() methods. The Paint holds attributes such as
+color, typeface, textSize, strokeWidth, shader (e.g. gradients, patterns),
+etc.
+*/
 type Canvas struct {
 	surfaceProps SurfaceProps
 	saveCount    int
@@ -42,17 +57,113 @@ type Canvas struct {
 }
 
 /**
+Attempt to allocate raster canvas, matching the ImageInfo, that will draw directly into the
+specified pixels. To access the pixels after drawing to them, the caller should call
+flush() or call peekPixels(...).
+
+On failure, return NULL. This can fail for several reasons:
+1. invalid ImageInfo (e.g. negative dimensions)
+2. unsupported ImageInfo for a canvas
+    - kUnknown_SkColorType, kIndex_8_SkColorType
+    - kUnknown_SkAlphaType
+    - this list is not complete, so others may also be unsupported
+
+Note: it is valid to request a supported ImageInfo, but with zero
+dimensions.
+ */
+func NewCanvasRasterDirect(imageInfo *ImageInfo, pixels []byte, rowBytes int) *Canvas {
+	toimpl()
+	return &Canvas{}
+}
+
+func NewCanvasRasterDirectN32(width, height int, pixels []PremulColor, rowBytes int) *Canvas {
+	toimpl()
+	return &Canvas{}
+}
+
+/**
+ *  Creates an empty canvas with no backing device/pixels, and zero
+ *  dimensions.
+ */
+func NewCanvasEmpty() *Canvas {
+	toimpl()
+	return &Canvas{}
+}
+
+/**
 Construct a canvas with the specified bitmap to draw into.
 @param bitmap   Specifies a bitmap for the canvas to draw into. Its
                 structure are copied to the canvas.
 */
-func NewCanvas(bmp *Bitmap) *Canvas {
+func NewCanvasFromBitmap(bmp *Bitmap) *Canvas {
 	var canvas = new(Canvas)
 	canvas.surfaceProps = MakeSurfaceProps(KSurfacePropsFlagNone, KSurfacePropsInitTypeLegacyFontHost)
 	canvas.mcStack = list.New()
 	var device = NewBitmapDevice(bmp, canvas.surfaceProps)
 	canvas.init(device.BaseDevice, KCanvasInitFlagDefault)
 	return canvas
+}
+
+/**
+ *  Creates a canvas of the specified dimensions, but explicitly not backed
+ *  by any device/pixels. Typically this use used by subclasses who handle
+ *  the draw calls in some other way.
+ */
+func NewCanvas(width, height int, surfaceProps *SurfaceProps) *Canvas {
+	toimpl()
+	return &Canvas{}
+}
+
+/** Construct a canvas with the specified device to draw into.
+
+	@param device   Specifies a device for the canvas to draw into.
+*/
+func NewCanvasFromDevice(device *BaseDevice) *Canvas {
+	toimpl()
+	return &Canvas{}
+}
+
+/** Construct a canvas with the specified bitmap to draw into.
+	@param bitmap   Specifies a bitmap for the canvas to draw into. Its
+					structure are copied to the canvas.
+	@param props    New canvas surface properties.
+*/
+func NewCanvasFromBitmapSurfaceProps(bmp *Bitmap, surfaceProps *SurfaceProps) *Canvas {
+	toimpl()
+	return &Canvas{}
+}
+
+func (canvas *Canvas) MetaData() *MetaData {
+	toimpl()
+	return nil
+}
+
+/**
+ *  Return ImageInfo for this canvas. If the canvas is not backed by pixels
+ *  (cpu or gpu), then the info's ColorType will be kUnknown_SkColorType.
+ */
+func (canvas *Canvas) ImageInfo() *ImageInfo {
+	toimpl()
+	return nil
+}
+
+/**
+ *  If the canvas is backed by pixels (cpu or gpu), this writes a copy of the SurfaceProps
+ *  for the canvas to the location supplied by the caller, and returns true. Otherwise,
+ *  return false and leave the supplied props unchanged.
+ */
+func (canvas *Canvas) SurfaceProps() *SurfaceProps {
+	toimpl()
+	return canvas.surfaceProps
+}
+
+/**
+ *  Trigger the immediate execution of all pending draw operations. For the GPU
+ *  backend this will resolve all rendering to the GPU surface backing the
+ *  SkSurface that owns this canvas.
+ */
+func (canvas *Canvas) flush() {
+	toimpl()
 }
 
 func (canvas *Canvas) init(device *BaseDevice, flags CanvasInitFlags) *BaseDevice {
