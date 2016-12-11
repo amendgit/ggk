@@ -2,7 +2,6 @@ package ggk
 
 import (
 	"container/list"
-	"time"
 )
 
 type CanvasInitFlags int
@@ -71,7 +70,7 @@ On failure, return NULL. This can fail for several reasons:
 
 Note: it is valid to request a supported ImageInfo, but with zero
 dimensions.
- */
+*/
 func NewCanvasRasterDirect(imageInfo *ImageInfo, pixels []byte, rowBytes int) *Canvas {
 	toimpl()
 	return &Canvas{}
@@ -117,7 +116,7 @@ func NewCanvas(width, height int, surfaceProps *SurfaceProps) *Canvas {
 
 /** Construct a canvas with the specified device to draw into.
 
-	@param device   Specifies a device for the canvas to draw into.
+@param device   Specifies a device for the canvas to draw into.
 */
 func NewCanvasFromDevice(device *BaseDevice) *Canvas {
 	toimpl()
@@ -125,9 +124,9 @@ func NewCanvasFromDevice(device *BaseDevice) *Canvas {
 }
 
 /** Construct a canvas with the specified bitmap to draw into.
-	@param bitmap   Specifies a bitmap for the canvas to draw into. Its
-					structure are copied to the canvas.
-	@param props    New canvas surface properties.
+@param bitmap   Specifies a bitmap for the canvas to draw into. Its
+				structure are copied to the canvas.
+@param props    New canvas surface properties.
 */
 func NewCanvasFromBitmapSurfaceProps(bmp *Bitmap, surfaceProps *SurfaceProps) *Canvas {
 	toimpl()
@@ -155,7 +154,7 @@ func (canvas *Canvas) ImageInfo() *ImageInfo {
  */
 func (canvas *Canvas) SurfaceProps() *SurfaceProps {
 	toimpl()
-	return canvas.surfaceProps
+	return nil
 }
 
 /**
@@ -397,15 +396,15 @@ func SaveLayerPreserveLCDTextRequests(bounds *Rect, paint *Paint) int {
 }
 
 /** This behaves the same as save(), but in addition it allocates an
-	offscreen bitmap. All drawing calls are directed there, and only when
-	the balancing call to restore() is made is that offscreen transfered to
-	the canvas (or the previous layer).
-	@param bounds (may be null) This rect, if non-null, is used as a hint to
-				  limit the size of the offscreen, and thus drawing may be
-				  clipped to it, though that clipping is not guaranteed to
-				  happen. If exact clipping is desired, use clipRect().
-	@param alpha  This is applied to the offscreen when restore() is called.
-	@return The value to pass to restoreToCount() to balance this save()
+offscreen bitmap. All drawing calls are directed there, and only when
+the balancing call to restore() is made is that offscreen transfered to
+the canvas (or the previous layer).
+@param bounds (may be null) This rect, if non-null, is used as a hint to
+			  limit the size of the offscreen, and thus drawing may be
+			  clipped to it, though that clipping is not guaranteed to
+			  happen. If exact clipping is desired, use clipRect().
+@param alpha  This is applied to the offscreen when restore() is called.
+@return The value to pass to restoreToCount() to balance this save()
 */
 func (canvas *Canvas) SaveLayerAlphas(bounds *Rect, alpha uint8) int {
 	toimpl()
@@ -429,7 +428,7 @@ type CanvasSaveLayerRec struct {
 }
 
 func newCanvasSaveLayerRec(bounds *Rect, paint *Paint, backdrop *ImageFilter,
-saveLayerFlags CanvasSaveLayerFlags) *CanvasSaveLayerRec {
+	saveLayerFlags CanvasSaveLayerFlags) *CanvasSaveLayerRec {
 	return &CanvasSaveLayerRec{
 		bounds:         bounds,
 		paint:          paint,
@@ -484,75 +483,75 @@ func (canvas *Canvas) Translate(dx, dy Scalar) {
 }
 
 /** Preconcat the current matrix with the specified scale.
-	@param sx   The amount to scale in X
-	@param sy   The amount to scale in Y
+@param sx   The amount to scale in X
+@param sy   The amount to scale in Y
 */
 func (canvas *Canvas) Scale(sx, sy Scalar) {
 	toimpl()
 }
 
 /** Preconcat the current matrix with the specified rotation about the origin.
-	@param degrees  The amount to rotate, in degrees
+@param degrees  The amount to rotate, in degrees
 */
 func (canvas *Canvas) Rotate(degrees Scalar) {
 	toimpl()
 }
 
 /** Preconcat the current matrix with the specified rotation about a given point.
-	@param degrees  The amount to rotate, in degrees
-	@param px  The x coordinate of the point to rotate about.
-	@param py  The y coordinate of the point to rotate about.
+@param degrees  The amount to rotate, in degrees
+@param px  The x coordinate of the point to rotate about.
+@param py  The y coordinate of the point to rotate about.
 */
 func (canvas *Canvas) RotateAt(degrees, px, py Scalar) {
 	toimpl()
 }
 
 /** Preconcat the current matrix with the specified skew.
-	@param sx   The amount to skew in X
-	@param sy   The amount to skew in Y
+@param sx   The amount to skew in X
+@param sy   The amount to skew in Y
 */
 func (canvas *Canvas) Skew(sx, sy Scalar) {
 	toimpl()
 }
 
 /** Preconcat the current matrix with the specified matrix.
-	@param matrix   The matrix to preconcatenate with the current matrix
+@param matrix   The matrix to preconcatenate with the current matrix
 */
 func (canvas *Canvas) Concat(matrix *Matrix) {
 	toimpl()
 }
 
 /** Replace the current matrix with a copy of the specified matrix.
-	@param matrix The matrix that will be copied into the current matrix.
+@param matrix The matrix that will be copied into the current matrix.
 */
 func (canvas *Canvas) SetMatrix(matrix *Matrix) {
 	toimpl()
 }
 
 /** Helper for setMatrix(identity). Sets the current matrix to identity.
-*/
+ */
 func (canvas *Canvas) ResetMatrix() {
 	toimpl()
 }
 
 /** Add the specified translation to the current draw depth of the canvas.
-	@param z    The distance to translate in Z.
-				Negative into screen, positive out of screen.
-				Without translation, the draw depth defaults to 0.
+@param z    The distance to translate in Z.
+			Negative into screen, positive out of screen.
+			Without translation, the draw depth defaults to 0.
 */
 func (canvas *Canvas) TranslateZ(z Scalar) {
 	toimpl()
 }
 
 /** Set the current set of lights in the canvas.
-	@param lights   The lights that we want the canvas to have.
+@param lights   The lights that we want the canvas to have.
 */
 func (canvas *Canvas) SetLights(lights *Lights) {
 	toimpl()
 }
 
 /** Returns the current set of lights the canvas uses
-*/
+ */
 func (canvas *Canvas) Lights() *Lights {
 	return nil
 }
@@ -595,20 +594,20 @@ func (canvas *Canvas) SetAllowSimplifyClip(allow bool) {
 }
 
 /** Modify the current clip with the specified region. Note that unlike
-	clipRect() and clipPath() which transform their arguments by the current
-	matrix, clipRegion() assumes its argument is already in device
-	coordinates, and so no transformation is performed.
-	@param deviceRgn    The region to apply to the current clip
-	@param op The region op to apply to the current clip
+clipRect() and clipPath() which transform their arguments by the current
+matrix, clipRegion() assumes its argument is already in device
+coordinates, and so no transformation is performed.
+@param deviceRgn    The region to apply to the current clip
+@param op The region op to apply to the current clip
 */
 func (canvas *Canvas) ClipRegion(deviceRgn *Region, op RegionOp) {
 	toimpl()
 }
 
 /** Helper for clipRegion(rgn, kReplace_Op). Sets the current clip to the
-	specified region. This does not intersect or in any other way account
-	for the existing clip region.
-	@param deviceRgn The region to copy into the current clip.
+specified region. This does not intersect or in any other way account
+for the existing clip region.
+@param deviceRgn The region to copy into the current clip.
 */
 func (canvas *Canvas) SetClipRegion(deviceRgn *Region) {
 	toimpl()
@@ -668,12 +667,12 @@ func (canvas *Canvas) ClipDeviceBounds(bounds *Rect) bool {
 }
 
 /** Fill the entire canvas' bitmap (restricted to the current clip) with the
-	specified ARGB color, using the specified mode.
-	@param a    the alpha component (0..255) of the color to fill the canvas
-	@param r    the red component (0..255) of the color to fill the canvas
-	@param g    the green component (0..255) of the color to fill the canvas
-	@param b    the blue component (0..255) of the color to fill the canvas
-	@param mode the mode to apply the color in (defaults to SrcOver)
+specified ARGB color, using the specified mode.
+@param a    the alpha component (0..255) of the color to fill the canvas
+@param r    the red component (0..255) of the color to fill the canvas
+@param g    the green component (0..255) of the color to fill the canvas
+@param b    the blue component (0..255) of the color to fill the canvas
+@param mode the mode to apply the color in (defaults to SrcOver)
 */
 func (canvas *Canvas) DrawARGB(a, r, g, b uint8, mode XfermodeMode) {
 	toimpl()
@@ -762,9 +761,9 @@ func (canvas *Canvas) DrawPoints(mode CanvasPointMode, count int, pts []Point, p
 }
 
 /** Draws a single pixel in the specified color.
-	@param x        The X coordinate of which pixel to draw
-	@param y        The Y coordiante of which pixel to draw
-	@param color    The color to draw
+@param x        The X coordinate of which pixel to draw
+@param y        The Y coordiante of which pixel to draw
+@param color    The color to draw
 */
 func (canvas *Canvas) DrawPoint(x, y Scalar, paint *Paint) {
 	var pt Point
@@ -819,6 +818,547 @@ func (canvas *Canvas) DrawOval(oval Rect, paint *Paint) {
 	toimpl()
 }
 
+/**
+ *  Draw the annulus formed by the outer and inner rrects. The results
+ *  are undefined if the outer does not contain the inner.
+ */
+func (canvas *Canvas) DrawDRect(outer, inner Rect, paint *Paint) {
+	toimpl()
+}
+
+/**
+Draw the specified circle using the specified paint. If radius is <= 0,
+then nothing will be drawn. The circle will be filled
+or framed based on the Style in the paint.
+@param cx       The x-coordinate of the center of the cirle to be drawn
+@param cy       The y-coordinate of the center of the cirle to be drawn
+@param radius   The radius of the cirle to be drawn
+@param paint    The paint used to draw the circle
+*/
+func (canvas *Canvas) DrawCircle(cx, cy, radius Scalar, paint *Paint) {
+	toimpl()
+}
+
+/**
+Draw the specified arc, which will be scaled to fit inside the
+specified oval. If the sweep angle is >= 360, then the oval is drawn
+completely. Note that this differs slightly from SkPath::arcTo, which
+treats the sweep angle mod 360.
+@param oval The bounds of oval used to define the shape of the arc.
+@param startAngle Starting angle (in degrees) where the arc begins
+@param sweepAngle Sweep angle (in degrees) measured clockwise.
+@param useCenter true means include the center of the oval. For filling
+				 this will draw a wedge. False means just use the arc.
+@param paint    The paint used to draw the arc
+*/
+func (canvas *Canvas) DrawArc(oval Rect, startAngle, sweepAngle Scalar, useCenter bool, paint *Paint) {
+	toimpl()
+}
+
+/**
+Draw the specified round-rect using the specified paint. The round-rect
+will be filled or framed based on the Style in the paint.
+@param rect     The rectangular bounds of the roundRect to be drawn
+@param rx       The x-radius of the oval used to round the corners
+@param ry       The y-radius of the oval used to round the corners
+@param paint    The paint used to draw the roundRect
+*/
+func (canvas *Canvas) DrawRoundRect(rect Rect, rx, ry Scalar, paint *Paint) {
+	toimpl()
+}
+
+/**
+Draw the specified path using the specified paint. The path will be
+filled or framed based on the Style in the paint.
+@param path     The path to be drawn
+@param paint    The paint used to draw the path
+*/
+
+func (canvas *Canvas) DrawPath(path *Path, paint *Paint) {
+	toimpl()
+}
+
+/**
+Draw the specified image, with its top/left corner at (x,y), using the
+specified paint, transformed by the current matrix.
+
+@param image    The image to be drawn
+@param left     The position of the left side of the image being drawn
+@param top      The position of the top side of the image being drawn
+@param paint    The paint used to draw the image, or NULL
+*/
+func (canvas *Canvas) DrawImage(image *Image, left, top Scalar, paint *Paint) {
+	toimpl()
+}
+
+/**
+ *  Controls the behavior at the edge of the src-rect, when specified in drawImageRect,
+ *  trading off speed for exactness.
+ *
+ *  When filtering is enabled (in the Paint), skia may need to sample in a neighborhood around
+ *  the pixels in the image. If there is a src-rect specified, it is intended to restrict the
+ *  pixels that will be read. However, for performance reasons, some implementations may slow
+ *  down if they cannot read 1-pixel past the src-rect boundary at times.
+ *
+ *  This enum allows the caller to specify if such a 1-pixel "slop" will be visually acceptable.
+ *  If it is, the caller should pass kFast, and it may result in a faster draw. If the src-rect
+ *  must be strictly respected, the caller should pass kStrict.
+ */
+type CanvasSrcRectConstraint int
+
+const (
+	/**
+	 *  If kStrict is specified, the implementation must respect the src-rect
+	 *  (if specified) strictly, and will never sample outside of those bounds during sampling
+	 *  even when filtering. This may be slower than kFast.
+	 */
+	KCanvasSrcRectConstraintStrict = iota
+
+	/**
+	 *  If kFast is specified, the implementation may sample outside of the src-rect
+	 *  (if specified) by half the width of filter. This allows greater flexibility
+	 *  to the implementation and can make the draw much faster.
+	 */
+	KCanvasSrcRectConstraintFast
+)
+
+/**
+Draw the specified image, scaling and translating so that it fills the specified
+dst rect. If the src rect is non-null, only that subset of the image is transformed
+and drawn.
+
+@param image      The image to be drawn
+@param src        Optional: specify the subset of the image to be drawn
+@param dst        The destination rectangle where the scaled/translated
+                  image will be drawn
+@param paint      The paint used to draw the image, or NULL
+@param constraint Control the tradeoff between speed and exactness w.r.t. the src-rect.
+*/
+func (canvas *Canvas) DrawImageRect(image *Image, srcRect, dstRect Rect, paint *Paint, constraint CanvasSrcRectConstraint) {
+	toimpl()
+}
+
+/**
+Draw the image stretched differentially to fit into dst.
+center is a rect within the image, and logically divides the image
+into 9 sections (3x3). For example, if the middle pixel of a [5x5]
+image is the "center", then the center-rect should be [2, 2, 3, 3].
+
+If the dst is >= the image size, then...
+- The 4 corners are not stretched at all.
+- The sides are stretched in only one axis.
+- The center is stretched in both axes.
+Else, for each axis where dst < image,
+- The corners shrink proportionally
+- The sides (along the shrink axis) and center are not drawn
+*/
+func (canvas *Canvas) DrawImageNine(image *Image, enter Rect, dst Rect, paint *Paint) {
+	toimpl()
+}
+
+/**
+Draw the specified bitmap, with its top/left corner at (x,y), using the
+specified paint, transformed by the current matrix. Note: if the paint
+contains a maskfilter that generates a mask which extends beyond the
+bitmap's original width/height, then the bitmap will be drawn as if it
+were in a Shader with CLAMP mode. Thus the color outside of the original
+width/height will be the edge color replicated.
+
+If a shader is present on the paint it will be ignored, except in the
+case where the bitmap is kAlpha_8_SkColorType. In that case, the color is
+generated by the shader.
+
+@param bitmap   The bitmap to be drawn
+@param left     The position of the left side of the bitmap being drawn
+@param top      The position of the top side of the bitmap being drawn
+@param paint    The paint used to draw the bitmap, or NULL
+*/
+func (canvas *Canvas) DrawBitmap(bmp *Bitmap, left, top Scalar, paint *Paint) {
+	toimpl()
+}
+
+/**
+Draw the specified bitmap, scaling and translating so that it fills the specified
+dst rect. If the src rect is non-null, only that subset of the bitmap is transformed
+and drawn.
+
+@param bitmap     The bitmap to be drawn
+@param src        Optional: specify the subset of the bitmap to be drawn
+@param dst        The destination rectangle where the scaled/translated
+                  bitmap will be drawn
+@param paint      The paint used to draw the bitmap, or NULL
+@param constraint Control the tradeoff between speed and exactness w.r.t. the src-rect.
+*/
+func (canvas *Canvas) DrawBitmapRect(bmp *Bitmap, src, dst Rect, paint *Paint, constraint CanvasSrcRectConstraint) {
+	toimpl()
+}
+
+/**
+Draw the bitmap stretched or shrunk differentially to fit into dst.
+center is a rect within the bitmap, and logically divides the bitmap
+into 9 sections (3x3). For example, if the middle pixel of a [5x5]
+bitmap is the "center", then the center-rect should be [2, 2, 3, 3].
+
+If the dst is >= the bitmap size, then...
+- The 4 corners are not stretched at all.
+- The sides are stretched in only one axis.
+- The center is stretched in both axes.
+Else, for each axis where dst < bitmap,
+- The corners shrink proportionally
+- The sides (along the shrink axis) and center are not drawn
+*/
+func (canvas *Canvas) DrawBitmapNine(bmp *Bitmap, center Rect, dst Rect, paint *Paint) {
+	toimpl()
+}
+
+/**
+ *  Specifies coordinates to divide a bitmap into (xCount*yCount) rects.
+ */
+type CanvasLattice struct {
+	// An array of x-coordinates that divide the bitmap vertically.
+	// These must be unique, increasing, and in the set [0, width].
+	// Does not have ownership.
+	XDivs *int
+
+	// The number of fXDivs.
+	XCount int
+
+	// An array of y-coordinates that divide the bitmap horizontally.
+	// These must be unique, increasing, and in the set [0, height].
+	// Does not have ownership.
+	YDivs *int
+
+	// The number of fYDivs.
+	YCount int
+}
+
+/**
+ *  Draw the bitmap stretched or shrunk differentially to fit into dst.
+ *
+ *  Moving horizontally across the bitmap, alternating rects will be "scalable"
+ *  (in the x-dimension) to fit into dst or must be left "fixed".  The first rect
+ *  is treated as "fixed", but it's possible to specify an empty first rect by
+ *  making lattice.fXDivs[0] = 0.
+ *
+ *  The scale factor for all "scalable" rects will be the same, and may be greater
+ *  than or less than 1 (meaning we can stretch or shrink).  If the number of
+ *  "fixed" pixels is greater than the width of the dst, we will collapse all of
+ *  the "scalable" regions and appropriately downscale the "fixed" regions.
+ *
+ *  The same interpretation also applies to the y-dimension.
+ */
+func (canvas *Canvas) DrawBitmapLattice(bmp *Bitmap, lattice *CanvasLattice, dst Rect, paint *Paint) {
+	toimpl()
+}
+
+func (canvas *Canvas) DrawImageLattice(bmp *Bitmap, lattice *CanvasLattice, dst Rect, paint *Paint) {
+	toimpl()
+}
+
+/**
+Draw the text, with origin at (x,y), using the specified paint.
+The origin is interpreted based on the Align setting in the paint.
+@param text The text to be drawn
+@param byteLength   The number of bytes to read from the text parameter
+@param x        The x-coordinate of the origin of the text being drawn
+@param y        The y-coordinate of the origin of the text being drawn
+@param paint    The paint used for the text (e.g. color, size, style)
+*/
+func (canvas *Canvas) DrawText(text string, x, y Scalar, paint *Paint) {
+	toimpl()
+}
+
+/**
+Draw the text, with each character/glyph origin specified by the pos[]
+array. The origin is interpreted by the Align setting in the paint.
+@param text The text to be drawn
+@param byteLength   The number of bytes to read from the text parameter
+@param pos      Array of positions, used to position each character
+@param paint    The paint used for the text (e.g. color, size, style)
+*/
+func (canvas *Canvas) DrawTextAt(text string, pos []Point, paint *Paint) {
+	toimpl()
+}
+
+/**
+Draw the text, with each character/glyph origin specified by the x
+coordinate taken from the xpos[] array, and the y from the constY param.
+The origin is interpreted by the Align setting in the paint.
+@param text The text to be drawn
+@param byteLength   The number of bytes to read from the text parameter
+@param xpos     Array of x-positions, used to position each character
+@param constY   The shared Y coordinate for all of the positions
+@param paint    The paint used for the text (e.g. color, size, style)
+*/
+func (canvas *Canvas) DrawTextAtH(text string, xpos []Scalar, constY Scalar, paint *Paint) {
+	toimpl()
+}
+
+/**
+Draw the text, with origin at (x,y), using the specified paint, along
+the specified path. The paint's Align setting determins where along the
+path to start the text.
+@param text The text to be drawn
+@param byteLength   The number of bytes to read from the text parameter
+@param path         The path the text should follow for its baseline
+@param hOffset      The distance along the path to add to the text's
+					starting position
+@param vOffset      The distance above(-) or below(+) the path to
+					position the text
+@param paint        The paint used for the text
+*/
+func (canvas *Canvas) DrawTextOnPathHV(text string, path *Path, hOffset, vOffset Scalar, paint *Paint) {
+	toimpl()
+}
+
+/**
+Draw the text, with origin at (x,y), using the specified paint, along
+the specified path. The paint's Align setting determins where along the
+path to start the text.
+@param text The text to be drawn
+@param byteLength   The number of bytes to read from the text parameter
+@param path         The path the text should follow for its baseline
+@param matrix       (may be null) Applied to the text before it is
+					mapped onto the path
+@param paint        The paint used for the text
+*/
+func (canvas *Canvas) DrawTextOnPath(text string, path *Path, matrix *Matrix, paint *Paint) {
+	toimpl()
+}
+
+/**
+ *  Draw the text with each character/glyph individually transformed by its xform.
+ *  If cullRect is not null, it is a conservative bounds of what will be drawn
+ *  taking into account the xforms and the paint, and will be used to accelerate culling.
+ */
+func (canvas *Canvas) DrawTextRSXform(text string, rsxform []RSXform, cullRect Rect, paint *Paint) {
+	toimpl()
+}
+
+/**
+Draw the picture into this canvas. This method effective brackets the
+playback of the picture's draw calls with save/restore, so the state
+of this canvas will be unchanged after this call.
+@param picture The recorded drawing commands to playback into this
+			   canvas.
+
+If matrix is non-null, apply that matrix to the CTM when drawing this picture. This is
+logically equivalent to
+    save/concat/drawPicture/restore
+
+If paint is non-null, draw the picture into a temporary buffer, and then apply the paint's
+alpha/colorfilter/imagefilter/xfermode to that buffer as it is drawn to the canvas.
+This is logically equivalent to
+    saveLayer(paint)/drawPicture/restore
+*/
+func (canvas *Canvas) DrawPicture(picture *Picture, matrix *Matrix, paint *Paint) {
+	toimpl()
+}
+
+/**
+Draw the picture into this canvas.
+
+We will use the canvas's lights along with the picture information (draw depths of
+objects, etc) to first create a set of shadowmaps for the light-picture pairs, and
+then use that set of shadowmaps to render the scene with shadows.
+
+If matrix is non-null, apply that matrix to the CTM when drawing this picture. This is
+logically equivalent to
+    save/concat/drawPicture/restore
+
+If paint is non-null, draw the picture into a temporary buffer, and then apply the paint's
+alpha/colorfilter/imagefilter/xfermode to that buffer as it is drawn to the canvas.
+This is logically equivalent to
+    saveLayer(paint)/drawPicture/restore
+
+*/
+func (canvas *Canvas) DrawShadowedPicture(picture *Picture, matrix *Matrix, paint *Paint) {
+	toimpl()
+}
+
+type CanvasVertexMode int
+
+const (
+	KCanvasVertexModeTriangles CanvasVertexMode = iota
+	KCanvasVertexModeTriangleStrip
+	KCanvasVertexModeTriangleFan
+)
+
+/**
+Draw the array of vertices, interpreted as triangles (based on mode).
+
+If both textures and vertex-colors are NULL, it strokes hairlines with
+the paint's color. This behavior is a useful debugging mode to visualize
+the mesh.
+
+@param vmode How to interpret the array of vertices
+@param vertexCount The number of points in the vertices array (and
+			corresponding texs and colors arrays if non-null)
+@param vertices Array of vertices for the mesh
+@param texs May be null. If not null, specifies the coordinate
+			in _texture_ space (not uv space) for each vertex.
+@param colors May be null. If not null, specifies a color for each
+			  vertex, to be interpolated across the triangle.
+@param xmode Used if both texs and colors are present. In this
+			case the colors are combined with the texture using mode,
+			before being drawn using the paint. If mode is null, then
+			kModulate_Mode is used.
+@param indices If not null, array of indices to reference into the
+			vertex (texs, colors) array.
+@param indexCount number of entries in the indices array (if not null)
+@param paint Specifies the shader/texture if present.
+*/
+func (canvas *Canvas) DrawVertices(vmode CanvasVertexMode, vertexCount int, vertices []Point, texs []Point, colors []Color,
+		mode *Xfermode, indices []uint16, indexCount int, paint *Paint) {
+	toimpl()
+}
+
+/**
+Draw a cubic coons patch
+
+@param cubic specifies the 4 bounding cubic bezier curves of a patch with clockwise order
+			   starting at the top left corner.
+@param colors specifies the colors for the corners which will be bilerp across the patch,
+			   their order is clockwise starting at the top left corner.
+@param texCoords specifies the texture coordinates that will be bilerp across the patch,
+			   their order is the same as the colors.
+@param xmode specifies how are the colors and the textures combined if both of them are
+			   present.
+@param paint Specifies the shader/texture if present.
+*/
+func (canvas *Canvas) DrawPatch(cubics [12]Point, colors [4]Color, texCoords [4]Point, xmode *Xfermode, paint *Paint) {
+	toimpl()
+}
+
+/**
+ *  Draw a set of sprites from the atlas. Each is specified by a tex rectangle in the
+ *  coordinate space of the atlas, and a corresponding xform which transforms the tex rectangle
+ *  into a quad.
+ *
+ *      xform maps [0, 0, tex.width, tex.height] -> quad
+ *
+ *  The color array is optional. When specified, each color modulates the pixels in its
+ *  corresponding quad (via the specified SkXfermode::Mode).
+ *
+ *  The cullRect is optional. When specified, it must be a conservative bounds of all of the
+ *  resulting transformed quads, allowing the canvas to skip drawing if the cullRect does not
+ *  intersect the current clip.
+ *
+ *  The paint is optional. If specified, its antialiasing, alpha, color-filter, image-filter
+ *  and xfermode are used to affect each of the quads.
+ */
+func (canvas *Canvas) DrawAtlas(atlas *Image, form []RSXform, tex []Rect, colors []Color, count int, mode XfermodeMode,
+		cullRect Rect, paint *Paint) {
+	toimpl()
+}
+
+/**
+ *  Draw the contents of this drawable into the canvas. If the canvas is async
+ *  (e.g. it is recording into a picture) then the drawable will be referenced instead,
+ *  to have its draw() method called when the picture is finalized.
+ *
+ *  If the intent is to force the contents of the drawable into this canvas immediately,
+ *  then drawable->draw(canvas) may be called.
+ */
+func (canvas *Canvas) DrawDrawable(drawable *Drawable, matrix *Matrix) {
+	toimpl()
+}
+
+func (canvas *Canvas) DrawDrawableAt(drawable *Drawable, x, y Scalar) {
+	toimpl()
+}
+
+/**
+ *  Send an "annotation" to the canvas. The annotation is a key/value pair, where the key is
+ *  a null-terminated utf8 string, and the value is a blob of data stored in an SkData
+ *  (which may be null). The annotation is associated with the specified rectangle.
+ *
+ *  The caller still retains its ownership of the data (if any).
+ *
+ *  Note: on may canvas types, this information is ignored, but some canvases (e.g. recording
+ *  a picture or drawing to a PDF document) will pass on this information.
+ */
+func (canvas *Canvas) DrawAnnotation(rect Rect, key []byte, value *Data) {
+	toimpl()
+}
+
+/** Get the current filter object. The filter's reference count is not
+	affected. The filter is saved/restored, just like the matrix and clip.
+	@return the canvas' filter (or NULL).
+*/
+func (canvas *Canvas) DrawFilter() *DrawFilter {
+	toimpl()
+	return nil
+}
+
+/**
+Set the new filter (or NULL). Pass NULL to clear any existing filter.
+As a convenience, the parameter is returned. If an existing filter
+exists, its refcnt is decrement. If the new filter is not null, its
+refcnt is incremented. The filter is saved/restored, just like the
+matrix and clip.
+@param filter the new filter (or NULL)
+@return the new filter
+TODO(abstract)
+*/
+func (canvas *Canvas) SetDrawFilter(filter *DrawFilter) {
+	toimpl()
+}
+
+/**
+Return true if the current clip is empty (i.e. nothing will draw).
+Note: this is not always a free call, so it should not be used
+more often than necessary. However, once the canvas has computed this
+result, subsequent calls will be cheap (until the clip state changes,
+which can happen on any clip..() or restore() call.
+TODO(abstract)
+*/
+func (canvas *Canvas) IsClipEmpty() bool {
+	toimpl()
+	return false
+}
+
+/**
+ *  Returns true if the current clip is just a (non-empty) rectangle.
+ *  Returns false if the clip is empty, or if it is complex.
+ */
+func (canvas *Canvas) IsClipRect() bool {
+	toimpl()
+	return false
+}
+
+/**
+Return the current matrix on the canvas.
+This does not account for the translate in any of the devices.
+@return The current matrix on the canvas.
+*/
+func (canvas *Canvas) TotalMatrix() *Matrix {
+	return canvas.mcRec.Matrix
+}
+
+/** Return the clip stack. The clip stack stores all the individual
+ *  clips organized by the save/restore frame in which they were
+ *  added.
+ *  @return the current clip stack ("list" of individual clip elements)
+ */
+func (canvas *Canvas) ClipStack() *ClipStack {
+	toimpl()
+	return nil
+}
+
+type CanvasClipVisitor interface {
+
+}
+
+/**
+ *  Replays the clip operations, back to front, that have been applied to
+ *  the canvas, calling the appropriate method on the visitor for each
+ *  clip. All clips have already been transformed into device space.
+ */
+func (canvas *Canvas) ReplayClipVisitor(clipVisitor CanvasClipVisitor) {
+	toimpl()
+}
+
 func (canvas *Canvas) init(device *BaseDevice, flags CanvasInitFlags) *BaseDevice {
 	if device != nil && device.forceConservativeRasterClip() {
 		flags = flags | KCanvasInitFlagConservativeRasterClip
@@ -848,14 +1388,6 @@ func (canvas *Canvas) init(device *BaseDevice, flags CanvasInitFlags) *BaseDevic
 	return device
 }
 
-/** Return the current matrix on the canvas.
-	This does not account for the translate in any of the devices.
-	@return The current matrix on the canvas.
-*/
-func (canvas *Canvas) TotalMatrix() *Matrix {
-	return canvas.mcRec.Matrix
-}
-
 func (canvas *Canvas) OnDrawPoints(mode CanvasPointMode, count int, pts []Point, paint *Paint) {
 	toimpl()
 }
@@ -882,7 +1414,7 @@ func (canvas *Canvas) PredrawNotify(rect *Rect, paint *Paint, overrideOpacity Ca
 	toimpl()
 }
 
-func (canvas *Canvas) internalSaveLayer(rec *tCanvasSaveLayerRec, strategy CanvasSaveLayerStrategy) {
+func (canvas *Canvas) internalSaveLayer(rec *CanvasSaveLayerRec, strategy CanvasSaveLayerStrategy) {
 	toimpl()
 }
 
