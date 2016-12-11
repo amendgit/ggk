@@ -2,6 +2,7 @@ package ggk
 
 import (
 	"container/list"
+	"time"
 )
 
 type CanvasInitFlags int
@@ -411,6 +412,413 @@ func (canvas *Canvas) SaveLayerAlphas(bounds *Rect, alpha uint8) int {
 	return 0
 }
 
+type CanvasSaveLayerFlags int
+
+const (
+	KCanvasSaveLayerFlagIsOpaque = 1 << iota
+	KCanvasSaveLayerFlagPreserveLCDText
+	kCanvasSaveLayerFlagDontClipToLayer   // private
+	KCanvasSaveLayerDontClipToLayerLegacy = kCanvasSaveLayerFlagDontClipToLayer
+)
+
+type CanvasSaveLayerRec struct {
+	bounds         *Rect
+	paint          *Paint
+	backdrop       *ImageFilter
+	saveLayerFlags CanvasSaveLayerFlags
+}
+
+func newCanvasSaveLayerRec(bounds *Rect, paint *Paint, backdrop *ImageFilter,
+saveLayerFlags CanvasSaveLayerFlags) *CanvasSaveLayerRec {
+	return &CanvasSaveLayerRec{
+		bounds:         bounds,
+		paint:          paint,
+		backdrop:       backdrop,
+		saveLayerFlags: saveLayerFlags,
+	}
+}
+
+func (canvas *Canvas) SaveLayerWithRec(rec *CanvasSaveLayerRec) int {
+	toimpl()
+	return 0
+}
+
+/**
+This call balances a previous call to save(), and is used to remove all
+modifications to the matrix/clip/drawFilter state since the last save
+call.
+It is an error to call restore() more times than save() was called.
+*/
+func (canvas *Canvas) Restore() {
+	toimpl()
+}
+
+/**
+Returns the number of matrix/clip states on the SkCanvas' private stack.
+This will equal # save() calls - # restore() calls + 1. The save count on
+a new canvas is 1.
+*/
+func (canvas *Canvas) SaveCount() int {
+	return canvas.saveCount
+}
+
+/**
+Efficient way to pop any calls to save() that happened after the save
+count reached saveCount. It is an error for saveCount to be greater than
+getSaveCount(). To pop all the way back to the initial matrix/clip context
+pass saveCount == 1.
+@param saveCount    The number of save() levels to restore from
+*/
+func (canvas *Canvas) RestoreToCount(saveCount int) {
+	toimpl()
+	return
+}
+
+/**
+Preconcat the current matrix with the specified translation
+@param dx   The distance to translate in X
+@param dy   The distance to translate in Y
+*/
+func (canvas *Canvas) Translate(dx, dy Scalar) {
+	toimpl()
+}
+
+/** Preconcat the current matrix with the specified scale.
+	@param sx   The amount to scale in X
+	@param sy   The amount to scale in Y
+*/
+func (canvas *Canvas) Scale(sx, sy Scalar) {
+	toimpl()
+}
+
+/** Preconcat the current matrix with the specified rotation about the origin.
+	@param degrees  The amount to rotate, in degrees
+*/
+func (canvas *Canvas) Rotate(degrees Scalar) {
+	toimpl()
+}
+
+/** Preconcat the current matrix with the specified rotation about a given point.
+	@param degrees  The amount to rotate, in degrees
+	@param px  The x coordinate of the point to rotate about.
+	@param py  The y coordinate of the point to rotate about.
+*/
+func (canvas *Canvas) RotateAt(degrees, px, py Scalar) {
+	toimpl()
+}
+
+/** Preconcat the current matrix with the specified skew.
+	@param sx   The amount to skew in X
+	@param sy   The amount to skew in Y
+*/
+func (canvas *Canvas) Skew(sx, sy Scalar) {
+	toimpl()
+}
+
+/** Preconcat the current matrix with the specified matrix.
+	@param matrix   The matrix to preconcatenate with the current matrix
+*/
+func (canvas *Canvas) Concat(matrix *Matrix) {
+	toimpl()
+}
+
+/** Replace the current matrix with a copy of the specified matrix.
+	@param matrix The matrix that will be copied into the current matrix.
+*/
+func (canvas *Canvas) SetMatrix(matrix *Matrix) {
+	toimpl()
+}
+
+/** Helper for setMatrix(identity). Sets the current matrix to identity.
+*/
+func (canvas *Canvas) ResetMatrix() {
+	toimpl()
+}
+
+/** Add the specified translation to the current draw depth of the canvas.
+	@param z    The distance to translate in Z.
+				Negative into screen, positive out of screen.
+				Without translation, the draw depth defaults to 0.
+*/
+func (canvas *Canvas) TranslateZ(z Scalar) {
+	toimpl()
+}
+
+/** Set the current set of lights in the canvas.
+	@param lights   The lights that we want the canvas to have.
+*/
+func (canvas *Canvas) SetLights(lights *Lights) {
+	toimpl()
+}
+
+/** Returns the current set of lights the canvas uses
+*/
+func (canvas *Canvas) Lights() *Lights {
+	return nil
+}
+
+/**
+ *  Modify the current clip with the specified rectangle.
+ *  @param rect The rect to combine with the current clip
+ *  @param op The region op to apply to the current clip
+ *  @param doAntiAlias true if the clip should be antialiased
+ */
+func (canvas *Canvas) ClipRect(rect Rect, op RegionOp, doAntiAlias bool) {
+	toimpl()
+}
+
+/**
+ *  Modify the current clip with the specified path.
+ *  @param path The path to combine with the current clip
+ *  @param op The region op to apply to the current clip
+ *  @param doAntiAlias true if the clip should be antialiased
+ */
+func (canvas *Canvas) ClipPath(path *Path, op RegionOp, doAntiAlias bool) {
+	toimpl()
+}
+
+/**
+EXPERIMENTAL -- only used for testing
+Set to false to force clips to be hard, even if doAntiAlias=true is
+passed to clipRect or clipPath.
+*/
+func (canvas *Canvas) SetAllowSoftClip(allow bool) {
+	toimpl()
+}
+
+/**
+EXPERIMENTAL -- only used for testing
+Set to simplify clip stack using path ops.
+*/
+func (canvas *Canvas) SetAllowSimplifyClip(allow bool) {
+	toimpl()
+}
+
+/** Modify the current clip with the specified region. Note that unlike
+	clipRect() and clipPath() which transform their arguments by the current
+	matrix, clipRegion() assumes its argument is already in device
+	coordinates, and so no transformation is performed.
+	@param deviceRgn    The region to apply to the current clip
+	@param op The region op to apply to the current clip
+*/
+func (canvas *Canvas) ClipRegion(deviceRgn *Region, op RegionOp) {
+	toimpl()
+}
+
+/** Helper for clipRegion(rgn, kReplace_Op). Sets the current clip to the
+	specified region. This does not intersect or in any other way account
+	for the existing clip region.
+	@param deviceRgn The region to copy into the current clip.
+*/
+func (canvas *Canvas) SetClipRegion(deviceRgn *Region) {
+	toimpl()
+}
+
+/**
+Return true if the specified rectangle, after being transformed by the
+current matrix, would lie completely outside of the current clip. Call
+this to check if an area you intend to draw into is clipped out (and
+therefore you can skip making the draw calls).
+@param rect the rect to compare with the current clip
+@return true if the rect (transformed by the canvas' matrix) does not
+			 intersect with the canvas' clip
+*/
+func (canvas *Canvas) QuickRejectRect(rect Rect) bool {
+	toimpl()
+	return false
+}
+
+/**
+Return true if the specified path, after being transformed by the
+current matrix, would lie completely outside of the current clip. Call
+this to check if an area you intend to draw into is clipped out (and
+therefore you can skip making the draw calls). Note, for speed it may
+return false even if the path itself might not intersect the clip
+(i.e. the bounds of the path intersects, but the path does not).
+@param path The path to compare with the current clip
+@return true if the path (transformed by the canvas' matrix) does not
+			 intersect with the canvas' clip
+*/
+func (canvas *Canvas) QuickRejectPath(path *Path) bool {
+	toimpl()
+	return false
+}
+
+/**
+Return the bounds of the current clip (in local coordinates) in the
+bounds parameter, and return true if it is non-empty. This can be useful
+in a way similar to quickReject, in that it tells you that drawing
+outside of these bounds will be clipped out.
+TODO(abstract)
+*/
+func (canvas *Canvas) ClipBounds(bounds *Rect) bool {
+	toimpl()
+	return false
+}
+
+/**
+Return the bounds of the current clip, in device coordinates; returns
+true if non-empty. Maybe faster than getting the clip explicitly and
+then taking its bounds.
+TODO(abstract)
+*/
+func (canvas *Canvas) ClipDeviceBounds(bounds *Rect) bool {
+	toimpl()
+	return false
+}
+
+/** Fill the entire canvas' bitmap (restricted to the current clip) with the
+	specified ARGB color, using the specified mode.
+	@param a    the alpha component (0..255) of the color to fill the canvas
+	@param r    the red component (0..255) of the color to fill the canvas
+	@param g    the green component (0..255) of the color to fill the canvas
+	@param b    the blue component (0..255) of the color to fill the canvas
+	@param mode the mode to apply the color in (defaults to SrcOver)
+*/
+func (canvas *Canvas) DrawARGB(a, r, g, b uint8, mode XfermodeMode) {
+	toimpl()
+}
+
+/**
+Fill the entire canvas' bitmap (restricted to the current clip) with the
+specified color and mode.
+@param color    the color to draw with
+@param mode the mode to apply the color in (defaults to SrcOver)
+*/
+func (canvas *Canvas) DrawColor(color Color, mode XfermodeMode) {
+	var paint = NewPaint()
+	paint.SetColor(color)
+	if KXfermodeModeSrcOver == mode {
+		paint.SetXfermodeMode(mode)
+	}
+	canvas.DrawPaint(paint)
+}
+
+/**
+ *  Helper method for drawing a color in SRC mode, completely replacing all the pixels
+ *  in the current clip with this color.
+ */
+func (canvas *Canvas) Clear(color Color) {
+	toimpl()
+}
+
+/**
+ * This makes the contents of the canvas undefined. Subsequent calls that
+ * require reading the canvas contents will produce undefined results. Examples
+ * include blending and readPixels. The actual implementation is backend-
+ * dependent and one legal implementation is to do nothing. This method
+ * ignores the current clip.
+ *
+ * This function should only be called if the caller intends to subsequently
+ * draw to the canvas. The canvas may do real work at discard() time in order
+ * to optimize performance on subsequent draws. Thus, if you call this and then
+ * never draw to the canvas subsequently you may pay a perfomance penalty.
+ */
+func (canvas *Canvas) Discard() {
+	toimpl()
+}
+
+/**
+ *  Fill the entire canvas (restricted to the current clip) with the
+ *  specified paint.
+ *  @param paint    The paint used to fill the canvas
+ */
+func (canvas *Canvas) DrawPaint(paint *Paint) {
+	canvas.OnDrawPaint(paint)
+}
+
+type CanvasPointMode int
+
+const (
+	KCanvasPointModePoints  CanvasPointMode = iota // DrawPoints draws each point separately
+	KCanvasPointModeLines                          // DrawPoints draws each pair of points as a line segment
+	KCanvasPointModePolygon                        // DrawPoints draws the array of points as a polygon
+)
+
+/**
+Draw a series of points, interpreted based on the PointMode mode. For
+all modes, the count parameter is interpreted as the total number of
+points. For kLine mode, count/2 line segments are drawn.
+For kPoint mode, each point is drawn centered at its coordinate, and its
+size is specified by the paint's stroke-width. It draws as a square,
+unless the paint's cap-type is round, in which the points are drawn as
+circles.
+For kLine mode, each pair of points is drawn as a line segment,
+respecting the paint's settings for cap/join/width.
+For kPolygon mode, the entire array is drawn as a series of connected
+line segments.
+Note that, while similar, kLine and kPolygon modes draw slightly
+differently than the equivalent path built with a series of moveto,
+lineto calls, in that the path will draw all of its contours at once,
+with no interactions if contours intersect each other (think XOR
+xfermode). drawPoints always draws each element one at a time.
+@param mode     PointMode specifying how to draw the array of points.
+@param count    The number of points in the array
+@param pts      Array of points to draw
+@param paint    The paint used to draw the points
+*/
+func (canvas *Canvas) DrawPoints(mode CanvasPointMode, count int, pts []Point, paint *Paint) {
+	canvas.OnDrawPoints(mode, count, pts, paint)
+}
+
+/** Draws a single pixel in the specified color.
+	@param x        The X coordinate of which pixel to draw
+	@param y        The Y coordiante of which pixel to draw
+	@param color    The color to draw
+*/
+func (canvas *Canvas) DrawPoint(x, y Scalar, paint *Paint) {
+	var pt Point
+	pt.X, pt.Y = x, y
+	canvas.DrawPoints(KCanvasPointModePoints, 1, []Point{pt}, paint)
+}
+
+/**
+Draw a line segment with the specified start and stop x,y coordinates,
+using the specified paint. NOTE: since a line is always "framed", the
+paint's Style is ignored.
+@param x0    The x-coordinate of the start point of the line
+@param y0    The y-coordinate of the start point of the line
+@param x1    The x-coordinate of the end point of the line
+@param y1    The y-coordinate of the end point of the line
+@param paint The paint used to draw the line
+*/
+func (canvas *Canvas) DrawLine(x0, y0, x1, y1 Scalar, paint *Paint) {
+	toimpl()
+}
+
+/**
+Draw the specified rectangle using the specified paint. The rectangle
+will be filled or stroked based on the Style in the paint.
+@param rect     The rect to be drawn
+@param paint    The paint used to draw the rect
+*/
+func (canvas *Canvas) DrawRect(rect Rect, paint *Paint) {
+	toimpl()
+}
+
+/**
+Draw the specified rectangle using the specified paint. The rectangle
+will be filled or framed based on the Style in the paint.
+@param left     The left side of the rectangle to be drawn
+@param top      The top side of the rectangle to be drawn
+@param right    The right side of the rectangle to be drawn
+@param bottom   The bottom side of the rectangle to be drawn
+@param paint    The paint used to draw the rect
+*/
+func (canvas *Canvas) DrawRectCoords(left, top, right, bottom Scalar, paint *Paint) {
+	toimpl()
+}
+
+/**
+Draw the specified oval using the specified paint. The oval will be
+filled or framed based on the Style in the paint.
+@param oval     The rectangle bounds of the oval to be drawn
+@param paint    The paint used to draw the oval
+*/
+func (canvas *Canvas) DrawOval(oval Rect, paint *Paint) {
+	toimpl()
+}
+
 func (canvas *Canvas) init(device *BaseDevice, flags CanvasInitFlags) *BaseDevice {
 	if device != nil && device.forceConservativeRasterClip() {
 		flags = flags | KCanvasInitFlagConservativeRasterClip
@@ -448,64 +856,6 @@ func (canvas *Canvas) TotalMatrix() *Matrix {
 	return canvas.mcRec.Matrix
 }
 
-type CanvasPointMode int
-
-const (
-	KCanvasPointModePoints  CanvasPointMode = iota // DrawPoints draws each point separately
-	KCanvasPointModeLines                          // DrawPoints draws each pair of points as a line segment
-	KCanvasPointModePolygon                        // DrawPoints draws the array of points as a polygon
-)
-
-func (canvas *Canvas) DrawPoint(x, y Scalar, paint *Paint) {
-	var pt Point
-	pt.X, pt.Y = x, y
-	canvas.DrawPoints(KCanvasPointModePoints, 1, []Point{pt}, paint)
-}
-
-func (canvas *Canvas) DrawColor(color Color, mode XfermodeMode) {
-	var paint = NewPaint()
-	paint.SetColor(color)
-	if KXfermodeModeSrcOver == mode {
-		paint.SetXfermodeMode(mode)
-	}
-	canvas.DrawPaint(paint)
-}
-
-/**
-Fill the entire canvas (restricted to the current clip) with the
-specified paint.
-@param paint    The paint used to fill the canvas
- */
-func (canvas *Canvas) DrawPaint(paint *Paint) {
-	canvas.OnDrawPaint(paint)
-}
-
-/**
-Draw a series of points, interpreted based on the PointMode mode. For
-all modes, the count parameter is interpreted as the total number of
-points. For kLine mode, count/2 line segments are drawn.
-For kPoint mode, each point is drawn centered at its coordinate, and its
-size is specified by the paint's stroke-width. It draws as a square,
-unless the paint's cap-type is round, in which the points are drawn as
-circles.
-For kLine mode, each pair of points is drawn as a line segment,
-respecting the paint's settings for cap/join/width.
-For kPolygon mode, the entire array is drawn as a series of connected
-line segments.
-Note that, while similar, kLine and kPolygon modes draw slightly
-differently than the equivalent path built with a series of moveto,
-lineto calls, in that the path will draw all of its contours at once,
-with no interactions if contours intersect each other (think XOR
-xfermode). drawPoints always draws each element one at a time.
-@param mode     PointMode specifying how to draw the array of points.
-@param count    The number of points in the array
-@param pts      Array of points to draw
-@param paint    The paint used to draw the points
-*/
-func (canvas *Canvas) DrawPoints(mode CanvasPointMode, count int, pts []Point, paint *Paint) {
-	canvas.OnDrawPoints(mode, count, pts, paint)
-}
-
 func (canvas *Canvas) OnDrawPoints(mode CanvasPointMode, count int, pts []Point, paint *Paint) {
 	toimpl()
 }
@@ -528,17 +878,8 @@ func (canvas *Canvas) internalDrawPaint(paint *Paint) {
 	}
 }
 
-func (canvas *Canvas) QuickReject(src Rect) bool {
-	toimpl()
-	return false
-}
-
 func (canvas *Canvas) PredrawNotify(rect *Rect, paint *Paint, overrideOpacity CanvasShaderOverrideOpacity) {
 	toimpl()
-}
-
-func (canvas *Canvas) SaveCount() int {
-	return canvas.saveCount
 }
 
 func (canvas *Canvas) internalSaveLayer(rec *tCanvasSaveLayerRec, strategy CanvasSaveLayerStrategy) {
@@ -818,32 +1159,6 @@ func (looper *tAutoDrawLooper) doNext(drawType DrawFilterType) bool {
 func (looper *tAutoDrawLooper) Finalizer() {
 	if looper.tempLayerForImageFilter {
 		looper.canvas.internalRestore()
-	}
-}
-
-type CanvasSaveLayerFlags int
-
-const (
-	KCanvasSaveLayerFlagIsOpaque = 1 << iota
-	KCanvasSaveLayerFlagPreserveLCDText
-	kCanvasSaveLayerFlagDontClipToLayer   // private
-	KCanvasSaveLayerDontClipToLayerLegacy = kCanvasSaveLayerFlagDontClipToLayer
-)
-
-type tCanvasSaveLayerRec struct {
-	bounds         *Rect
-	paint          *Paint
-	backdrop       *ImageFilter
-	saveLayerFlags CanvasSaveLayerFlags
-}
-
-func newCanvasSaveLayerRec(bounds *Rect, paint *Paint, backdrop *ImageFilter,
-	saveLayerFlags CanvasSaveLayerFlags) *tCanvasSaveLayerRec {
-	return &tCanvasSaveLayerRec{
-		bounds:         bounds,
-		paint:          paint,
-		backdrop:       backdrop,
-		saveLayerFlags: saveLayerFlags,
 	}
 }
 
