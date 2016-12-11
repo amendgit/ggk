@@ -166,6 +166,251 @@ func (canvas *Canvas) flush() {
 	toimpl()
 }
 
+/**
+ * Gets the size of the base or root layer in global canvas coordinates. The
+ * origin of the base layer is always (0,0). The current drawable area may be
+ * smaller (due to clipping or saveLayer).
+ * TODO(abstract)
+ */
+func (c *Canvas) BaseLayerSize() Size {
+	var device = c.Device()
+	var size Size
+	if device != nil {
+		size = MakeSize(device.Width(), device.Height())
+	}
+	return size
+}
+
+/**
+ *  Return the canvas' device object, which may be null. The device holds
+ *  the bitmap of the pixels that the canvas draws into. The reference count
+ *  of the returned device is not changed by this call.
+ */
+func (c *Canvas) Device() *BaseDevice {
+	var rec = c.mcStack.Front().Value.(*tCanvasMCRec)
+	return rec.Layer.Device
+}
+
+/**
+ *  saveLayer() can create another device (which is later drawn onto
+ *  the previous device). getTopDevice() returns the top-most device current
+ *  installed. Note that this can change on other calls like save/restore,
+ *  so do not access this device after subsequent canvas calls.
+ *  The reference count of the device is not changed.
+ *
+ * @param updateMatrixClip If this is true, then before the device is
+ *        returned, we ensure that its has been notified about the current
+ *        matrix and clip. Note: this happens automatically when the device
+ *        is drawn to, but is optional here, as there is a small perf hit
+ *        sometimes.
+ */
+func (canvas *Canvas) TopDevice() *BaseDevice {
+	toimpl()
+	return nil
+}
+
+/**
+ *  Create a new surface matching the specified info, one that attempts to
+ *  be maximally compatible when used with this canvas. If there is no matching Surface type,
+ *  NULL is returned.
+ *
+ *  If surfaceprops is specified, those are passed to the new surface, otherwise the new surface
+ *  inherits the properties of the surface that owns this canvas. If this canvas has no parent
+ *  surface, then the new surface is created with default properties.
+ */
+func (canvas *Canvas) NewSurface(imageInfo *ImageInfo, surfaceProps *SurfaceProps) *Surface {
+	toimpl()
+	return nil
+}
+
+/**
+ * Return the GPU context of the device that is associated with the canvas.
+ * For a canvas with non-GPU device, NULL is returned.
+ */
+func (canvas *Canvas) GrContext() *GrContext {
+	toimpl()
+	return nil
+}
+
+/**
+ *  If the canvas has writable pixels in its top layer (and is not recording to a picture
+ *  or other non-raster target) and has direct access to its pixels (i.e. they are in
+ *  local RAM) return the address of those pixels, and if not null,
+ *  return the ImageInfo, rowBytes and origin. The returned address is only valid
+ *  while the canvas object is in scope and unchanged. Any API calls made on
+ *  canvas (or its parent surface if any) will invalidate the
+ *  returned address (and associated information).
+ *
+ *  On failure, returns NULL and the info, rowBytes, and origin parameters are ignored.
+ */
+func (canvas *Canvas) AccessTopLayerPixels(imageInfo *ImageInfo, rowBytes *int, origin *Point) []byte {
+	toimpl()
+	return nil
+}
+
+/**
+ *  If the canvas has readable pixels in its base layer (and is not recording to a picture
+ *  or other non-raster target) and has direct access to its pixels (i.e. they are in
+ *  local RAM) return true, and if not null, return in the pixmap parameter information about
+ *  the pixels. The pixmap's pixel address is only valid
+ *  while the canvas object is in scope and unchanged. Any API calls made on
+ *  canvas (or its parent surface if any) will invalidate the pixel address
+ *  (and associated information).
+ *
+ *  On failure, returns false and the pixmap parameter will be ignored.
+ */
+func (canvas *Canvas) PeekPixels(pixmap *Pixmap) bool {
+	toimpl()
+	return false
+}
+
+/**
+ReadPixels copy the pixels from the base-layer into the specified buffer
+(pixels + rowBytes). converting them into the requested format (ImageInfo).
+The base-layer are read starting at the specified (srcX, srcY) location in
+the coordinate system of the base-layer.
+
+The specified ImageInfo and (srcX, srcY) offset specifies a source rectangle.
+
+    srcR.SetXYWH(srcX, srcY, dstInfo.Width(), dstInfo.Height())
+
+srcR is intersected with the bounds of the base-layer. If this intersection
+is not empty, then we have two sets of pixels (of equal size). Replace the
+dst pixels with the corresponding src pixels, performing any
+colortype/alphatype transformations needed (in the case where the src and dst
+have different colortypes or alphatypes).
+
+This call can fail, returning false, for serveral reasons:
+- If srcR does not intersect the base-layer bounds.
+- If the requested colortype/alphatype cannot be converted from the base-layer's types.
+- If this canvas is not backed by pixels (e.g. picture or PDF)
+*/
+func (c *Canvas) ReadPixels(dstInfo *ImageInfo, dstData []byte, rowBytes int, x, y Scalar) error {
+	var dev = c.Device()
+	if dev == nil {
+		return errorf("device is nil")
+	}
+	var size = c.BaseLayerSize()
+	var rec = newReadPixelsRec(dstInfo, dstData, rowBytes, x, y)
+	if err := rec.Trim(size.Width(), size.Height()); err != nil {
+		return errorf("bad arg %v", err)
+	}
+	// The device can assert that the requested area is always contained in its
+	// bounds.
+	return dev.ReadPixels(rec.Info, rec.Pixels, rec.RowBytes, rec.X, rec.Y)
+}
+
+/**
+ *  Helper for calling readPixels(info, ...). This call will check if bitmap has been allocated.
+ *  If not, it will attempt to call allocPixels(). If this fails, it will return false. If not,
+ *  it calls through to readPixels(info, ...) and returns its result.
+ */
+func (canvas *Canvas) ReadPixelsToBitmap(bmp *Bitmap, srcX, srcY int) bool {
+	toimpl()
+	return false
+}
+
+/**
+ *  Helper for allocating pixels and then calling readPixels(info, ...). The bitmap is resized
+ *  to the intersection of srcRect and the base-layer bounds. On success, pixels will be
+ *  allocated in bitmap and true returned. On failure, false is returned and bitmap will be
+ *  set to empty.
+ */
+func (canvas *Canvas) ReadPixelsInRectToBitmap(rect Rect, bmp *Bitmap) bool {
+	toimpl()
+	return false
+}
+
+/**
+ *  This method affects the pixels in the base-layer, and operates in pixel coordinates,
+ *  ignoring the matrix and clip.
+ *
+ *  The specified ImageInfo and (x,y) offset specifies a rectangle: target.
+ *
+ *      target.setXYWH(x, y, info.width(), info.height());
+ *
+ *  Target is intersected with the bounds of the base-layer. If this intersection is not empty,
+ *  then we have two sets of pixels (of equal size), the "src" specified by info+pixels+rowBytes
+ *  and the "dst" by the canvas' backend. Replace the dst pixels with the corresponding src
+ *  pixels, performing any colortype/alphatype transformations needed (in the case where the
+ *  src and dst have different colortypes or alphatypes).
+ *
+ *  This call can fail, returning false, for several reasons:
+ *  - If the src colortype/alphatype cannot be converted to the canvas' types
+ *  - If this canvas is not backed by pixels (e.g. picture or PDF)
+ */
+func (canvas *Canvas) WritePixels(info *ImageInfo, pixels []byte, rowBytes int, x, y int) bool {
+	toimpl()
+	return false
+}
+
+/**
+ *  Helper for calling writePixels(info, ...) by passing its pixels and rowbytes. If the bitmap
+ *  is just wrapping a texture, returns false and does nothing.
+ */
+func (canvas *Canvas) WritePixelsFromBitmap(bmp *Bitmap, x, y int) bool {
+	toimpl()
+	return false
+}
+
+/**
+This call saves the current matrix, clip, and drawFilter, and pushes a
+copy onto a private stack. Subsequent calls to translate, scale,
+rotate, skew, concat or clipRect, clipPath, and setDrawFilter all
+operate on this copy.
+When the balancing call to restore() is made, the previous matrix, clip,
+and drawFilter are restored.
+
+@return The value to pass to restoreToCount() to balance this save()
+*/
+func (canvas *Canvas) Save() {
+	toimpl()
+}
+
+/**
+This behaves the same as save(), but in addition it allocates an
+offscreen bitmap. All drawing calls are directed there, and only when
+the balancing call to restore() is made is that offscreen transfered to
+the canvas (or the previous layer).
+@param bounds (may be null) This rect, if non-null, is used as a hint to
+			  limit the size of the offscreen, and thus drawing may be
+			  clipped to it, though that clipping is not guaranteed to
+			  happen. If exact clipping is desired, use clipRect().
+@param paint (may be null) This is copied, and is applied to the
+			 offscreen when restore() is called
+@return The value to pass to restoreToCount() to balance this save()
+*/
+func (canvas *Canvas) SaveLayer(bounds *Rect, paint *Paint) int {
+	toimpl()
+	return 0
+}
+
+/**
+ *  Temporary name.
+ *  Will allow any requests for LCD text to be respected, so the caller must be careful to
+ *  only draw on top of opaque sections of the layer to get good results.
+ */
+func SaveLayerPreserveLCDTextRequests(bounds *Rect, paint *Paint) int {
+	toimpl()
+	return 0
+}
+
+/** This behaves the same as save(), but in addition it allocates an
+	offscreen bitmap. All drawing calls are directed there, and only when
+	the balancing call to restore() is made is that offscreen transfered to
+	the canvas (or the previous layer).
+	@param bounds (may be null) This rect, if non-null, is used as a hint to
+				  limit the size of the offscreen, and thus drawing may be
+				  clipped to it, though that clipping is not guaranteed to
+				  happen. If exact clipping is desired, use clipRect().
+	@param alpha  This is applied to the offscreen when restore() is called.
+	@return The value to pass to restoreToCount() to balance this save()
+*/
+func (canvas *Canvas) SaveLayerAlphas(bounds *Rect, alpha uint8) int {
+	toimpl()
+	return 0
+}
+
 func (canvas *Canvas) init(device *BaseDevice, flags CanvasInitFlags) *BaseDevice {
 	if device != nil && device.forceConservativeRasterClip() {
 		flags = flags | KCanvasInitFlagConservativeRasterClip
@@ -193,90 +438,6 @@ func (canvas *Canvas) init(device *BaseDevice, flags CanvasInitFlags) *BaseDevic
 	}
 
 	return device
-}
-
-func (canvas *Canvas) ReadPixelsToBitmap(bmp *Bitmap, x, y Scalar) error {
-	toimpl()
-	return nil
-}
-
-func (canvas *Canvas) ReadPixelsInRectToBitmap(bmp *Bitmap, srcRect Rect) error {
-	toimpl()
-	return nil
-}
-
-/**
-ReadPixels copy the pixels from the base-layer into the specified buffer
-(pixels + rowBytes). converting them into the requested format (ImageInfo).
-The base-layer are read starting at the specified (srcX, srcY) location in
-the coordinate system of the base-layer.
-
-The specified ImageInfo and (srcX, srcY) offset specifies a source rectangle.
-
-    srcR.SetXYWH(srcX, srcY, dstInfo.Width(), dstInfo.Height())
-
-srcR is intersected with the bounds of the base-layer. If this intersection
-is not empty, then we have two sets of pixels (of equal size). Replace the
-dst pixels with the corresponding src pixels, performing any
-colortype/alphatype transformations needed (in the case where the src and dst
-have different colortypes or alphatypes).
-
-This call can fail, returning false, for serveral reasons:
-- If srcR does not intersect the base-layer bounds.
-- If the requested colortype/alphatype cannot be converted from the base-layer's types.
-- If this canvas is not backed by pixels (e.g. picture or PDF)
-*/
-func (c *Canvas) ReadPixels(dstInfo *ImageInfo, dstData []byte, rowBytes int,
-	x, y Scalar) error {
-	var dev = c.Device()
-	if dev == nil {
-		return errorf("device is nil")
-	}
-	var size = c.BaseLayerSize()
-	var rec = newReadPixelsRec(dstInfo, dstData, rowBytes, x, y)
-	if err := rec.Trim(size.Width(), size.Height()); err != nil {
-		return errorf("bad arg %v", err)
-	}
-	// The device can assert that the requested area is always contained in its
-	// bounds.
-	return dev.ReadPixels(rec.Info, rec.Pixels, rec.RowBytes, rec.X, rec.Y)
-}
-
-/**
-WritePixels affects the pixels in the base-layer, and operates in pixel
-coordinates. ignoring the matrix and clip.
-
-The specified ImageInfo and (x, y) offset specifies a rectangle: target.
-
-    target.SetXYWH(x, y, info.width(), info.height());
-
-Target is intersected with the bounds of the base-layer. If this intersection
-is not empty. then we have two sets of pixels (of equal size), the "src"
-specified by info+pixels+rowBytes and the "dst" by the canvas' backend.
-Replace the dst pixels with the corresponding src pixels, performing any
-colortype/alphatype transformations needed (in the case where the src and
-dst have different colirtypes or alphatypes).
-
-This call can fail, returing false, for several reasons:
-- If the src colortype/alpahtype cannot be converted to the canvas' types
-- If this canvas is not backed by pixels (e.g. picture or PDF)
-*/
-func (c *Canvas) WritePixels(info *ImageInfo, pixels []byte, rowBytes int, x, y int) error {
-	return nil
-}
-
-func (c *Canvas) Device() *BaseDevice {
-	var rec = c.mcStack.Front().Value.(*tCanvasMCRec)
-	return rec.Layer.Device
-}
-
-func (c *Canvas) BaseLayerSize() Size {
-	var device = c.Device()
-	var size Size
-	if device != nil {
-		size = MakeSize(device.Width(), device.Height())
-	}
-	return size
 }
 
 /** Return the current matrix on the canvas.
