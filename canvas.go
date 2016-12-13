@@ -1355,9 +1355,206 @@ type CanvasClipVisitor interface {
  *  the canvas, calling the appropriate method on the visitor for each
  *  clip. All clips have already been transformed into device space.
  */
-func (canvas *Canvas) ReplayClipVisitor(clipVisitor CanvasClipVisitor) {
+func (canvas *Canvas) ReplayClips(clipVisitor CanvasClipVisitor) {
 	toimpl()
 }
+
+func (canvas *Canvas) internalAccessTopLayerDrawContext() *GrDrawContext {
+	toimpl()
+	return nil
+}
+
+func (canvas *Canvas) internalSetIgnoreSaveLayerBounds(ignore bool) {
+	toimpl()
+	return
+}
+
+func (canvas *Canvas) internalGetIgnoreSaveLayerBounds() bool {
+	toimpl()
+	return false
+}
+
+func (canvas *Canvas) internalSetTreatSpriteAsBitmap(treatSpriteAsBitmap bool) {
+	toimpl()
+}
+
+func (canvas *Canvas) internalGetTreatSpriteAsBitmap() bool {
+	toimpl()
+	return false
+}
+
+// TEMP helpers until we switch virtual over to const& for src-rect
+func (canvas *Canvas) legacyDrawImageRect(image *Image, src, dst *Rect, paint *Paint) {
+	toimpl()
+}
+
+func (canvas *Canvas) legacyDrawBitmapRect(bmp *Bitmap, src, dst *Rect, paint *Paint) {
+	toimpl()
+}
+
+// expose minimum amount of information necessary for transitional refactoring
+/**
+ * Returns CTM and clip bounds, translated from canvas coordinates to top layer coordinates.
+ */
+func (canvas *Canvas) temporaryInternalDescribeTopLayer(matrix *Matrix, clipBounds *Rect) {
+	toimpl()
+}
+
+func (canvas *Canvas) Z() Scalar {
+	toimpl()
+	return 0
+}
+/**
+default impl defers to getDevice()->newSurface(info)
+TODO(abstract)
+*/
+func (canvas *Canvas) OnNewSurface(imageInfo *ImageInfo, surfaceProps *SurfaceProps) {
+	toimpl()
+}
+/**
+default impl defers to its device
+TODO(abstract)
+*/
+func (canvas *Canvas) OnPeekPixels(pixmap *Pixmap) bool {
+	toimpl()
+	return false
+}
+
+/**
+TODO(abstract)
+*/
+func (canvas *Canvas) OnAccessTopLayerPixles(pixmap *Pixmap) bool {
+	toimpl()
+	return false
+}
+
+/**
+TODO(abstract)
+*/
+func (canvas *Canvas) OnImageInfo() *ImageInfo {
+	toimpl()
+	return nil
+}
+
+/**
+TODO(abstract)
+*/
+func (canvas *Canvas) OnGetProps() (SurfaceProps, bool) {
+	toimpl()
+	return nil, false
+}
+
+/**
+TODO(abstract)
+*/
+func (canvas *Canvas) WillSave() {
+	toimpl()
+}
+
+/**
+Overriders should call the corresponding INHERITED method up the inheritance chain.
+TODO(abstract)
+*/
+func (canvas *Canvas) SaveLayerStrategy() CanvasSaveLayerStrategy {
+	toimpl()
+	return KCanvasSaveLayerStrategyFullLayer
+}
+
+/**
+TODO(abstract)
+*/
+func (canvas *Canvas) WillRestore() {
+	toimpl()
+}
+
+/**
+TODO(abstract)
+*/
+func (canvas *Canvas) DidRestore() {
+	toimpl()
+}
+
+/**
+TODO(abstract)
+*/
+func (canvas *Canvas) DicConcat(matrix *Matrix) {
+	toimpl()
+}
+
+/**
+TODO(abstract)
+*/
+func (canvas *Canvas) DidSetMatrix(matrix *Matrix) {
+	toimpl()
+}
+
+/**
+TODO(abstract)
+*/
+func (canvas *Canvas) DidTranslate(dx, dy Scalar) {
+	toimpl()
+}
+
+/**
+TODO(abstract)
+*/
+func (canvas *Canvas) DidTranslateZ(z Scalar) {
+	toimpl()
+}
+
+/**
+TODO(abstract)
+*/
+func (canvas *Canvas) OnDrawAnnotation(rect Rect, kay []byte, value *Data) {
+	toimpl()
+}
+
+/**
+TODO(abstract)
+*/
+func (canvas *Canvas) OnDrawDRect(outter, inner Rect, paint *Paint) {
+	toimpl()
+}
+
+/**
+TODO(abstract)
+*/
+func (canvas *Canvas) OnDrawText(text string, x, y Scalar, paint *Paint) {
+	toimpl()
+}
+
+/**
+TODO(abstract)
+*/
+func (canvas *Canvas) OnDrawTextAt(text string, xpos []Point, constY Scalar, paint *Paint) {
+	toimpl()
+}
+
+/**
+TODO(abstract)
+*/
+func (canvas *Canvas) OnDrawTextAtH(text string, xpos []Point, constY Scalar, paint *Paint) {
+	toimpl()
+}
+
+/**
+TODO(abstract)
+*/
+func (canvas *Canvas) OnDrawTextOnPath(text string, path *Path, matrix *Matrix, paint *Paint) {
+	toimpl()
+}
+
+/**
+Subclass save/restore notifiers.
+Overriders should call the corresponding INHERITED method up the inheritance chain.
+getSaveLayerStrategy()'s return value may suppress full layer allocation.
+*/
+type CanvasSaveLayerStrategy int
+
+const (
+	KCanvasSaveLayerStrategyFullLayer = iota
+	KCanvasSaveLayerStrategyNoLayer
+)
 
 func (canvas *Canvas) init(device *BaseDevice, flags CanvasInitFlags) *BaseDevice {
 	if device != nil && device.forceConservativeRasterClip() {
@@ -1541,18 +1738,6 @@ func newCanvasMCRec(conservativeRasterClip bool) *tCanvasMCRec {
 
 	return rec
 }
-
-/**
-Subclass save/restore notifiers.
-Overriders should call the corresponding INHERITED method up the inheritance chain.
-getSaveLayerStrategy()'s return value may suppress full layer allocation.
-*/
-type CanvasSaveLayerStrategy int
-
-const (
-	KCanvasSaveLayerStrategyFullLayer = iota
-	KCanvasSaveLayerStrategyNoLayer
-)
 
 type tAutoDrawLooper struct {
 	lazyPaintInit           *Lazy
