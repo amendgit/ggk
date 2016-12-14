@@ -1545,6 +1545,185 @@ func (canvas *Canvas) OnDrawTextOnPath(text string, path *Path, matrix *Matrix, 
 }
 
 /**
+TODO(abstract)
+*/
+func (canvas *Canvas) OnDrawTextRSXform(text string, xform []RSXform, cullRect *Rect, paint *Paint) {
+	toimpl()
+}
+
+/**
+TODO(abstract)
+*/
+func (canvas *Canvas) OnDrawTextBlob(blob *TextBlob, x, y Scalar, paint *Paint) {
+	toimpl()
+}
+
+/**
+TODO(abstract)
+*/
+func (canvas *Canvas) OnDrawPatch(cubics [12]Point, colors [4]Color, texCoords [4]Point, xmode *Xfermode, paint *Paint) {
+	toimpl()
+}
+
+/**
+TODO(abstract)
+*/
+func (canvas *Canvas) OnDrawDrawable(drawable *Drawable, matrixe *Matrix) {
+	toimpl()
+}
+
+/**
+TODO(abstract)
+*/
+func (canvas *Canvas) OnDrawPaint(paint *Paint) {
+	canvas.internalDrawPaint(paint)
+}
+
+/**
+TODO(abstract)
+*/
+func (canvas *Canvas) OnDrawRect(rect Rect, paint *Paint) {
+	toimpl()
+}
+
+/**
+TODO(abstract)
+*/
+func (canvas *Canvas) OnDrawOval(oval Rect, paint *Paint) {
+	toimpl()
+}
+
+/**
+TODO(abstract)
+*/
+func (canvas *Canvas) OnDrawArc(oval Rect, startAngle, sweepAngle Scalar, useCenter bool, paint *Paint) {
+	toimpl()
+}
+
+/**
+TODO(abstract)
+*/
+func (canvas *Canvas) OnDrawPoints(mode CanvasPointMode, count int, pts []Point, paint *Paint) {
+	toimpl()
+}
+
+/**
+TODO(abstract)
+*/
+func (canvas *Canvas) OnDrawVertices(vertexMode CanvasVertexMode, vertexCount int, vertices []Point, texs []Point,
+		colors []Color, xfermode *Xfermode, indices []uint16, indexCount int, paint *Paint) {
+	toimpl()
+}
+
+/**
+TODO(abstract)
+*/
+func (canvas *Canvas) OnDrawAtlas(atlas *Image, xform []RSXform, tex []Rect, colors []Color, count int,
+		mode XfermodeMode, cull *Rect, paint *Paint) {
+	toimpl()
+}
+
+/**
+TODO(abstract)
+*/
+func (canvas *Canvas) OnDrawPath(path *Path, paint *Paint) {
+	toimpl()
+}
+
+/**
+TODO(abstract)
+*/
+func (canvas *Canvas) OnDrawImage(image *Image, dx, dy Scalar, paint *Paint) {
+	toimpl()
+}
+
+/**
+TODO(abstract)
+*/
+func (canvas *Canvas) OnDrawImageRect(image *Image, src *Rect, dst Rect, paint *Paint,
+		constraint CanvasSrcRectConstraint) {
+	toimpl()
+}
+
+/**
+TODO(abstract)
+*/
+func (canvas *Canvas) OnDrawImageNine(image *Image, center Rect, dst Rect, paint *Paint) {
+	toimpl()
+}
+
+/**
+TODO(abstract)
+*/
+func (canvas *Canvas) OnDrawImageLattice(image *Image, lattice *CanvasLattice, dst Rect, paint *Paint) {
+	toimpl()
+}
+
+/**
+TODO(abstract)
+*/
+func (canvas *Canvas) OnDrawBitmap(bmp *Bitmap, dx, dy Scalar, paint *Paint) {
+	toimpl()
+}
+
+/**
+TODO(abstract)
+*/
+func (canvas *Canvas) OnDrawBitmapRect(bmp *Bitmap, src *Rect, dst Rect, paint *Paint,
+		constraint CanvasSrcRectConstraint) {
+	toimpl()
+}
+
+/**
+TODO(abstract)
+*/
+func (canvas *Canvas) OnDrawBitmapNine(bmp *Bitmap, center Rect, dst Rect, paint *Paint) {
+	toimpl()
+}
+
+type ClipEdgeStyle int
+
+const (
+	KClipEdgeStyleHard
+	KClipEdgeStyleSoft
+)
+
+/**
+TODO(abstract)
+*/
+func (canvas *Canvas) OnClipRect(rect Rect, op RegionOp, edgeStyle ClipEdgeStyle) {
+	toimpl()
+}
+
+/**
+TODO(abstract)
+*/
+func (canvas *Canvas) OnClipPath(path *Path, op RegionOp, edgeStyle ClipEdgeStyle) {
+	toimpl()
+}
+
+/**
+TODO(abstract)
+*/
+func (canvas *Canvas) OnClipRegion(deviceRgn *Region, op RegionOp) {
+	toimpl()
+}
+
+/**
+TODO(abstract)
+*/
+func (canvas *Canvas) OnDiscard() {
+	toimpl()
+}
+
+/**
+TODO(abstract)
+*/
+func (canvas *Canvas) OnDrawPicture(picture *Picture, matrix *Matrix, paint *Paint) {
+	toimpl()
+}
+
+/**
 Subclass save/restore notifiers.
 Overriders should call the corresponding INHERITED method up the inheritance chain.
 getSaveLayerStrategy()'s return value may suppress full layer allocation.
@@ -1590,10 +1769,6 @@ func (canvas *Canvas) OnDrawPoints(mode CanvasPointMode, count int, pts []Point,
 }
 
 type LazyPaint Lazy
-
-func (canvas *Canvas) OnDrawPaint(paint *Paint) {
-	canvas.internalDrawPaint(paint)
-}
 
 func (canvas *Canvas) internalDrawPaint(paint *Paint) {
 	canvas.PredrawNotify(nil, paint, KCanvasShaderOverrideOpacityNotOpaque)
