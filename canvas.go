@@ -1739,6 +1739,15 @@ func (canvas *Canvas) CanvasForDrawIterator() {
 	return canvas
 }
 
+// Clip rectangle bounds. Called internally by saveLayer.
+// returns false if the entire rectangle is entirely clipped out
+// If non-NULL, The imageFilter parameter will be used to expand the clip
+// and offscreen bounds for any margin required by the filter DAG.
+func (canvas *Canvas) ClipRectBounds(bounds *Rect, saveLayerFlags CanvasSaveLayerFlags, intersection *Rect,
+		imageFilter *ImageFilter) {
+	toimpl()
+}
+
 /**
 Subclass save/restore notifiers.
 Overriders should call the corresponding INHERITED method up the inheritance chain.
