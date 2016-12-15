@@ -1719,8 +1719,24 @@ func (canvas *Canvas) OnDiscard() {
 /**
 TODO(abstract)
 */
-func (canvas *Canvas) OnDrawPicture(picture *Picture, matrix *Matrix, paint *Paint) {
+func (canvas *Canvas) OnDrawPicture(pic *Picture, matrix *Matrix, paint *Paint) {
 	toimpl()
+}
+
+/**
+TODO(abstract)
+*/
+func (canvas *Canvas) OnDrawShadowedPicture(pic *Picture, matrix *Matrix, paint *Paint) {
+	toimpl()
+}
+
+// Returns the canvas to be used by DrawIter. Default implementation
+// returns this. Subclasses that encapsulate an indirect canvas may
+// need to overload this method. The impl must keep track of this, as it
+// is not released or deleted by the caller.
+// TODO(abstract)
+func (canvas *Canvas) CanvasForDrawIterator() {
+	return canvas
 }
 
 /**
@@ -1792,14 +1808,6 @@ func (canvas *Canvas) internalSaveLayer(rec *CanvasSaveLayerRec, strategy Canvas
 
 func (canvas *Canvas) internalRestore() {
 	toimpl()
-}
-
-// Returns the canvas to be used by DrawIterator. Default implementation
-// returns this. Subclasses that encapsulate an indirect canvas may
-// need to overload this method. The impl must keep track of this, as it
-// is not released or deleted by the caller.
-func (canvas *Canvas) CanvasForDrawIterator() *Canvas {
-	return canvas
 }
 
 func (canvas *Canvas) UpdateDeviceCMCache() {
