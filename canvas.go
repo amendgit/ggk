@@ -1209,7 +1209,7 @@ the mesh.
 @param paint Specifies the shader/texture if present.
 */
 func (canvas *Canvas) DrawVertices(vmode CanvasVertexMode, vertexCount int, vertices []Point, texs []Point, colors []Color,
-		mode *Xfermode, indices []uint16, indexCount int, paint *Paint) {
+	mode *Xfermode, indices []uint16, indexCount int, paint *Paint) {
 	toimpl()
 }
 
@@ -1248,7 +1248,7 @@ func (canvas *Canvas) DrawPatch(cubics [12]Point, colors [4]Color, texCoords [4]
  *  and xfermode are used to affect each of the quads.
  */
 func (canvas *Canvas) DrawAtlas(atlas *Image, form []RSXform, tex []Rect, colors []Color, count int, mode XfermodeMode,
-		cullRect Rect, paint *Paint) {
+	cullRect Rect, paint *Paint) {
 	toimpl()
 }
 
@@ -1283,8 +1283,8 @@ func (canvas *Canvas) DrawAnnotation(rect Rect, key []byte, value *Data) {
 }
 
 /** Get the current filter object. The filter's reference count is not
-	affected. The filter is saved/restored, just like the matrix and clip.
-	@return the canvas' filter (or NULL).
+affected. The filter is saved/restored, just like the matrix and clip.
+@return the canvas' filter (or NULL).
 */
 func (canvas *Canvas) DrawFilter() *DrawFilter {
 	toimpl()
@@ -1347,7 +1347,6 @@ func (canvas *Canvas) ClipStack() *ClipStack {
 }
 
 type CanvasClipVisitor interface {
-
 }
 
 /**
@@ -1404,6 +1403,7 @@ func (canvas *Canvas) Z() Scalar {
 	toimpl()
 	return 0
 }
+
 /**
 default impl defers to getDevice()->newSurface(info)
 TODO(abstract)
@@ -1411,6 +1411,7 @@ TODO(abstract)
 func (canvas *Canvas) OnNewSurface(imageInfo *ImageInfo, surfaceProps *SurfaceProps) {
 	toimpl()
 }
+
 /**
 default impl defers to its device
 TODO(abstract)
@@ -1623,7 +1624,7 @@ func (canvas *Canvas) OnDrawPoints(mode CanvasPointMode, count int, pts []Point,
 TODO(abstract)
 */
 func (canvas *Canvas) OnDrawVertices(vertexMode CanvasVertexMode, vertexCount int, vertices []Point, texs []Point,
-		colors []Color, xfermode *Xfermode, indices []uint16, indexCount int, paint *Paint) {
+	colors []Color, xfermode *Xfermode, indices []uint16, indexCount int, paint *Paint) {
 	toimpl()
 }
 
@@ -1631,7 +1632,7 @@ func (canvas *Canvas) OnDrawVertices(vertexMode CanvasVertexMode, vertexCount in
 TODO(abstract)
 */
 func (canvas *Canvas) OnDrawAtlas(atlas *Image, xform []RSXform, tex []Rect, colors []Color, count int,
-		mode XfermodeMode, cull *Rect, paint *Paint) {
+	mode XfermodeMode, cull *Rect, paint *Paint) {
 	toimpl()
 }
 
@@ -1653,7 +1654,7 @@ func (canvas *Canvas) OnDrawImage(image *Image, dx, dy Scalar, paint *Paint) {
 TODO(abstract)
 */
 func (canvas *Canvas) OnDrawImageRect(image *Image, src *Rect, dst Rect, paint *Paint,
-		constraint CanvasSrcRectConstraint) {
+	constraint CanvasSrcRectConstraint) {
 	toimpl()
 }
 
@@ -1682,7 +1683,7 @@ func (canvas *Canvas) OnDrawBitmap(bmp *Bitmap, dx, dy Scalar, paint *Paint) {
 TODO(abstract)
 */
 func (canvas *Canvas) OnDrawBitmapRect(bmp *Bitmap, src *Rect, dst Rect, paint *Paint,
-		constraint CanvasSrcRectConstraint) {
+	constraint CanvasSrcRectConstraint) {
 	toimpl()
 }
 
@@ -1696,7 +1697,7 @@ func (canvas *Canvas) OnDrawBitmapNine(bmp *Bitmap, center Rect, dst Rect, paint
 type ClipEdgeStyle int
 
 const (
-	KClipEdgeStyleHard
+	KClipEdgeStyleHard = iota
 	KClipEdgeStyleSoft
 )
 
@@ -1756,8 +1757,68 @@ func (canvas *Canvas) CanvasForDrawIterator() {
 // If non-NULL, The imageFilter parameter will be used to expand the clip
 // and offscreen bounds for any margin required by the filter DAG.
 func (canvas *Canvas) ClipRectBounds(bounds *Rect, saveLayerFlags CanvasSaveLayerFlags, intersection *Rect,
-		imageFilter *ImageFilter) {
+	imageFilter *ImageFilter) {
 	toimpl()
+}
+
+/** After calling saveLayer(), there can be any number of devices that make
+up the top-most drawing area. LayerIter can be used to iterate through
+those devices. Note that the iterator is only valid until the next API
+call made on the canvas. Ownership of all pointers in the iterator stays
+with the canvas, so none of them should be modified or deleted.
+*/
+type LayerIterator struct {
+	defaultPaint *Paint
+	done         bool
+	impl         *DrawIterator
+}
+
+// Initialize iterator with canvas, and set values for 1st device.
+func NewLayerIterator(canvas *Canvas) *LayerIterator {
+	toimpl()
+	return nil
+}
+
+// Return true if the iterator is done
+func (iter *LayerIterator) Done() bool {
+	toimpl()
+	return false
+}
+
+// Cycle to the next device
+func (iter *LayerIterator) Next() {
+	toimpl()
+}
+
+// These reflect the current device in the iterator
+func (iter *LayerIterator) Device() *BaseDevice {
+	toimpl()
+	return nil
+}
+
+func (iter *LayerIterator) Matrix() *Matrix {
+	toimpl()
+	return nil
+}
+
+func (iter *LayerIterator) Clip() *RasterClip {
+	toimpl()
+	return nil
+}
+
+func (iter *LayerIterator) Paint() *Paint {
+	toimpl()
+	return nil
+}
+
+func (iter *LayerIterator) X() int {
+	toimpl()
+	return nil
+}
+
+func (iter *LayerIterator) Y() int {
+	toimpl()
+	return nil
 }
 
 func (canvas *Canvas) init(device *BaseDevice, flags CanvasInitFlags) *BaseDevice {
