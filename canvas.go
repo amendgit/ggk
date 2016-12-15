@@ -4,21 +4,6 @@ import (
 	"container/list"
 )
 
-type CanvasInitFlags int
-
-const (
-	KCanvasInitFlagDefault = CanvasInitFlags(1 << iota)
-	KCanvasInitFlagConservativeRasterClip
-)
-
-type CanvasShaderOverrideOpacity int
-
-const (
-	KCanvasShaderOverrideOpacityNone      = CanvasShaderOverrideOpacity(1 << iota) //!< there is no overriding shader (bitmap or image)
-	KCanvasShaderOverrideOpacityOpaque                                             //!< the overriding shader is opaque
-	KCanvasShaderOverrideOpacityNotOpaque                                          //!< the overriding shader may not be opaque
-)
-
 /** \class SkCanvas
 
 A Canvas encapsulates all of the state about drawing into a device (bitmap).
@@ -102,25 +87,6 @@ func NewCanvasFromBitmap(bmp *Bitmap) *Canvas {
 	var device = NewBitmapDevice(bmp, canvas.surfaceProps)
 	canvas.init(device.BaseDevice, KCanvasInitFlagDefault)
 	return canvas
-}
-
-/**
- *  Creates a canvas of the specified dimensions, but explicitly not backed
- *  by any device/pixels. Typically this use used by subclasses who handle
- *  the draw calls in some other way.
- */
-func NewCanvas(width, height int, surfaceProps *SurfaceProps) *Canvas {
-	toimpl()
-	return &Canvas{}
-}
-
-/** Construct a canvas with the specified device to draw into.
-
-@param device   Specifies a device for the canvas to draw into.
-*/
-func NewCanvasFromDevice(device *BaseDevice) *Canvas {
-	toimpl()
-	return &Canvas{}
 }
 
 /** Construct a canvas with the specified bitmap to draw into.
@@ -406,7 +372,7 @@ the canvas (or the previous layer).
 @param alpha  This is applied to the offscreen when restore() is called.
 @return The value to pass to restoreToCount() to balance this save()
 */
-func (canvas *Canvas) SaveLayerAlphas(bounds *Rect, alpha uint8) int {
+func (canvas *Canvas) SaveLayerAlpha(bounds *Rect, alpha uint8) int {
 	toimpl()
 	return 0
 }
@@ -1440,7 +1406,7 @@ func (canvas *Canvas) OnImageInfo() *ImageInfo {
 /**
 TODO(abstract)
 */
-func (canvas *Canvas) OnGetProps() (SurfaceProps, bool) {
+func (canvas *Canvas) OnGetProps() (*SurfaceProps, bool) {
 	toimpl()
 	return nil, false
 }
@@ -1748,7 +1714,7 @@ func (canvas *Canvas) OnDrawShadowedPicture(pic *Picture, matrix *Matrix, paint 
 // need to overload this method. The impl must keep track of this, as it
 // is not released or deleted by the caller.
 // TODO(abstract)
-func (canvas *Canvas) CanvasForDrawIterator() {
+func (canvas *Canvas) CanvasForDrawIterator() *Canvas {
 	return canvas
 }
 
@@ -1813,12 +1779,114 @@ func (iter *LayerIterator) Paint() *Paint {
 
 func (iter *LayerIterator) X() int {
 	toimpl()
-	return nil
+	return 0
 }
 
 func (iter *LayerIterator) Y() int {
 	toimpl()
-	return nil
+	return 0
+}
+
+func CanvasBoundsAffectsClip(saveLayerFlags CanvasSaveLayerFlags) {
+	toimpl()
+}
+
+func CanvasLegacySaveFlagsToSaveLayerFlags(legacySaveFlags uint32) CanvasSaveLayerFlags {
+	toimpl()
+	return 0
+}
+
+func CanvasDrawDeviceWithFilter(src *BaseDevice, filter *ImageFilter, dst *BaseDevice, ctm *Matrix,
+	clipStack *ClipStack) {
+	toimpl()
+}
+
+type CanvasShaderOverrideOpacity int
+
+const (
+	KCanvasShaderOverrideOpacityNone      = CanvasShaderOverrideOpacity(1 << iota) //!< there is no overriding shader (bitmap or image)
+	KCanvasShaderOverrideOpacityOpaque                                             //!< the overriding shader is opaque
+	KCanvasShaderOverrideOpacityNotOpaque                                          //!< the overriding shader may not be opaque
+)
+
+// notify our surface (if we have one) that we are about to draw, so it
+// can perform copy-on-write or invalidate any cached images
+func (canvas *Canvas) PredrawNotify(rect *Rect, paint *Paint, overrideOpacity CanvasShaderOverrideOpacity) {
+	toimpl()
+}
+
+// the first N recs that can fit here mean we won't call malloc
+const (
+	KMCRecSize    = 128 // < most recent measurement
+	KMCRecCount   = 32  // < common depth for save/restores
+	KDeviceCMSize = 176 // < most recent measurement
+)
+
+func (canvas *Canvas) updateDeviceCMCache() {
+	if canvas.deviceCMDirty {
+		var totalMatrix = canvas.TotalMatrix()
+		var totalClip = canvas.mcRec.RasterClip
+		var layer = canvas.mcRec.TopLayer
+
+		if layer.Next == nil { // < only one layer.
+			layer.UpdateMC(totalMatrix, totalClip, canvas.clipStack, nil)
+		} else {
+			var clip = NewRasterClipClone(totalClip)
+			for layer.Next != nil {
+				layer.UpdateMC(totalMatrix, clip, canvas.clipStack, clip)
+				layer = layer.Next
+			}
+		}
+	}
+}
+
+func (canvas *Canvas) doSave() {
+	toimpl()
+}
+
+func (canvas *Canvas) checkForDeferredSave() {
+	toimpl()
+}
+
+func (canvas *Canvas) internalSetMatrix(matrix *Matrix) {
+	toimpl()
+}
+
+type CanvasInitFlags int
+
+const (
+	KCanvasInitFlagDefault = CanvasInitFlags(1 << iota)
+	KCanvasInitFlagConservativeRasterClip
+)
+
+/**
+ *  Creates a canvas of the specified dimensions, but explicitly not backed
+ *  by any device/pixels. Typically this use used by subclasses who handle
+ *  the draw calls in some other way.
+ */
+func NewCanvas(width, height int, surfaceProps *SurfaceProps) *Canvas {
+	toimpl()
+	return &Canvas{}
+}
+
+/** Construct a canvas with the specified device to draw into.
+
+@param device   Specifies a device for the canvas to draw into.
+*/
+func NewCanvasFromDevice(device *BaseDevice) *Canvas {
+	toimpl()
+	return &Canvas{}
+}
+
+func (canvas *Canvas) resetForNextPicture(bounds Rect) {
+	toimpl()
+}
+
+// call this each time we attach ourselves to a device
+//  - constructor
+//  - internalSaveLayer
+func (canvas *Canvas) setupDevice(device *BaseDevice) {
+	toimpl()
 }
 
 func (canvas *Canvas) init(device *BaseDevice, flags CanvasInitFlags) *BaseDevice {
@@ -1850,6 +1918,23 @@ func (canvas *Canvas) init(device *BaseDevice, flags CanvasInitFlags) *BaseDevic
 	return device
 }
 
+/**
+ * Gets the bounds of the top level layer in global canvas coordinates. We don't want this
+ * to be public because it exposes decisions about layer sizes that are internal to the canvas.
+ */
+func (canvas *Canvas) getTopLayerBounds() Rect {
+	toimpl()
+	return RectZero
+}
+
+func (canvas *Canvas) internalSaveLayer(rec *CanvasSaveLayerRec, strategy CanvasSaveLayerStrategy) {
+	toimpl()
+}
+
+func (canvas *Canvas) internalRestore() {
+	toimpl()
+}
+
 type LazyPaint Lazy
 
 func (canvas *Canvas) internalDrawPaint(paint *Paint) {
@@ -1864,45 +1949,23 @@ func (canvas *Canvas) internalDrawPaint(paint *Paint) {
 	}
 }
 
-func (canvas *Canvas) PredrawNotify(rect *Rect, paint *Paint, overrideOpacity CanvasShaderOverrideOpacity) {
+/*
+ *  Returns true if drawing the specified rect (or all if it is null) with the specified
+ *  paint (or default if null) would overwrite the entire root device of the canvas
+ *  (i.e. the canvas' surface if it had one).
+ */
+func (canvas *Canvas) WouldOverwriteEntireSurface(rect *Rect, paint *Paint,
+		overrideOpacity CanvasShaderOverrideOpacity) bool {
+	toimpl()
+	return false
+}
+
+/**
+ *  Returns true if the paint's imagefilter can be invoked directly, without needed a layer.
+ */
+func (canvas *Canvas) CanDrawBitmapAsSprite(x, y Scalar, w, h int, paint *Paint) {
 	toimpl()
 }
-
-func (canvas *Canvas) internalSaveLayer(rec *CanvasSaveLayerRec, strategy CanvasSaveLayerStrategy) {
-	toimpl()
-}
-
-func (canvas *Canvas) internalRestore() {
-	toimpl()
-}
-
-func (canvas *Canvas) UpdateDeviceCMCache() {
-	if canvas.deviceCMDirty {
-		var totalMatrix = canvas.TotalMatrix()
-		var totalClip = canvas.mcRec.RasterClip
-		var layer = canvas.mcRec.TopLayer
-
-		if layer.Next == nil { // < only one layer.
-			layer.UpdateMC(totalMatrix, totalClip, canvas.clipStack, nil)
-		} else {
-			var clip = NewRasterClipClone(totalClip)
-			for layer.Next != nil {
-				layer.UpdateMC(totalMatrix, clip, canvas.clipStack, clip)
-				layer = layer.Next
-			}
-		}
-	}
-}
-
-type CanvasSaveFlags int
-
-const (
-	KSaveFlagHasAlphaLayer   = 0x01
-	KSaveFlagFullColorLayer  = 0x02
-	KSaveFlagClipToLayer     = 0x10
-	KSaveFlagARGBNoClipLayer = 0x0F
-	KSaveFlagARGBClipLayer   = 0x1F
-)
 
 /**
 tDeviceCM is the record we keep for each BaseDevice that the user installs.
@@ -2137,7 +2200,7 @@ type DrawIterator struct {
 
 func NewDrawIterator(canvas *Canvas) *DrawIterator {
 	canvas = canvas.CanvasForDrawIterator()
-	canvas.UpdateDeviceCMCache()
+	canvas.updateDeviceCMCache()
 	var it = &DrawIterator{
 		canvas:    canvas,
 		currLayer: canvas.mcRec.TopLayer,
