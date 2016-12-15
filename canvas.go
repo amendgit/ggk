@@ -1452,6 +1452,18 @@ func (canvas *Canvas) WillSave() {
 }
 
 /**
+Subclass save/restore notifiers.
+Overriders should call the corresponding INHERITED method up the inheritance chain.
+getSaveLayerStrategy()'s return value may suppress full layer allocation.
+*/
+type CanvasSaveLayerStrategy int
+
+const (
+	KCanvasSaveLayerStrategyFullLayer = iota
+	KCanvasSaveLayerStrategyNoLayer
+)
+
+/**
 Overriders should call the corresponding INHERITED method up the inheritance chain.
 TODO(abstract)
 */
@@ -1748,18 +1760,6 @@ func (canvas *Canvas) ClipRectBounds(bounds *Rect, saveLayerFlags CanvasSaveLaye
 	toimpl()
 }
 
-/**
-Subclass save/restore notifiers.
-Overriders should call the corresponding INHERITED method up the inheritance chain.
-getSaveLayerStrategy()'s return value may suppress full layer allocation.
-*/
-type CanvasSaveLayerStrategy int
-
-const (
-	KCanvasSaveLayerStrategyFullLayer = iota
-	KCanvasSaveLayerStrategyNoLayer
-)
-
 func (canvas *Canvas) init(device *BaseDevice, flags CanvasInitFlags) *BaseDevice {
 	if device != nil && device.forceConservativeRasterClip() {
 		flags = flags | KCanvasInitFlagConservativeRasterClip
@@ -1787,10 +1787,6 @@ func (canvas *Canvas) init(device *BaseDevice, flags CanvasInitFlags) *BaseDevic
 	}
 
 	return device
-}
-
-func (canvas *Canvas) OnDrawPoints(mode CanvasPointMode, count int, pts []Point, paint *Paint) {
-	toimpl()
 }
 
 type LazyPaint Lazy
