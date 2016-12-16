@@ -5,6 +5,101 @@ import (
 )
 
 type CanvasImpl interface {
+	/* BaseLayerSize
+	Gets the size of the base or root layer in global canvas coordinates. The
+	origin of the base layer is always (0,0). The current drawable area may be
+	smaller (due to clipping or saveLayer).	*/
+	BaseLayerSize() Size
+
+	/** ClipBounds
+	Return the bounds of the current clip (in local coordinates) in the
+	bounds parameter, and return true if it is non-empty. This can be useful
+	in a way similar to quickReject, in that it tells you that drawing
+	outside of these bounds will be clipped out. */
+	ClipBounds(bounds *Rect) bool
+
+	/** ClipDeviceBounds
+	Return the bounds of the current clip, in device coordinates; returns
+	true if non-empty. Maybe faster than getting the clip explicitly and
+	then taking its bounds. */
+	ClipDeviceBounds(bounds *Rect) bool
+
+	/** SetDrawFilter
+	Set the new filter (or NULL). Pass NULL to clear any existing filter.
+	As a convenience, the parameter is returned. If an existing filter
+	exists, its refcnt is decrement. If the new filter is not null, its
+	refcnt is incremented. The filter is saved/restored, just like the
+	matrix and clip.
+	@param filter the new filter (or NULL)
+	@return the new filter */
+	SetDrawFilter(filter *DrawFilter)
+
+	/** IsClipEmpty
+	Return true if the current clip is empty (i.e. nothing will draw).
+	Note: this is not always a free call, so it should not be used
+	more often than necessary. However, once the canvas has computed this
+	result, subsequent calls will be cheap (until the clip state changes,
+	which can happen on any clip..() or restore() call. */
+	IsClipEmpty() bool
+
+	OnNewSurface(imageInfo *ImageInfo, surfaceProps *SurfaceProps)
+	OnPeekPixels(pixmap *Pixmap) bool
+	OnAccessTopLayerPixles(pixmap *Pixmap) bool
+	OnImageInfo() *ImageInfo
+	OnGetProps() (*SurfaceProps, bool)
+
+	WillSave()
+	SaveLayerStrategy() CanvasSaveLayerStrategy
+	WillRestore()
+	DidRestore()
+	DidConcat(matrix *Matrix)
+	DidSetMatrix(matrix *Matrix)
+	DidTranslate(dx, dy Scalar)
+	DidTranslateZ(z Scalar)
+
+	OnDrawAnnotation(rect Rect, kay []byte, value *Data)
+	OnDrawDRect(outter, inner Rect, paint *Paint)
+	OnDrawText(text string, x, y Scalar, paint *Paint)
+	OnDrawTextAt(text string, xpos []Point, constY Scalar, paint *Paint)
+	OnDrawTextAtH(text string, xpos []Point, constY Scalar, paint *Paint)
+	OnDrawTextOnPath(text string, path *Path, matrix *Matrix, paint *Paint)
+	OnDrawTextRSXform(text string, xform []RSXform, cullRect *Rect, paint *Paint)
+	OnDrawTextBlob(blob *TextBlob, x, y Scalar, paint *Paint)
+	OnDrawPatch(cubics [12]Point, colors [4]Color, texCoords [4]Point, xmode *Xfermode, paint *Paint)
+	OnDrawDrawable(drawable *Drawable, matrixe *Matrix)
+	OnDrawPaint(paint *Paint)
+	OnDrawRect(rect Rect, paint *Paint)
+	OnDrawOval(oval Rect, paint *Paint)
+	OnDrawArc(oval Rect, startAngle, sweepAngle Scalar, useCenter bool, paint *Paint)
+	OnDrawPoints(mode CanvasPointMode, count int, pts []Point, paint *Paint)
+	OnDrawVertices(vertexMode CanvasVertexMode, vertexCount int, vertices []Point, texs []Point,
+		colors []Color, xfermode *Xfermode, indices []uint16, indexCount int, paint *Paint)
+	OnDrawAtlas(atlas *Image, xform []RSXform, tex []Rect, colors []Color, count int,
+		mode XfermodeMode, cull *Rect, paint *Paint)
+	OnDrawPath(path *Path, paint *Paint)
+	OnDrawImage(image *Image, dx, dy Scalar, paint *Paint)
+	OnDrawImageRect(image *Image, src *Rect, dst Rect, paint *Paint,
+		constraint CanvasSrcRectConstraint)
+	OnDrawImageNine(image *Image, center Rect, dst Rect, paint *Paint)
+	OnDrawImageLattice(image *Image, lattice *CanvasLattice, dst Rect, paint *Paint)
+	OnDrawBitmap(bmp *Bitmap, dx, dy Scalar, paint *Paint)
+	OnDrawBitmapRect(bmp *Bitmap, src *Rect, dst Rect, paint *Paint,
+		constraint CanvasSrcRectConstraint)
+	OnDrawBitmapNine(bmp *Bitmap, center Rect, dst Rect, paint *Paint)
+
+	OnClipRect(rect Rect, op RegionOp, edgeStyle ClipEdgeStyle)
+	OnClipPath(path *Path, op RegionOp, edgeStyle ClipEdgeStyle)
+	OnClipRegion(deviceRgn *Region, op RegionOp)
+	OnDiscard()
+	OnDrawPicture(pic *Picture, matrix *Matrix, paint *Paint)
+	OnDrawShadowedPicture(pic *Picture, matrix *Matrix, paint *Paint)
+
+	/**
+	Returns the canvas to be used by DrawIter. Default implementation
+	returns this. Subclasses that encapsulate an indirect canvas may
+	need to overload this method. The impl must keep track of this, as it
+	is not released or deleted by the caller. */
+	CanvasForDrawIterator() *Canvas
 }
 
 /** \class SkCanvas
@@ -22,7 +117,8 @@ parameter to each of the draw() methods. The Paint holds attributes such as
 color, typeface, textSize, strokeWidth, shader (e.g. gradients, patterns),
 etc. */
 type Canvas struct {
-	Impl         CanvasImpl
+	Impl CanvasImpl
+
 	surfaceProps SurfaceProps
 	saveCount    int
 	metaData     *MetaData
@@ -129,11 +225,7 @@ func (canvas *Canvas) Flush() {
 	toimpl()
 }
 
-/**
-Gets the size of the base or root layer in global canvas coordinates. The
-origin of the base layer is always (0,0). The current drawable area may be
-smaller (due to clipping or saveLayer).
-TODO(abstract) */
+/** impl CanvasImpl */
 func (c *Canvas) BaseLayerSize() Size {
 	var device = c.Device()
 	var size Size
@@ -585,7 +677,7 @@ Return the bounds of the current clip (in local coordinates) in the
 bounds parameter, and return true if it is non-empty. This can be useful
 in a way similar to quickReject, in that it tells you that drawing
 outside of these bounds will be clipped out.
-TODO(abstract) */
+Impl CanvasImpl */
 func (canvas *Canvas) ClipBounds(bounds *Rect) bool {
 	toimpl()
 	return false
@@ -595,7 +687,7 @@ func (canvas *Canvas) ClipBounds(bounds *Rect) bool {
 Return the bounds of the current clip, in device coordinates; returns
 true if non-empty. Maybe faster than getting the clip explicitly and
 then taking its bounds.
-TODO(abstract) */
+Impl CanvasImpl */
 func (canvas *Canvas) ClipDeviceBounds(bounds *Rect) bool {
 	toimpl()
 	return false
@@ -700,7 +792,7 @@ func (canvas *Canvas) DrawPoint(x, y Scalar, paint *Paint) {
 	canvas.DrawPoints(KCanvasPointModePoints, 1, []Point{pt}, paint)
 }
 
-/**
+/** DrawLine
 Draw a line segment with the specified start and stop x,y coordinates,
 using the specified paint. NOTE: since a line is always "framed", the
 paint's Style is ignored.
@@ -713,7 +805,7 @@ func (canvas *Canvas) DrawLine(x0, y0, x1, y1 Scalar, paint *Paint) {
 	toimpl()
 }
 
-/**
+/** DrawRect
 Draw the specified rectangle using the specified paint. The rectangle
 will be filled or stroked based on the Style in the paint.
 @param rect     The rect to be drawn
@@ -722,7 +814,7 @@ func (canvas *Canvas) DrawRect(rect Rect, paint *Paint) {
 	toimpl()
 }
 
-/**
+/** DrawRectCoords
 Draw the specified rectangle using the specified paint. The rectangle
 will be filled or framed based on the Style in the paint.
 @param left     The left side of the rectangle to be drawn
@@ -734,7 +826,7 @@ func (canvas *Canvas) DrawRectCoords(left, top, right, bottom Scalar, paint *Pai
 	toimpl()
 }
 
-/**
+/** DrawOval
 Draw the specified oval using the specified paint. The oval will be
 filled or framed based on the Style in the paint.
 @param oval     The rectangle bounds of the oval to be drawn
@@ -743,14 +835,14 @@ func (canvas *Canvas) DrawOval(oval Rect, paint *Paint) {
 	toimpl()
 }
 
-/**
+/** DrawDRect
 Draw the annulus formed by the outer and inner rrects. The results
 are undefined if the outer does not contain the inner. */
 func (canvas *Canvas) DrawDRect(outer, inner Rect, paint *Paint) {
 	toimpl()
 }
 
-/**
+/** DrawCircle
 Draw the specified circle using the specified paint. If radius is <= 0,
 then nothing will be drawn. The circle will be filled
 or framed based on the Style in the paint.
@@ -762,7 +854,7 @@ func (canvas *Canvas) DrawCircle(cx, cy, radius Scalar, paint *Paint) {
 	toimpl()
 }
 
-/**
+/** DrawArc
 Draw the specified arc, which will be scaled to fit inside the
 specified oval. If the sweep angle is >= 360, then the oval is drawn
 completely. Note that this differs slightly from SkPath::arcTo, which
@@ -777,7 +869,7 @@ func (canvas *Canvas) DrawArc(oval Rect, startAngle, sweepAngle Scalar, useCente
 	toimpl()
 }
 
-/**
+/** DrawRoundRect
 Draw the specified round-rect using the specified paint. The round-rect
 will be filled or framed based on the Style in the paint.
 @param rect     The rectangular bounds of the roundRect to be drawn
@@ -1193,7 +1285,7 @@ refcnt is incremented. The filter is saved/restored, just like the
 matrix and clip.
 @param filter the new filter (or NULL)
 @return the new filter
-TODO(abstract) */
+Impl CanvasImpl */
 func (canvas *Canvas) SetDrawFilter(filter *DrawFilter) {
 	toimpl()
 }
@@ -1204,7 +1296,7 @@ Note: this is not always a free call, so it should not be used
 more often than necessary. However, once the canvas has computed this
 result, subsequent calls will be cheap (until the clip state changes,
 which can happen on any clip..() or restore() call.
-TODO(abstract) */
+Impl CanvasImpl */
 func (canvas *Canvas) IsClipEmpty() bool {
 	toimpl()
 	return false
@@ -1294,42 +1386,42 @@ func (canvas *Canvas) Z() Scalar {
 
 /**
 default impl defers to getDevice()->newSurface(info)
-TODO(abstract) */
+Impl CanvasImpl */
 func (canvas *Canvas) OnNewSurface(imageInfo *ImageInfo, surfaceProps *SurfaceProps) {
 	toimpl()
 }
 
 /**
 default impl defers to its device
-TODO(abstract) */
+Impl CanvasImpl */
 func (canvas *Canvas) OnPeekPixels(pixmap *Pixmap) bool {
 	toimpl()
 	return false
 }
 
 /**
-TODO(abstract) */
+Impl CanvasImpl */
 func (canvas *Canvas) OnAccessTopLayerPixles(pixmap *Pixmap) bool {
 	toimpl()
 	return false
 }
 
 /**
-TODO(abstract) */
+Impl CanvasImpl */
 func (canvas *Canvas) OnImageInfo() *ImageInfo {
 	toimpl()
 	return nil
 }
 
 /**
-TODO(abstract) */
+Impl CanvasImpl */
 func (canvas *Canvas) OnGetProps() (*SurfaceProps, bool) {
 	toimpl()
 	return nil, false
 }
 
 /**
-TODO(abstract) */
+Impl CanvasImpl */
 func (canvas *Canvas) WillSave() {
 	toimpl()
 }
@@ -1347,198 +1439,184 @@ const (
 
 /**
 Overriders should call the corresponding INHERITED method up the inheritance chain.
-TODO(abstract) */
+Impl CanvasImpl */
 func (canvas *Canvas) SaveLayerStrategy() CanvasSaveLayerStrategy {
 	toimpl()
 	return KCanvasSaveLayerStrategyFullLayer
 }
 
-/**
-TODO(abstract) */
+/** Impl CanvasImpl */
 func (canvas *Canvas) WillRestore() {
 	toimpl()
 }
 
 /**
-TODO(abstract) */
+Impl CanvasImpl */
 func (canvas *Canvas) DidRestore() {
 	toimpl()
 }
 
 /**
-TODO(abstract) */
+Impl CanvasImpl */
 func (canvas *Canvas) DicConcat(matrix *Matrix) {
 	toimpl()
 }
 
 /**
-TODO(abstract) */
+Impl CanvasImpl */
 func (canvas *Canvas) DidSetMatrix(matrix *Matrix) {
 	toimpl()
 }
 
 /**
-TODO(abstract) */
+Impl CanvasImpl */
 func (canvas *Canvas) DidTranslate(dx, dy Scalar) {
 	toimpl()
 }
 
 /**
-TODO(abstract) */
+Impl CanvasImpl */
 func (canvas *Canvas) DidTranslateZ(z Scalar) {
 	toimpl()
 }
 
 /**
-TODO(abstract) */
+Impl CanvasImpl */
 func (canvas *Canvas) OnDrawAnnotation(rect Rect, kay []byte, value *Data) {
 	toimpl()
 }
 
 /**
-TODO(abstract) */
+Impl CanvasImpl */
 func (canvas *Canvas) OnDrawDRect(outter, inner Rect, paint *Paint) {
 	toimpl()
 }
 
 /**
-TODO(abstract) */
+Impl CanvasImpl */
 func (canvas *Canvas) OnDrawText(text string, x, y Scalar, paint *Paint) {
 	toimpl()
 }
 
 /**
-TODO(abstract) */
+Impl CanvasImpl */
 func (canvas *Canvas) OnDrawTextAt(text string, xpos []Point, constY Scalar, paint *Paint) {
 	toimpl()
 }
 
 /**
-TODO(abstract) */
+Impl CanvasImpl */
 func (canvas *Canvas) OnDrawTextAtH(text string, xpos []Point, constY Scalar, paint *Paint) {
 	toimpl()
 }
 
 /**
-TODO(abstract) */
+Impl CanvasImpl */
 func (canvas *Canvas) OnDrawTextOnPath(text string, path *Path, matrix *Matrix, paint *Paint) {
 	toimpl()
 }
 
 /**
-TODO(abstract) */
+Impl CanvasImpl */
 func (canvas *Canvas) OnDrawTextRSXform(text string, xform []RSXform, cullRect *Rect, paint *Paint) {
 	toimpl()
 }
 
 /**
-TODO(abstract) */
+Impl CanvasImpl */
 func (canvas *Canvas) OnDrawTextBlob(blob *TextBlob, x, y Scalar, paint *Paint) {
 	toimpl()
 }
 
 /**
-TODO(abstract) */
+Impl CanvasImpl */
 func (canvas *Canvas) OnDrawPatch(cubics [12]Point, colors [4]Color, texCoords [4]Point, xmode *Xfermode, paint *Paint) {
 	toimpl()
 }
 
 /**
-TODO(abstract) */
+Impl CanvasImpl */
 func (canvas *Canvas) OnDrawDrawable(drawable *Drawable, matrixe *Matrix) {
 	toimpl()
 }
 
 /**
-TODO(abstract) */
+Impl CanvasImpl */
 func (canvas *Canvas) OnDrawPaint(paint *Paint) {
 	canvas.internalDrawPaint(paint)
 }
 
 /**
-TODO(abstract) */
+Impl CanvasImpl */
 func (canvas *Canvas) OnDrawRect(rect Rect, paint *Paint) {
 	toimpl()
 }
 
-/**
-TODO(abstract) */
+/** Impl CanvasImpl */
 func (canvas *Canvas) OnDrawOval(oval Rect, paint *Paint) {
 	toimpl()
 }
 
-/**
-TODO(abstract) */
+/** Impl CanvasImpl */
 func (canvas *Canvas) OnDrawArc(oval Rect, startAngle, sweepAngle Scalar, useCenter bool, paint *Paint) {
 	toimpl()
 }
 
-/**
-TODO(abstract) */
+/** Impl CanvasImpl */
 func (canvas *Canvas) OnDrawPoints(mode CanvasPointMode, count int, pts []Point, paint *Paint) {
 	toimpl()
 }
 
-/**
-TODO(abstract) */
+/** Impl CanvasImpl */
 func (canvas *Canvas) OnDrawVertices(vertexMode CanvasVertexMode, vertexCount int, vertices []Point, texs []Point,
 	colors []Color, xfermode *Xfermode, indices []uint16, indexCount int, paint *Paint) {
 	toimpl()
 }
 
-/**
-TODO(abstract) */
+/** Impl CanvasImpl */
 func (canvas *Canvas) OnDrawAtlas(atlas *Image, xform []RSXform, tex []Rect, colors []Color, count int,
 	mode XfermodeMode, cull *Rect, paint *Paint) {
 	toimpl()
 }
 
-/**
-TODO(abstract) */
+/** Impl CanvasImpl */
 func (canvas *Canvas) OnDrawPath(path *Path, paint *Paint) {
 	toimpl()
 }
 
-/**
-TODO(abstract) */
+/** Impl CanvasImpl */
 func (canvas *Canvas) OnDrawImage(image *Image, dx, dy Scalar, paint *Paint) {
 	toimpl()
 }
 
-/**
-TODO(abstract) */
+/** Impl CanvasImpl */
 func (canvas *Canvas) OnDrawImageRect(image *Image, src *Rect, dst Rect, paint *Paint,
 	constraint CanvasSrcRectConstraint) {
 	toimpl()
 }
 
-/**
-TODO(abstract) */
+/** Impl CanvasImpl */
 func (canvas *Canvas) OnDrawImageNine(image *Image, center Rect, dst Rect, paint *Paint) {
 	toimpl()
 }
 
-/**
-TODO(abstract) */
+/** Impl CanvasImpl */
 func (canvas *Canvas) OnDrawImageLattice(image *Image, lattice *CanvasLattice, dst Rect, paint *Paint) {
 	toimpl()
 }
 
-/**
-TODO(abstract) */
+/** Impl CanvasImpl */
 func (canvas *Canvas) OnDrawBitmap(bmp *Bitmap, dx, dy Scalar, paint *Paint) {
 	toimpl()
 }
 
-/**
-TODO(abstract) */
+/** Impl CanvasImpl */
 func (canvas *Canvas) OnDrawBitmapRect(bmp *Bitmap, src *Rect, dst Rect, paint *Paint,
 	constraint CanvasSrcRectConstraint) {
 	toimpl()
 }
 
-/**
-TODO(abstract) */
+/** Impl CanvasImpl */
 func (canvas *Canvas) OnDrawBitmapNine(bmp *Bitmap, center Rect, dst Rect, paint *Paint) {
 	toimpl()
 }
@@ -1550,48 +1628,37 @@ const (
 	KClipEdgeStyleSoft
 )
 
-/**
-TODO(abstract) */
+/** Impl CanvasImpl */
 func (canvas *Canvas) OnClipRect(rect Rect, op RegionOp, edgeStyle ClipEdgeStyle) {
 	toimpl()
 }
 
-/**
-TODO(abstract) */
+/** Impl CanvasImpl */
 func (canvas *Canvas) OnClipPath(path *Path, op RegionOp, edgeStyle ClipEdgeStyle) {
 	toimpl()
 }
 
-/**
-TODO(abstract) */
+/** Impl CanvasImpl */
 func (canvas *Canvas) OnClipRegion(deviceRgn *Region, op RegionOp) {
 	toimpl()
 }
 
-/**
-TODO(abstract) */
+/** Impl CanvasImpl */
 func (canvas *Canvas) OnDiscard() {
 	toimpl()
 }
 
-/**
-TODO(abstract) */
+/** Impl CanvasImpl */
 func (canvas *Canvas) OnDrawPicture(pic *Picture, matrix *Matrix, paint *Paint) {
 	toimpl()
 }
 
-/**
-TODO(abstract) */
+/** Impl CanvasImpl */
 func (canvas *Canvas) OnDrawShadowedPicture(pic *Picture, matrix *Matrix, paint *Paint) {
 	toimpl()
 }
 
-/**
-Returns the canvas to be used by DrawIter. Default implementation
-returns this. Subclasses that encapsulate an indirect canvas may
-need to overload this method. The impl must keep track of this, as it
-is not released or deleted by the caller.
-TODO(abstract) */
+/** Impl CanvasImpl */
 func (canvas *Canvas) CanvasForDrawIterator() *Canvas {
 	return canvas
 }
