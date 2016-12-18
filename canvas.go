@@ -178,10 +178,13 @@ Construct a canvas with the specified bitmap to draw into.
                 structure are copied to the canvas. */
 func NewCanvasFromBitmap(bmp *Bitmap) *Canvas {
 	var canvas = new(Canvas)
+	canvas.Impl = canvas
 	canvas.surfaceProps = MakeSurfaceProps(KSurfacePropsFlagNone, KSurfacePropsInitTypeLegacyFontHost)
 	canvas.mcStack = list.New()
+
 	var device = NewBitmapDevice(bmp, canvas.surfaceProps)
 	canvas.init(device.BaseDevice, KCanvasInitFlagDefault)
+
 	return canvas
 }
 
@@ -1930,13 +1933,31 @@ func (d *tDeviceCM) Reset(bounds Rect) {
 	d.Clip.SetRect(bounds)
 }
 
-func (d *tDeviceCM) UpdateMC(totalMatrix *Matrix, totlaClip *RasterClip,
+func (deviceCM *tDeviceCM) UpdateMC(totalMatrix *Matrix, totalClip *RasterClip,
 	clipStack *ClipStack, updateClip *RasterClip) {
-	toimpl()
+	var x, y = deviceCM.Device.Origin().X, deviceCM.Device.Origin().Y
+	var w, h = deviceCM.Device.Width(), deviceCM.Device.Height()
+	if x == 0 || y == 0 {
+		deviceCM.Matrix = totalMatrix
+		deviceCM.Clip = totalClip
+	} else {
+		deviceCM.Matrix = NewMatrixClone(totalMatrix)
+		deviceCM.Matrix.PostTranslate(-x, -y)
+		totalClip.Translate(-x, -y, deviceCM.Clip)
+	}
+	deviceCM.Clip.Op(MakeRectWH(w, h), KRegionOpIntersect)
+
+	// Intersect clip, but don't translate it (yet)
+
+	if updateClip != nil {
+		updateClip.Op(MakeRect(x, y, w, h), KRegionOpDifference)
+	}
+
+	deviceCM.Device.SetMatrixClip(deviceCM.Matrix, deviceCM.Clip.ForceGetBW(), clipStack)
 }
 
-/**
-tCanvasMCRec is the record we keep for each save/restore level in the stack.
+/** tCanvasMCRec
+is the record we keep for each save/restore level in the stack.
 Since a level optionally copies the matrix and/or stack, we have pointers
 for these fields. If the value is copied for this level, the copy is stored
 in the ...Storage field, and the pointer points to that. If the value is not

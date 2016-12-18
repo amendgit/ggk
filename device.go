@@ -141,5 +141,24 @@ func (b *BaseDevice) DrawPaint(draw *Draw, paint *Paint) {
 }
 
 func (b *BaseDevice) forceConservativeRasterClip() bool {
+	toimpl()
 	return false
+}
+
+/** SetMatrixClip
+DEPRECATED: This will be removed in a future change. Device subclasses
+should use the matrix and clip from the SkDraw passed to draw functions.
+
+Called with the correct matrix and clip before this device is drawn
+to using those settings. If your subclass overrides this, be sure to
+call through to the base class as well.
+
+The clipstack is another view of the clip. It records the actual
+geometry that went into building the region. It is present for devices
+that want to parse it, but is not required: the region is a complete
+picture of the current clip. (i.e. if you regionize all of the geometry
+in the clipstack, you will arrive at an equivalent region to the one
+passed in). */
+func (b *BaseDevice) SetMatrixClip(mat *Matrix, bw *Region, clipStack *ClipStack) {
+	toimpl()
 }

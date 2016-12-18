@@ -27,6 +27,12 @@ func NewMatrix() *Matrix {
 	return matrix
 }
 
+func NewMatrixClone(otr *Matrix) *Matrix {
+	var matrix = &Matrix{}
+	toimpl()
+	return matrix
+}
+
 const (
 	KMScaleX = iota
 	KMSkewX
@@ -70,4 +76,8 @@ func (m *Matrix) Reset() {
 	m.mat[KMSkewY ], m.mat[KMScaleY], m.mat[KMTransY] = 0, 1, 0
 	m.mat[KMPersp0], m.mat[KMPersp1], m.mat[KMPersp2] = 0, 0, 1
 	// setTypeMask(kIdentity_Mask | kRectStaysRect_Mask)
+}
+
+func (mat *Matrix) PostTranslate(x, y Scalar) {
+	toimpl()
 }

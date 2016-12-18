@@ -27,12 +27,12 @@ func NewRasterClip(forceConservativeRects bool) *RasterClip {
 	return clip
 }
 
-func (r *RasterClip) IsEmpty() bool {
-	return r.isEmpty
+func (clip *RasterClip) IsEmpty() bool {
+	return clip.isEmpty
 }
 
-func (r *RasterClip) IsBW() bool {
-	return r.isBW
+func (clip *RasterClip) IsBW() bool {
+	return clip.isBW
 }
 
 func (clip *RasterClip) SetRect(rect Rect) bool {
@@ -43,7 +43,20 @@ func (clip *RasterClip) SetRect(rect Rect) bool {
 	return clip.isRect
 }
 
-func (r *RasterClip) BWRgn() *Region {
+func (clip *RasterClip) BWRgn() *Region {
+	toimpl()
+	return nil
+}
+
+func (clip *RasterClip) Translate(x, y Scalar, otr *RasterClip) {
+	toimpl()
+}
+
+func (clip *RasterClip) Op(rect Rect, op RegionOp) {
+	toimpl()
+}
+
+func (clip *RasterClip) ForceGetBW() *Region {
 	toimpl()
 	return nil
 }
