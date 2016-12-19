@@ -229,7 +229,7 @@ func (canvas *Canvas) Flush() {
 }
 
 /** impl CanvasImpl */
-func (c *Canvas) BaseLayerSize() Size {
+func (canvas *Canvas) BaseLayerSize() Size {
 	var device = c.Device()
 	var size Size
 	if device != nil {
@@ -242,7 +242,7 @@ func (c *Canvas) BaseLayerSize() Size {
 Return the canvas' device object, which may be null. The device holds
 the bitmap of the pixels that the canvas draws into. The reference count
 of the returned device is not changed by this call. */
-func (c *Canvas) Device() *BaseDevice {
+func (canvas *Canvas) Device() *BaseDevice {
 	var rec = c.mcStack.Front().Value.(*tCanvasMCRec)
 	return rec.Layer.Device
 }
@@ -1892,14 +1892,14 @@ func (canvas *Canvas) WouldOverwriteEntireSurface(rect *Rect, paint *Paint,
 	return false
 }
 
-/**
+/** CanDrawBitmapAsSprite
 Returns true if the paint's imagefilter can be invoked directly, without needed a layer. */
 func (canvas *Canvas) CanDrawBitmapAsSprite(x, y Scalar, w, h int, paint *Paint) {
 	toimpl()
 }
 
-/**
-tDeviceCM is the record we keep for each BaseDevice that the user installs.
+/** tDeviceCM
+is the record we keep for each BaseDevice that the user installs.
 The clip/matrix/proc are fields that reflect the top of the save/resotre
 stack. Whenever the canvas changes, it makes a dirty flag, and then before
 these are used (assuming we're not on a layer) we rebuild these cache values:
