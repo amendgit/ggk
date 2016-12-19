@@ -94,7 +94,7 @@ type CanvasImpl interface {
 	OnDrawPicture(pic *Picture, matrix *Matrix, paint *Paint)
 	OnDrawShadowedPicture(pic *Picture, matrix *Matrix, paint *Paint)
 
-	/**
+	/** CanvasForDrawIterator
 	Returns the canvas to be used by DrawIter. Default implementation
 	returns this. Subclasses that encapsulate an indirect canvas may
 	need to overload this method. The impl must keep track of this, as it
@@ -1646,7 +1646,7 @@ func (canvas *Canvas) CanvasForDrawIterator() *Canvas {
 	return canvas
 }
 
-/**
+/** ClipRectBounds
 Clip rectangle bounds. Called internally by saveLayer.
 returns false if the entire rectangle is entirely clipped out
 If non-NULL, The imageFilter parameter will be used to expand the clip
@@ -1656,7 +1656,7 @@ func (canvas *Canvas) ClipRectBounds(bounds *Rect, saveLayerFlags CanvasSaveLaye
 	toimpl()
 }
 
-/**
+/** LayerIterator
 After calling saveLayer(), there can be any number of devices that make
 up the top-most drawing area. LayerIter can be used to iterate through
 those devices. Note that the iterator is only valid until the next API
@@ -1668,27 +1668,27 @@ type LayerIterator struct {
 	impl         *DrawIterator
 }
 
-/**
+/** NewLayerIterator
 Initialize iterator with canvas, and set values for 1st device. */
 func NewLayerIterator(canvas *Canvas) *LayerIterator {
 	toimpl()
 	return nil
 }
 
-/**
+/** Done
 Return true if the iterator is done */
 func (iter *LayerIterator) Done() bool {
 	toimpl()
 	return false
 }
 
-/**
+/** Next
 Cycle to the next device */
 func (iter *LayerIterator) Next() {
 	toimpl()
 }
 
-/**
+/** Device
 These reflect the current device in the iterator */
 func (iter *LayerIterator) Device() *BaseDevice {
 	toimpl()
@@ -1742,15 +1742,14 @@ const (
 	KCanvasShaderOverrideOpacityNotOpaque             // the overriding shader may not be opaque
 )
 
-/**
+/** PredrawNotify
 notify our surface (if we have one) that we are about to draw, so it
 can perform copy-on-write or invalidate any cached images */
 func (canvas *Canvas) PredrawNotify(rect *Rect, paint *Paint, overrideOpacity CanvasShaderOverrideOpacity) {
 	toimpl()
 }
 
-/**
-the first N recs that can fit here mean we won't call malloc */
+/** the first N recs that can fit here mean we won't call malloc */
 const (
 	KMCRecSize    = 128 // < most recent measurement
 	KMCRecCount   = 32  // < common depth for save/restores
@@ -1852,9 +1851,9 @@ func (canvas *Canvas) init(device *BaseDevice, flags CanvasInitFlags) *BaseDevic
 	return device
 }
 
-/**
-Gets the bounds of the top level layer in global canvas coordinates. We don't want this
-to be public because it exposes decisions about layer sizes that are internal to the canvas. */
+/** getTopLayerBounds gets the bounds of the top level layer in global canvas coordinates.
+We don't want this to be public because it exposes decisions about layer sizes that are
+internal to the canvas. */
 func (canvas *Canvas) getTopLayerBounds() Rect {
 	toimpl()
 	return RectZero
@@ -1882,24 +1881,22 @@ func (canvas *Canvas) internalDrawPaint(paint *Paint) {
 	}
 }
 
-/*
-Returns true if drawing the specified rect (or all if it is null) with the specified
-paint (or default if null) would overwrite the entire root device of the canvas
-(i.e. the canvas' surface if it had one). */
+/** WouldOverwriteEntireSurface Returns true if drawing the specified rect (or all
+if it is null) with the specified paint (or default if null) would overwrite the
+entire root device of the canvas (i.e. the canvas' surface if it had one). */
 func (canvas *Canvas) WouldOverwriteEntireSurface(rect *Rect, paint *Paint,
 	overrideOpacity CanvasShaderOverrideOpacity) bool {
 	toimpl()
 	return false
 }
 
-/** CanDrawBitmapAsSprite
-Returns true if the paint's imagefilter can be invoked directly, without needed a layer. */
+/** CanDrawBitmapAsSprite Returns true if the paint's imagefilter can be invoked
+directly, without needed a layer. */
 func (canvas *Canvas) CanDrawBitmapAsSprite(x, y Scalar, w, h int, paint *Paint) {
 	toimpl()
 }
 
-/** tDeviceCM
-is the record we keep for each BaseDevice that the user installs.
+/** tDeviceCM is the record we keep for each BaseDevice that the user installs.
 The clip/matrix/proc are fields that reflect the top of the save/resotre
 stack. Whenever the canvas changes, it makes a dirty flag, and then before
 these are used (assuming we're not on a layer) we rebuild these cache values:
@@ -1956,8 +1953,7 @@ func (deviceCM *tDeviceCM) UpdateMC(totalMatrix *Matrix, totalClip *RasterClip,
 	deviceCM.Device.SetMatrixClip(deviceCM.Matrix, deviceCM.Clip.ForceGetBW(), clipStack)
 }
 
-/** tCanvasMCRec
-is the record we keep for each save/restore level in the stack.
+/** tCanvasMCRec is the record we keep for each save/restore level in the stack.
 Since a level optionally copies the matrix and/or stack, we have pointers
 for these fields. If the value is copied for this level, the copy is stored
 in the ...Storage field, and the pointer points to that. If the value is not
@@ -2175,13 +2171,12 @@ func (it *DrawIterator) Next() bool {
 
 		return true
 	}
+
 	return false
 }
 
-/**
-If the paint has an imagefilter, but it can be simplified to just a colorfilter, return that
-colorfilter, else return nullptr.
-*/
+/** If the paint has an imagefilter, but it can be simplified to just a colorfilter, return that
+colorfilter, else return nullptr. */
 func imageToColorFilter(paint *Paint) *ColorFilter {
 	var imageFilter = paint.ImageFilter()
 	if imageFilter == nil {
