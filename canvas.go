@@ -164,7 +164,7 @@ func NewCanvasRasterDirectN32(width, height int, pixels []PremulColor, rowBytes 
 	return &Canvas{}
 }
 
-/**
+/** NewCanvasEmpty
 Creates an empty canvas with no backing device/pixels, and zero
 dimensions. */
 func NewCanvasEmpty() *Canvas {
@@ -230,7 +230,7 @@ func (canvas *Canvas) Flush() {
 
 /** impl CanvasImpl */
 func (canvas *Canvas) BaseLayerSize() Size {
-	var device = c.Device()
+	var device = canvas.Device()
 	var size Size
 	if device != nil {
 		size = MakeSize(device.Width(), device.Height())
@@ -243,7 +243,7 @@ Return the canvas' device object, which may be null. The device holds
 the bitmap of the pixels that the canvas draws into. The reference count
 of the returned device is not changed by this call. */
 func (canvas *Canvas) Device() *BaseDevice {
-	var rec = c.mcStack.Front().Value.(*tCanvasMCRec)
+	var rec = canvas.mcStack.Front().Value.(*tCanvasMCRec)
 	return rec.Layer.Device
 }
 
