@@ -29,13 +29,20 @@ const (
 	KSurfacePropsInitTypeLegacyFontHost
 )
 
+type SurfacePropsContentChangeMode int
+
+const (
+	KSurfaceContentChangeModeRetain = SurfacePropsContentChangeMode(iota)
+	KSurfaceContentChangeModeDiscard
+)
+
 type SurfaceProps struct {
 	flags         SurfacePropsFlags
 	pixelGeometry PixelGeometry
 }
 
-func MakeSurfaceProps(flags SurfacePropsFlags, initType SurfacePropsInitType) SurfaceProps {
-	var props SurfaceProps
+func NewSurfaceProps(flags SurfacePropsFlags, initType SurfacePropsInitType) *SurfaceProps {
+	var props = &SurfaceProps{}
 	props.flags = flags
 	if initType == KSurfacePropsInitTypeLegacyFontHost {
 		props.pixelGeometry = props.computeDefaultGeometry()
@@ -46,4 +53,13 @@ func MakeSurfaceProps(flags SurfacePropsFlags, initType SurfacePropsInitType) Su
 func (props *SurfaceProps) computeDefaultGeometry() PixelGeometry {
 	toimpl()
 	return KPixelGeometryBGRH
+}
+
+func (props *SurfaceProps) OutstandingImageSnapshot() *BaseSurface {
+	toimpl()
+	return nil
+}
+
+func (props *SurfaceProps) AboutToDraw(mode SurfacePropsContentChangeMode) {
+	toimpl()
 }

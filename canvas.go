@@ -119,7 +119,7 @@ etc. */
 type Canvas struct {
 	Impl CanvasImpl
 
-	surfaceProps SurfaceProps
+	surfaceProps *SurfaceProps
 	saveCount    int
 	metaData     *MetaData
 	baseSurface  *BaseSurface
@@ -179,7 +179,7 @@ Construct a canvas with the specified bitmap to draw into.
 func NewCanvasFromBitmap(bmp *Bitmap) *Canvas {
 	var canvas = new(Canvas)
 	canvas.Impl = canvas
-	canvas.surfaceProps = MakeSurfaceProps(KSurfacePropsFlagNone, KSurfacePropsInitTypeLegacyFontHost)
+	canvas.surfaceProps = NewSurfaceProps(KSurfacePropsFlagNone, KSurfacePropsInitTypeLegacyFontHost)
 	canvas.mcStack = list.New()
 
 	var device = NewBitmapDevice(bmp, canvas.surfaceProps)
@@ -1745,8 +1745,20 @@ const (
 /** PredrawNotify
 notify our surface (if we have one) that we are about to draw, so it
 can perform copy-on-write or invalidate any cached images */
-func (canvas *Canvas) PredrawNotify(rect *Rect, paint *Paint, overrideOpacity CanvasShaderOverrideOpacity) {
-	toimpl()
+func (canvas *Canvas) PredrawRectNotify(rect *Rect, paint *Paint, overrideOpacity CanvasShaderOverrideOpacity) {
+	if canvas.surfaceProps != nil {
+		var mode = KSurfaceContentChangeModeRetain
+		/*
+		Since willOverwriteAllPixels() may not be complete free to call, we only do so if
+		there is an outstanding snapshot, since w/o that, there will be no copy-on-write
+		and therefore we don't care which mode we're in. */
+		if canvas.surfaceProps.OutstandingImageSnapshot() != nil {
+			if canvas.WouldOverwriteEntireSurface(rect, paint, overrideOpacity) {
+				mode = KSurfaceContentChangeModeDiscard
+			}
+		}
+		canvas.surfaceProps.AboutToDraw(mode)
+	}
 }
 
 /** the first N recs that can fit here mean we won't call malloc */
@@ -1870,7 +1882,7 @@ func (canvas *Canvas) internalRestore() {
 type LazyPaint Lazy
 
 func (canvas *Canvas) internalDrawPaint(paint *Paint) {
-	canvas.PredrawNotify(nil, paint, KCanvasShaderOverrideOpacityNotOpaque)
+	canvas.PredrawRectNotify(nil, paint, KCanvasShaderOverrideOpacityNotOpaque)
 
 	var looper = newAutoDrawLooper(canvas, paint, false, nil)
 	for looper.Next(KDrawFilterTypePaint) {

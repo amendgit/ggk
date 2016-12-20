@@ -7,7 +7,7 @@ type BitmapDevice struct {
 // Construct a new device with the specified bitmap as its backend. It is valid
 // for the bitmap to have no pixels associated with it. In that case, any
 // drawing to this device will have no effect.
-func NewBitmapDevice(bmp *Bitmap, props SurfaceProps) *BitmapDevice {
+func NewBitmapDevice(bmp *Bitmap, props *SurfaceProps) *BitmapDevice {
 	var bitmapDevice = new(BitmapDevice)
 	bitmapDevice.BaseDevice = NewBaseDevice()
 	bitmapDevice.Device = bitmapDevice
