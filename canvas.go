@@ -1527,7 +1527,15 @@ func (canvas *Canvas) OnDrawDrawable(drawable *Drawable, matrixe *Matrix) {
 
 /** OnDrawPaint Impl CanvasImpl */
 func (canvas *Canvas) OnDrawPaint(paint *Paint) {
-	canvas.internalDrawPaint(paint)
+	canvas.PredrawRectNotify(nil, paint, KCanvasShaderOverrideOpacityNotOpaque)
+
+	var looper = newAutoDrawLooper(canvas, paint, false, nil)
+	for looper.Next(KDrawFilterTypePaint) {
+		var it = NewDrawIterator(canvas)
+		for it.Next() {
+			it.Device().DrawPaint(it.Draw, looper.Paint())
+		}
+	}
 }
 
 /** OnDrawRect Impl CanvasImpl */
@@ -1881,18 +1889,6 @@ func (canvas *Canvas) internalRestore() {
 
 type LazyPaint Lazy
 
-func (canvas *Canvas) internalDrawPaint(paint *Paint) {
-	canvas.PredrawRectNotify(nil, paint, KCanvasShaderOverrideOpacityNotOpaque)
-
-	var looper = newAutoDrawLooper(canvas, paint, false, nil)
-	for looper.Next(KDrawFilterTypePaint) {
-		var it = NewDrawIterator(canvas)
-		for it.Next() {
-			it.Device().DrawPaint(it.Draw, looper.Paint())
-		}
-	}
-}
-
 /** WouldOverwriteEntireSurface Returns true if drawing the specified rect (or all
 if it is null) with the specified paint (or default if null) would overwrite the
 entire root device of the canvas (i.e. the canvas' surface if it had one). */
@@ -1924,12 +1920,12 @@ type tDeviceCM struct {
 	StashedMatrix *Matrix
 }
 
-func newDeivceCM(dev *BaseDevice, paint *Paint, canvas *Canvas, conservativeRasterClip bool, stashed *Matrix) *tDeviceCM {
+func newDeivceCM(device *BaseDevice, paint *Paint, canvas *Canvas, conservativeRasterClip bool, stashed *Matrix) *tDeviceCM {
 	var deviceCM = new(tDeviceCM)
 	deviceCM.Next = nil
 	deviceCM.Clip = NewRasterClip(conservativeRasterClip)
 	deviceCM.StashedMatrix = stashed
-	deviceCM.Device = dev
+	deviceCM.Device = device
 	if paint != nil {
 		deviceCM.Paint = paint
 	} else {
@@ -1975,8 +1971,7 @@ type tCanvasMCRec struct {
 	Filter *DrawFilter // the current filter (or nil)
 	Layer  *tDeviceCM
 
-	/**
-	If there are any layers in the stack, this points to the top-most
+	/** If there are any layers in the stack, this points to the top-most
 	one that is at or below this level in the stack (so we know what
 	bitmap/device to draw into from this level. This value is NOT
 	reference counted, since the real owner is either our fLayer field,
