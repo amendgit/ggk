@@ -39,20 +39,20 @@ const (
 	KPaintHintingFull   = 3
 )
 
-func (p *Paint) Hinting() PaintHinting {
-	return PaintHinting(p.hinting)
+func (paint *Paint) Hinting() PaintHinting {
+	return PaintHinting(paint.hinting)
 }
 
-func (p *Paint) SetHinting(hinting PaintHinting) {
-	p.hinting = uint8(hinting)
+func (paint *Paint) SetHinting(hinting PaintHinting) {
+	paint.hinting = uint8(hinting)
 }
 
-func (p *Paint) Looper() *DrawLooper {
-	return p.looper
+func (paint *Paint) Looper() *DrawLooper {
+	return paint.looper
 }
 
-func (p *Paint) SetLooper(looper *DrawLooper) {
-	p.looper = looper
+func (paint *Paint) SetLooper(looper *DrawLooper) {
+	paint.looper = looper
 }
 
 func (paint *Paint) SetColor(color Color) {
@@ -95,12 +95,12 @@ const (
 	KPaintStyleStrokeAndFill                    // < fill and stroke the geometry
 )
 
-func (p *Paint) Flags() PaintFlags {
-	return PaintFlags(p.flags)
+func (paint *Paint) Flags() PaintFlags {
+	return PaintFlags(paint.flags)
 }
 
-func (p *Paint) SetFlags(flags PaintFlags) {
-	p.flags = uint16(flags)
+func (paint *Paint) SetFlags(flags PaintFlags) {
+	paint.flags = uint16(flags)
 }
 
 func (paint *Paint) CanComputeFastBounds() bool {
