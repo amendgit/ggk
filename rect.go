@@ -27,6 +27,10 @@ func MakeRectLTRB(left, top, right, bottom Scalar) Rect {
 	return Rect{left, top, right - left, bottom - top}
 }
 
+func MakeRectEmpty() Rect {
+	return Rect{0, 0, 0, 0}
+}
+
 // Return te left edge of the rect.
 func (r Rect) L() Scalar {
 	return r.Left
@@ -111,6 +115,13 @@ func (r *Rect) SetLTRBPoint(lt, rb Point) {
 func (r *Rect) IntersectXYWH(x, y, w, h Scalar) bool {
 	toimpl()
 	return false
+}
+
+func (rect *Rect) InsetLTRB(left, top, right, bottom Scalar) {
+	rect.Left = rect.Left + left
+	rect.Top = rect.Top + top
+	rect.Width = rect.Width - left + right
+	rect.Height = rect.Height - top + bottom
 }
 
 func (r Rect) ToGoRect() image.Rectangle {

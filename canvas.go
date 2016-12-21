@@ -2222,6 +2222,13 @@ func applyPaintToBoundsSansImageFilter(paint *Paint, rowBounds Rect, storage *Re
 }
 
 func quickRejectClipBounds(bounds Rect) Rect {
-	toimpl()
-	return RectZero
+	if bounds.IsEmpty() {
+		return MakeRectEmpty()
+	}
+
+	// Expand bounds out by 1 in case we are anti-aliasing. We store the bounds as floats to
+	// enable a faster quick reject implementation.
+	bounds.InsetLTRB(-1, -1, 1, 1)
+
+	return bounds
 }
