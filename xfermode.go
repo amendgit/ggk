@@ -23,3 +23,8 @@ type Xfermode struct {
 func NewXfermode() *Xfermode {
 	return &Xfermode{}
 }
+
+func NewXfermodeWithMode(mode XfermodeMode) *Xfermode {
+	toimpl()
+	return nil
+}

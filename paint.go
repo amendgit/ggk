@@ -59,8 +59,9 @@ func (paint *Paint) SetColor(color Color) {
 	paint.color = color
 }
 
-func (paint *Paint) SetXfermodeMode(mode XfermodeMode) {
-	toimpl()
+func (paint *Paint) SetXfermodeMode(mode XfermodeMode) *Xfermode {
+	paint.xfermode = NewXfermodeWithMode(mode)
+	return paint.xfermode
 }
 
 type PaintFlags int
