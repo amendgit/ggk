@@ -3,15 +3,21 @@ package ggk
 // Paint holds the style and color information about how to draw geometries, text
 // and bitmaps.
 type Paint struct {
-	flags   uint16
-	hinting uint8
-	looper  *DrawLooper
-	style   PaintStyle
-	color   Color
+	flags       uint16
+	hinting     uint8
+	xfermode    *Xfermode
+	looper      *DrawLooper
+	imageFilter *ImageFilter
+
+	style PaintStyle
+	color Color
 }
 
 func NewPaint() *Paint {
-	var paint = &Paint{}
+	var paint = &Paint{
+		xfermode:    NewXfermode(),
+		imageFilter: NewImageFilter(),
+	}
 	return paint
 }
 
@@ -121,8 +127,7 @@ func (paint *Paint) doComputeFastStrokeBounds(orig Rect, storage *Rect, style Pa
 }
 
 func (paint *Paint) ImageFilter() *ImageFilter {
-	toimpl()
-	return nil
+	return paint.imageFilter
 }
 
 func (paint *Paint) Rasterizer() bool {
@@ -131,8 +136,8 @@ func (paint *Paint) Rasterizer() bool {
 }
 
 /** Get the paint's colorfilter. If there is a colorfilter, its reference
-	count is not changed.
-	@return the paint's colorfilter (or NULL)
+count is not changed.
+@return the paint's colorfilter (or NULL)
 */
 func (paint *Paint) ColorFilter() *ColorFilter {
 	return paint.ColorFilter()
@@ -147,12 +152,13 @@ func (paint *Paint) SetImageFilter(imageFilter *ImageFilter) {
 }
 
 func (paint *Paint) SetXfermode(xfermode *Xfermode) {
-	toimpl()
+	paint.xfermode = xfermode
 }
 
+/** Xfermode
+@return the paint's xfermode or nil. */
 func (paint *Paint) Xfermode() *Xfermode {
-	toimpl()
-	return nil
+	return paint.xfermode
 }
 
 func (paint *Paint) NothingToDraw() bool {

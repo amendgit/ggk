@@ -19,3 +19,7 @@ const (
 type Xfermode struct {
 	
 }
+
+func NewXfermode() *Xfermode {
+	return &Xfermode{}
+}

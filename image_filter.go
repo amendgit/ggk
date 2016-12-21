@@ -3,6 +3,10 @@ package ggk
 type ImageFilter struct {
 }
 
+func NewImageFilter() *ImageFilter {
+	return &ImageFilter{}
+}
+
 func (imageFilter *ImageFilter) CanComputeFastBounds() bool {
 	toimpl()
 	return false
