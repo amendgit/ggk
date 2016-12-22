@@ -176,7 +176,7 @@ func NewCanvasEmpty() *Canvas {
 Construct a canvas with the specified bitmap to draw into.
 @param bitmap   Specifies a bitmap for the canvas to draw into. Its
                 structure are copied to the canvas. */
-func NewCanvasFromBitmap(bmp *Bitmap) *Canvas {
+func NewCanvasBitmap(bmp *Bitmap) *Canvas {
 	var canvas = new(Canvas)
 	canvas.Impl = canvas
 	canvas.surfaceProps = NewSurfaceProps(KSurfacePropsFlagNone, KSurfacePropsInitTypeLegacyFontHost)
@@ -193,7 +193,7 @@ Construct a canvas with the specified bitmap to draw into.
 @param bitmap   Specifies a bitmap for the canvas to draw into. Its
 				structure are copied to the canvas.
 @param props    New canvas surface properties. */
-func NewCanvasFromBitmapSurfaceProps(bmp *Bitmap, surfaceProps *SurfaceProps) *Canvas {
+func NewCanvasBitmapSurfaceProps(bmp *Bitmap, surfaceProps *SurfaceProps) *Canvas {
 	toimpl()
 	return &Canvas{}
 }
