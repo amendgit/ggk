@@ -24,11 +24,11 @@ func (pixmap *Pixmap) Height() Scalar {
 	return pixmap.imageInfo.Height()
 }
 
-func (pixmap *Pixmap) Reset(imagInfo *ImageInfo, pixels []byte, rowBytes int, ct *ColorTable) {
-	pixmap.imageInfo = imagInfo
-	pixmap.pixels = pixels
+func (pixmap *Pixmap) Reset(imageInfo *ImageInfo, pixelbytes []byte, rowBytes int, colorTable *ColorTable) {
+	pixmap.imageInfo = imageInfo
+	pixmap.pixels = pixelbytes
 	pixmap.rowBytes = rowBytes
-	pixmap.colorTable = ct
+	pixmap.colorTable = colorTable
 }
 
 type AutoPixmapUnlock struct {

@@ -1533,7 +1533,7 @@ func (canvas *Canvas) OnDrawPaint(paint *Paint) {
 	for looper.Next(KDrawFilterTypePaint) {
 		var it = NewDrawIterator(canvas)
 		for it.Next() {
-			it.Device().DrawPaint(it.Draw, looper.Paint())
+			it.Device().Device.DrawPaint(it.Draw, looper.Paint())
 		}
 	}
 }
@@ -2155,6 +2155,7 @@ func NewDrawIterator(canvas *Canvas) *DrawIterator {
 		currLayer: canvas.mcRec.TopLayer,
 		Draw: &Draw{
 			clipStack: canvas.clipStack,
+			dst: NewPixmap(),
 		},
 	}
 	return it
@@ -2171,7 +2172,7 @@ func (it *DrawIterator) Next() bool {
 		it.rasterClip = rec.Clip
 		it.device = rec.Device
 		if !it.device.AccessPixels(it.dst) {
-			it.dst.Reset(it.device.imageInfo, nil, 0, nil)
+			it.dst.Reset(it.device.Device.ImageInfo(), nil, 0, nil)
 		}
 		it.paint = rec.Paint
 		it.currLayer = rec.Next

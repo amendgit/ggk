@@ -21,7 +21,7 @@ func (alloc *BitmapHeapAllocator) AllocPixelRef(bmp *Bitmap, ct *ColorTable) boo
 type BitmapFlags uint8
 
 const (
-	kBitmapFlagImageIsVolatile = uint8(0x02)
+	KBitmapFlagImageIsVolatile = uint8(0x02)
 	// A hint for the renderer responsible for drawing this bitmap
     // indicating that it should attempt to use mipmaps when this bitmap
     // is drawn scaled down.
@@ -184,7 +184,7 @@ func (bmp *Bitmap) Pixels() *Pixels {
 }
 
 // Return the bytes of the pixels for this bitmap.
-func (bmp *Bitmap) PixelsBytes() []byte {
+func (bmp *Bitmap) PixelBytes() []byte {
 	bmp.pixels.LockPixels()
 	var bytes = bmp.pixels.Bytes()
 	return bytes

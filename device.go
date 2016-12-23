@@ -41,10 +41,10 @@ type Device interface {
 	// OnAccessBitmap() *Bitmap
 	// CanHandleImageFilter(*ImageFilter) bool
 	// FilterImage(filter *ImageFilter, bmp *Bitmap, ctxt *ImageFilterContext) (resultBmp *Bitmap, offset Point, ok bool)
-	// OnPeekPixels(pixmap *Pixmap) bool
+	OnPeekPixels(pixmap *Pixmap) bool
 	// OnReadPixels(imageInfo ImageInfo, pixelBytes []byte, x, y int)
 	// OnWritePixels(imageInfo ImageInfo, pixelBytes []byte, x, y int)
-	// OnAccessPixels(pixmap *Pixmap) bool
+	OnAccessPixels(pixmap *Pixmap) bool
 	// OnCreateDevice(CreateInfo, Paint) Device
 	// Flush()
 	// GetImageFilterCache() *ImageFilterCache
@@ -122,7 +122,15 @@ func (b *BaseDevice) ReadPixels(info *ImageInfo, pixels []byte, rowBytes int,
 }
 
 func (b *BaseDevice) AccessPixels(pixmap *Pixmap) bool {
-	toimpl()
+	b.Device.OnAccessPixels(pixmap)
+	return false
+}
+
+func (b *BaseDevice) OnAccessPixels(pixmap *Pixmap) bool {
+	return false
+}
+
+func (b *BaseDevice) OnPeekPixels(pixmap *Pixmap) bool {
 	return false
 }
 

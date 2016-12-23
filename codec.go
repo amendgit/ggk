@@ -21,7 +21,7 @@ func BitmapToGoImage(bmp *Bitmap) (image.Image, error) {
 	switch bmp.ColorType() {
 	case KColorTypeRGBA8888:
 		img = &image.RGBA{
-			Pix:    bmp.PixelsBytes(),
+			Pix:    bmp.PixelBytes(),
 			Stride: bmp.RowBytes(),
 			Rect:   bmp.Bounds().ToGoRect(),
 		}
