@@ -59,32 +59,32 @@ type Device interface {
 
 	// Causes any deferred drawing to the device to be completed.
 	// flush()
-
+	Base() *BaseDevice
 }
 
 type BaseDevice struct {
 	Device Device
 	origin Point
-	imageInfo *ImageInfo
 }
 
 func NewBaseDevice() *BaseDevice {
-	var baseDevice = &BaseDevice {
-		imageInfo: NewImageInfoUnknown(0, 0),
+	var baseDevice = &BaseDevice{
+		origin: PointZero,
 	}
+	baseDevice.Device = baseDevice
 	return baseDevice
 }
 
 func (b *BaseDevice) Width() Scalar {
-	return b.imageInfo.Width()
+	return b.Device.ImageInfo().Width()
 }
 
 func (b *BaseDevice) Height() Scalar {
-	return b.imageInfo.Height()
+	return b.Device.ImageInfo().Height()
 }
 
 func (b *BaseDevice) ImageInfo() *ImageInfo {
-	return b.imageInfo
+	return NewImageInfoUnknown(0, 0)
 }
 
 /**
@@ -161,4 +161,8 @@ in the clipstack, you will arrive at an equivalent region to the one
 passed in). */
 func (b *BaseDevice) SetMatrixClip(mat *Matrix, bw *Region, clipStack *ClipStack) {
 	toimpl()
+}
+
+func (b *BaseDevice) Base() *BaseDevice {
+	return b
 }
