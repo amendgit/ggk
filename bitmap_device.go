@@ -50,5 +50,5 @@ func (dev *BitmapDevice) DrawPoints(draw *Draw, mode CanvasPointMode, count int,
 }
 
 func (bmpdev *BitmapDevice) DrawPaint(draw *Draw, paint *Paint) {
-	toimpl()
+	draw.DrawPaint(paint)
 }
