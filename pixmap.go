@@ -31,5 +31,10 @@ func (pixmap *Pixmap) Reset(imageInfo *ImageInfo, pixelbytes []byte, rowBytes in
 	pixmap.colorTable = colorTable
 }
 
+func (pixmap *Pixmap) ColorType() ColorType {
+	toimpl()
+	return KColorTypeN32
+}
+
 type AutoPixmapUnlock struct {
 }

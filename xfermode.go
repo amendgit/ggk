@@ -4,6 +4,10 @@ type XfermodeMode int
 
 const (
 	KXfermodeModeSrcOver XfermodeMode = iota //!< [Sa + Da * (1 - Sa), Sc + Dc * (1 - Sa)]
+	KXfermodeModeDst
+	KXfermodeModeSrc
+	KXfermodeModeClear
+
 )
 
 // Xfermode
@@ -21,10 +25,16 @@ type Xfermode struct {
 }
 
 func NewXfermode() *Xfermode {
+	toimpl()
 	return &Xfermode{}
 }
 
 func NewXfermodeWithMode(mode XfermodeMode) *Xfermode {
 	toimpl()
 	return nil
+}
+
+func XfermodeAsMode(xfer *Xfermode) (XfermodeMode, bool) {
+	toimpl()
+	return KXfermodeModeSrcOver, false
 }

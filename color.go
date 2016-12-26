@@ -117,3 +117,13 @@ func PremultiplyColor(c Color) (PremulColor, error) {
 	var a, r, g, b uint8 = c.ARGB()
 	return PremultiplyARGB(a, r, g, b)
 }
+
+func Pixel32ToPixel16(pixel32 uint32) uint32 {
+	toimpl()
+	return 0
+}
+
+func GetPackedA32(packed32 uint32) uint32 {
+	toimpl()
+	return 0
+}

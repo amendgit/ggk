@@ -11,7 +11,57 @@ type Draw struct {
 }
 
 func chooseBitmapXferProc(dst *Pixmap, paint *Paint, data *uint32) tBitmapXferProc {
-	toimpl()
+	// todo: we can apply colorfilter up front if no shader, so we wouldn't
+	// need to abort this fastpath
+	if paint.Shader() != nil || paint.ColorFilter() != nil {
+		return nil
+	}
+
+	var mode XfermodeMode
+	var ok bool
+	if ok, mode = XfermodeAsMode(paint.Xfermode()); !ok {
+		return nil
+	}
+
+	var color = paint.Color()
+
+	// collaps modes based on color...
+	if mode == KXfermodeModeSrcOver {
+		var alpha = color.Alpha()
+		if alpha == 0 {
+			mode = KXfermodeModeDst
+		} else {
+			mode = KXfermodeModeSrc
+		}
+	}
+
+	switch mode {
+	case KXfermodeModeClear:
+		return new(tBitmapXferProcClear)
+	case KXfermodeModeDst:
+		return new(tBitmapXferProcDst)
+	case KXfermodeModeSrc:
+		// Should I worry about dithering for the lower depths.
+		var _, pmc = PremultiplyColor(color)
+		switch dst.ColorType() {
+		case KColorTypeN32:
+			if (data != nil) {
+				*data = pmc
+			}
+			return new(tBitmapXferProcSrcD8)
+		case KColorTypeRGB565:
+			if (data != nil) {
+				*data = Pixel32ToPixel16(pmc)
+			}
+			return new(tBitmapXferProcSrcD16)
+		case KColorTypeAlpha8:
+			if (data != nil) {
+				*data = GetPackedA32(pmc)
+			}
+			return new(tBitmapXferProcSrcDA8)
+		}
+	}
+
 	return nil
 }
 
@@ -29,10 +79,10 @@ func (draw *Draw) DrawPaint(paint *Paint) {
 
 	if draw.rasterClip.IsBW() {
 		/* If we don't have a shader (i.e. we're just a solid color) we may
-		   be faster to operate directly on the device bitmap, rather than invoking
-		   a blitter. Esp. true for xfermodes, which require a colorshader to be
-		   present, which is just redundant work. Since we're drawing everywhere
-		   in the clip, we don't have to worry about antialiasing. */
+	    be faster to operate directly on the device bitmap, rather than invoking
+	    a blitter. Esp. true for xfermodes, which require a colorshader to be
+	    present, which is just redundant work. Since we're drawing everywhere
+	    in the clip, we don't have to worry about antialiasing. */
 		var xferData uint32 = 0
 		var xferProc = chooseBitmapXferProc(draw.dst, paint, &xferData)
 		if xferProc != nil {

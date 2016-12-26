@@ -59,6 +59,11 @@ func (paint *Paint) SetColor(color Color) {
 	paint.color = color
 }
 
+func (paint *Paint) Color() Color {
+	toimpl()
+	return KColorBlack
+}
+
 func (paint *Paint) SetXfermodeMode(mode XfermodeMode) *Xfermode {
 	paint.xfermode = NewXfermodeWithMode(mode)
 	return paint.xfermode
@@ -134,6 +139,11 @@ func (paint *Paint) ImageFilter() *ImageFilter {
 func (paint *Paint) Rasterizer() bool {
 	toimpl()
 	return false
+}
+
+func (paint *Paint) Shader() *Shader {
+	toimpl()
+	return nil
 }
 
 /** Get the paint's colorfilter. If there is a colorfilter, its reference
