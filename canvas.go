@@ -2016,6 +2016,7 @@ type tAutoDrawLooper struct {
 
 func newAutoDrawLooper(canvas *Canvas, paint *Paint, skipLayerForImageFilter bool, rawBounds *Rect) *tAutoDrawLooper {
 	var looper = &tAutoDrawLooper{
+		lazyPaintPerLooper: NewLazy(),
 		canvas:                  canvas,
 		origPaint:               paint,
 		paint:                   paint,
@@ -2055,8 +2056,7 @@ func newAutoDrawLooper(canvas *Canvas, paint *Paint, skipLayerForImageFilter boo
 			// Make rawBounds include all paint outsets except for those due to image filters.
 			*rawBounds = applyPaintToBoundsSansImageFilter(looper.paint, *rawBounds, &storage)
 		}
-		canvas.internalSaveLayer(newCanvasSaveLayerRec(rawBounds, tmp, nil, KCanvasSaveLayerFlagIsOpaque),
-			KCanvasSaveLayerStrategyFullLayer)
+		canvas.internalSaveLayer(newCanvasSaveLayerRec(rawBounds, tmp, nil, KCanvasSaveLayerFlagIsOpaque), KCanvasSaveLayerStrategyFullLayer)
 		looper.tempLayerForImageFilter = false
 		// we remove the imagefilter/xfermode inside doNext()
 	}
