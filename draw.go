@@ -19,7 +19,7 @@ func chooseBitmapXferProc(dst *Pixmap, paint *Paint, data *uint32) tBitmapXferPr
 
 	var mode XfermodeMode
 	var ok bool
-	if ok, mode = XfermodeAsMode(paint.Xfermode()); !ok {
+	if mode, ok = XfermodeAsMode(paint.Xfermode()); !ok {
 		return nil
 	}
 
@@ -42,21 +42,21 @@ func chooseBitmapXferProc(dst *Pixmap, paint *Paint, data *uint32) tBitmapXferPr
 		return new(tBitmapXferProcDst)
 	case KXfermodeModeSrc:
 		// Should I worry about dithering for the lower depths.
-		var _, pmc = PremultiplyColor(color)
+		var pmc, _ = PremultiplyColor(color)
 		switch dst.ColorType() {
 		case KColorTypeN32:
 			if (data != nil) {
-				*data = pmc
+				*data = uint32(pmc)
 			}
 			return new(tBitmapXferProcSrcD8)
 		case KColorTypeRGB565:
 			if (data != nil) {
-				*data = Pixel32ToPixel16(pmc)
+				*data = Pixel32ToPixel16(uint32(pmc))
 			}
 			return new(tBitmapXferProcSrcD16)
 		case KColorTypeAlpha8:
 			if (data != nil) {
-				*data = GetPackedA32(pmc)
+				*data = GetPackedA32(uint32(pmc))
 			}
 			return new(tBitmapXferProcSrcDA8)
 		}
@@ -86,7 +86,7 @@ func (draw *Draw) DrawPaint(paint *Paint) {
 		var xferData uint32 = 0
 		var xferProc = chooseBitmapXferProc(draw.dst, paint, &xferData)
 		if xferProc != nil {
-			if _, ok := xferProc.(*tBitmapXferDst); ok { // < nothing to draw.
+			if _, ok := xferProc.(*tBitmapXferProcDst); ok { // < nothing to draw.
 				return
 			}
 
