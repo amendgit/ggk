@@ -9,8 +9,9 @@ type Paint struct {
 	looper      *DrawLooper
 	imageFilter *ImageFilter
 
-	style PaintStyle
-	color Color
+	colorFilter *ColorFilter
+	style       PaintStyle
+	color       Color
 }
 
 func NewPaint() *Paint {
@@ -151,7 +152,7 @@ count is not changed.
 @return the paint's colorfilter (or NULL)
 */
 func (paint *Paint) ColorFilter() *ColorFilter {
-	return paint.ColorFilter()
+	return paint.colorFilter
 }
 
 func (paint *Paint) SetColorFilter(colorFilter *ColorFilter) {
