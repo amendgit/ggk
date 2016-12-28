@@ -60,3 +60,30 @@ func (clip *RasterClip) ForceGetBW() *Region {
 	toimpl()
 	return nil
 }
+
+/** AAClipBlitterWrapper
+Encapsulates the logic of deciding if we need to change/wrap the blitter
+for aaclipping. If so, getRgn and getBlitter return modified values. If
+not, they return the raw blitter and (bw) clip region.
+
+We need to keep the constructor/destructor cost as small as possible, so we
+can freely put this guy on the stack, and not pay too much for the case when
+we're really BW anyways.
+*/
+type AAClipBlitterWrapper struct {
+
+}
+
+func NewAAClipBlitterWrapper(rasterClip *RasterClip, blitter Blitter) *AAClipBlitterWrapper {
+	return &AAClipBlitterWrapper{}
+}
+
+func (wrapper *AAClipBlitterWrapper) Rgn() *Region {
+	toimpl()
+	return nil
+}
+
+func (wrapper *AAClipBlitterWrapper) Blitter() Blitter {
+	toimpl()
+	return nil
+}
