@@ -34,6 +34,11 @@ func NewXfermodeWithMode(mode XfermodeMode) *Xfermode {
 	return nil
 }
 
+func XfermodeIsMode(xfer *Xfermode, mode XfermodeMode) bool {
+	toimpl()
+	return false
+}
+
 func XfermodeAsMode(xfer *Xfermode) (XfermodeMode, bool) {
 	toimpl()
 	return KXfermodeModeSrcOver, false

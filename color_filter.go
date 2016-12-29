@@ -17,3 +17,8 @@ type ColorFilter struct {
 func NewColorFilterFromComposeFilter(outer, inner *ColorFilter) *ColorFilter {
 	return &ColorFilter{}
 }
+
+func (filter *ColorFilter) FilterColor(color Color) Color {
+	toimpl()
+	return KColorBlack
+}

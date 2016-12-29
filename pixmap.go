@@ -36,5 +36,10 @@ func (pixmap *Pixmap) ColorType() ColorType {
 	return KColorTypeN32
 }
 
+func (pixmap *Pixmap) Info() *ImageInfo {
+	toimpl()
+	return nil
+}
+
 type AutoPixmapUnlock struct {
 }

@@ -11,13 +11,48 @@ package ggk
  *  to be modified.
  */
 type Shader struct {
-
 }
 
-type tShaderContextRec struct {
+func NewShader_Color(color Color) *Shader {
+	toimpl()
+	return nil
+}
 
+func (shader *Shader) MakeWithColorFilter(filter *ColorFilter) *Shader {
+	toimpl()
+	return nil
+}
+
+func (shader *Shader) ContextSize(rec *ShaderContextRec) int {
+	toimpl()
+	return 0
+}
+
+func (shader *Shader) CreateContext(rec *ShaderContextRec) *ShaderContext {
+	toimpl()
+	return nil
+}
+
+
+type ShaderContextRec struct {
+}
+
+type ShaderDstType int
+
+const (
+	KShaderDstTypePMColor = ShaderDstType(iota) //< clients prefer shading into PMColor dest.
+	KSahderDstTypePM4f                          //< clients prefer shading into PM4f dest.
+)
+
+func NewShaderContextRec(paint *Paint, matrix *Matrix, localM *Matrix, dstType ShaderDstType) *ShaderContextRec {
+	toimpl()
+	return nil
+}
+
+func BlitterPreferredShaderDest(dstInfo *ImageInfo) ShaderDstType {
+	toimpl()
+	return KShaderDstTypePMColor
 }
 
 type ShaderContext struct {
-
 }

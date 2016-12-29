@@ -191,3 +191,21 @@ func (paint *Paint) StrokeWidth() int {
 	toimpl()
 	return 0
 }
+
+func (paint *Paint) MaskFilter() *MaskFilter {
+	toimpl()
+	return nil
+}
+
+func (paint *Paint) SetShader(shader *Shader) {
+	toimpl()
+}
+
+func (paint *Paint) SetAlpha(alpha uint8) {
+	toimpl()
+}
+
+func (paint *Paint) Alpha() uint8 {
+	toimpl()
+	return 0
+}

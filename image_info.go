@@ -58,6 +58,7 @@ const (
 	KColorTypeBGRA8888
 	KColorTypeIndex8
 	KColorTypeGray8
+	KColorTypeRGBAF16
 
 	KColorTypeLastEnum = KColorTypeGray8
 )
@@ -312,6 +313,11 @@ func (ii *ImageInfo) SafeSize(rowBytes int) uint {
 		return 0
 	}
 	return uint(size)
+}
+
+func (ii *ImageInfo) GammaCloseToSRGB() bool {
+	toimpl()
+	return false
 }
 
 // ReadPixelsRec is helper to package and trim the parameters passed to
