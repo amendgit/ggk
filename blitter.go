@@ -93,3 +93,8 @@ type BlitterClipper struct {
 func (*BlitterClipper)apply(blitter Blitter, clip *Region, bounds Rect) {
 	toimpl()
 }
+
+func BlitterChoose(device *Pixmap, matrix *Matrix, origPaint *Paint, drawCoverage bool) Blitter {
+	toimpl()
+	return nil
+}
