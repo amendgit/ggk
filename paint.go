@@ -4,7 +4,7 @@ package ggk
 holds the style and color information about how to draw geometries, text
 and bitmaps. */
 type Paint struct {
-	flags       uint16
+	flags       uint32
 	hinting     uint8
 	xfermode    *Xfermode
 	looper      *DrawLooper
@@ -83,7 +83,7 @@ func (paint *Paint) SetHinting(hinting PaintHinting) {
 }
 
 /** Specifies the bit values that are stored in the paint's flags. */
-type PaintFlags int
+type PaintFlags uint32
 
 const (
 	KPaintFlagAntiAlias          PaintFlags = 0x01  //< mask to enable antialiasing
@@ -116,13 +116,13 @@ func (paint *Paint) Flags() PaintFlags {
 /** Set the paint's flags. Use the Flag enum to specific flag values.
 @param flags    The new flag bits for the paint (see Flags enum) */
 func (paint *Paint) SetFlags(flags PaintFlags) {
-	paint.flags = uint16(flags)
+	paint.flags = flags
 }
 
 /** Helper for getFlags(), returning true if kAntiAlias_Flag bit is set
 @return true if the antialias bit is set in the paint's flags. */
 func (paint *Paint) IsAntiAlias() bool {
-	return paint.Flags() & KPaintFlagAntiAlias != 0
+	return paint.flags & KPaintFlagAntiAlias != 0
 }
 
 /** Helper for setFlags(), setting or clearing the kAntiAlias_Flag bit
@@ -134,7 +134,7 @@ func (paint *Paint) SetAnitAlias(aa bool) {
 /** Helper for getFlags(), returning true if kDither_Flag bit is set
 @return true if the dithering bit is set in the paint's flags. */
 func (paint *Paint) IsDither() bool {
-	return paint.Flags() & KPaintFlagDither != 0
+	return paint.flags & KPaintFlagDither != 0
 }
 
 /** Helper for setFlags(), setting or clearing the kDither_Flag bit
@@ -146,7 +146,43 @@ func (paint *Paint) SetDither(dither bool) {
 /** Helper for getFlags(), returning true if kLinearText_Flag bit is set
 @return true if the lineartext bit is set in the paint's flags */
 func (paint *Paint) IsLinearText() bool {
-	return paint.Flags() & KPaintFlagLinearText != 0
+	return paint.flags & KPaintFlagLinearText != 0
+}
+
+/** Helper for setFlags(), setting or clearing the kLinearText_Flag bit
+@param linearText true to set the linearText bit in the paint's flags,
+				  false to clear it. */
+func (paint *Paint) SetLinearText(linearText bool) {
+	toimpl()
+}
+
+/** Helper for getFlags(), returning true if kSubpixelText_Flag bit is set
+@return true if the lineartext bit is set in the paint's flags */
+func (paint *Paint) IsSubpixelText() bool {
+	return paint.flags & KPaintFlagSubpixelText != 0
+}
+
+/**
+ *  Helper for setFlags(), setting or clearing the kSubpixelText_Flag.
+ *  @param subpixelText true to set the subpixelText bit in the paint's
+ *                      flags, false to clear it.
+ */
+func (paint *Paint) SetSubpixelText(subpixelText bool) {
+	toimpl()
+}
+
+func (paint *Paint) IsLCDRenderText() bool {
+	return uint32(paint.flags) & KPaintFlagLCDRenderText != 0
+}
+
+/**
+ *  Helper for setFlags(), setting or clearing the kLCDRenderText_Flag.
+ *  Note: antialiasing must also be on for lcd rendering
+ *  @param lcdText true to set the LCDRenderText bit in the paint's flags,
+ *                 false to clear it.
+ */
+func (paint *Paint) SetLCDRenderText(lcdRencderText bool) {
+	toimpl()
 }
 
 func (paint *Paint) Looper() *DrawLooper {
