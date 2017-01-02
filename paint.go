@@ -185,6 +185,50 @@ func (paint *Paint) SetLCDRenderText(lcdRencderText bool) {
 	toimpl()
 }
 
+func (paint *Paint) IsEmbeddedBitmapText() bool  {
+	toimpl()
+	return false
+}
+
+/** Helper for setFlags(), setting or clearing the kEmbeddedBitmapText_Flag bit
+	@param useEmbeddedBitmapText true to set the kEmbeddedBitmapText bit in the paint's flags,
+								 false to clear it.
+*/
+func (paint *Paint) SetEmbeddedBitmapText(useEmbeddedBitmapText bool) {
+	toimpl()
+}
+
+func (paint *Paint) IsAutohinted() bool {
+	toimpl()
+	return false
+}
+
+/** Helper for setFlags(), setting or clearing the kAutoHinting_Flag bit
+	@param useAutohinter true to set the kEmbeddedBitmapText bit in the
+							  paint's flags,
+						 false to clear it.
+*/
+func (paint *Paint) SetAutohinted(useAutohinted bool) {
+	toimpl()
+}
+
+func (paint *Paint) IsVerticalText() bool {
+	toimpl()
+	return false
+}
+
+/**
+ *  Helper for setting or clearing the kVerticalText_Flag bit in
+ *  setFlags(...).
+ *
+ *  If this bit is set, then advances are treated as Y values rather than
+ *  X values, and drawText will places its glyphs vertically rather than
+ *  horizontally.
+ */
+func (paint *Paint) SetVerticalText(useVerticalText bool) {
+	toimpl()
+}
+
 func (paint *Paint) Looper() *DrawLooper {
 	return paint.looper
 }
