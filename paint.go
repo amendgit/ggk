@@ -122,7 +122,7 @@ func (paint *Paint) SetFlags(flags PaintFlags) {
 /** Helper for getFlags(), returning true if kAntiAlias_Flag bit is set
 @return true if the antialias bit is set in the paint's flags. */
 func (paint *Paint) IsAntiAlias() bool {
-	return paint.flags & KPaintFlagAntiAlias != 0
+	return paint.flags&KPaintFlagAntiAlias != 0
 }
 
 /** Helper for setFlags(), setting or clearing the kAntiAlias_Flag bit
@@ -134,7 +134,7 @@ func (paint *Paint) SetAnitAlias(aa bool) {
 /** Helper for getFlags(), returning true if kDither_Flag bit is set
 @return true if the dithering bit is set in the paint's flags. */
 func (paint *Paint) IsDither() bool {
-	return paint.flags & KPaintFlagDither != 0
+	return paint.flags&KPaintFlagDither != 0
 }
 
 /** Helper for setFlags(), setting or clearing the kDither_Flag bit
@@ -146,7 +146,7 @@ func (paint *Paint) SetDither(dither bool) {
 /** Helper for getFlags(), returning true if kLinearText_Flag bit is set
 @return true if the lineartext bit is set in the paint's flags */
 func (paint *Paint) IsLinearText() bool {
-	return paint.flags & KPaintFlagLinearText != 0
+	return paint.flags&KPaintFlagLinearText != 0
 }
 
 /** Helper for setFlags(), setting or clearing the kLinearText_Flag bit
@@ -159,7 +159,7 @@ func (paint *Paint) SetLinearText(linearText bool) {
 /** Helper for getFlags(), returning true if kSubpixelText_Flag bit is set
 @return true if the lineartext bit is set in the paint's flags */
 func (paint *Paint) IsSubpixelText() bool {
-	return paint.flags & KPaintFlagSubpixelText != 0
+	return paint.flags&KPaintFlagSubpixelText != 0
 }
 
 /**
@@ -172,7 +172,7 @@ func (paint *Paint) SetSubpixelText(subpixelText bool) {
 }
 
 func (paint *Paint) IsLCDRenderText() bool {
-	return uint32(paint.flags) & KPaintFlagLCDRenderText != 0
+	return uint32(paint.flags)&KPaintFlagLCDRenderText != 0
 }
 
 /**
@@ -185,14 +185,14 @@ func (paint *Paint) SetLCDRenderText(lcdRencderText bool) {
 	toimpl()
 }
 
-func (paint *Paint) IsEmbeddedBitmapText() bool  {
+func (paint *Paint) IsEmbeddedBitmapText() bool {
 	toimpl()
 	return false
 }
 
 /** Helper for setFlags(), setting or clearing the kEmbeddedBitmapText_Flag bit
-	@param useEmbeddedBitmapText true to set the kEmbeddedBitmapText bit in the paint's flags,
-								 false to clear it.
+@param useEmbeddedBitmapText true to set the kEmbeddedBitmapText bit in the paint's flags,
+							 false to clear it.
 */
 func (paint *Paint) SetEmbeddedBitmapText(useEmbeddedBitmapText bool) {
 	toimpl()
@@ -204,9 +204,9 @@ func (paint *Paint) IsAutohinted() bool {
 }
 
 /** Helper for setFlags(), setting or clearing the kAutoHinting_Flag bit
-	@param useAutohinter true to set the kEmbeddedBitmapText bit in the
-							  paint's flags,
-						 false to clear it.
+@param useAutohinter true to set the kEmbeddedBitmapText bit in the
+						  paint's flags,
+					 false to clear it.
 */
 func (paint *Paint) SetAutohinted(useAutohinted bool) {
 	toimpl()
@@ -229,6 +229,385 @@ func (paint *Paint) SetVerticalText(useVerticalText bool) {
 	toimpl()
 }
 
+/** Helper for getFlags(), returning true if kUnderlineText_Flag bit is set
+@return true if the underlineText bit is set in the paint's flags. */
+func (paint *Paint) IsUnderlineText() bool {
+	toimpl()
+	return false
+}
+
+/** Helper for setFlags(), setting or clearing the kUnderlineText_Flag bit
+@param underlineText true to set the underlineText bit in the paint's
+					 flags, false to clear it. */
+func (paint *Paint) SetUnderlineText(underlineText bool) {
+	toimpl()
+}
+
+/** Helper for getFlags(), returns true if kStrikeThruText_Flag bit is set
+@return true if the strikeThruText bit is set in the paint's flags. */
+func (paint *Paint) IsStrikeThruText() bool {
+	toimpl()
+	return false
+}
+
+/** Helper for setFlags(), setting or clearing the kStrikeThruText_Flag bit
+@param strikeThruText   true to set the strikeThruText bit in the
+						paint's flags, false to clear it. */
+func (paint *Paint) SetStrikeThruText(strikeThruText bool) {
+	toimpl()
+}
+
+/** Helper for getFlags(), returns true if kFakeBoldText_Flag bit is set
+@return true if the kFakeBoldText_Flag bit is set in the paint's flags.
+*/
+func (paint *Paint) IsFakeBoldText() bool {
+	toimpl()
+	return false
+}
+
+/** Helper for setFlags(), setting or clearing the kFakeBoldText_Flag bit
+@param fakeBoldText true to set the kFakeBoldText_Flag bit in the paint's
+					flags, false to clear it.
+*/
+func (paint *Paint) SetFakeBoldText(fakeBoldText bool) {
+	toimpl()
+}
+
+/** Helper for getFlags(), returns true if kDevKernText_Flag bit is set
+@return true if the kernText bit is set in the paint's flags.
+*/
+func (paint *Paint) IsDevKernText() bool {
+	toimpl()
+	return false
+}
+
+/** Helper for setFlags(), setting or clearing the kKernText_Flag bit
+@param kernText true to set the kKernText_Flag bit in the paint's
+					flags, false to clear it.
+*/
+func (paint *Paint) SetDevKernText(devKernText bool) {
+	toimpl()
+}
+
+/**
+ *  Return the filter level. This affects the quality (and performance) of
+ *  drawing scaled images.
+ */
+func (paint *Paint) FilterQuality() FilterQuality {
+	toimpl()
+	return KFilterQualityNone
+}
+
+/**
+ *  Set the filter quality. This affects the quality (and performance) of
+ *  drawing scaled images.
+ */
+func (paint *Paint) SetFilterQuality(quality FilterQuality) {
+	toimpl()
+}
+
+/** Styles apply to rect, oval, path, and text.
+  Bitmaps are always drawn in "fill", and lines are always drawn in
+  "stroke".
+
+  Note: strokeandfill implicitly draws the result with
+  SkPath::kWinding_FillType, so if the original path is even-odd, the
+  results may not appear the same as if it was drawn twice, filled and
+  then stroked.
+*/
+type PaintStyle int
+
+const (
+	KPaintStyleFill          = PaintStyle(iota) // < fill the geometry
+	KPaintStyleStroke                           // < stroke the geometry
+	KPaintStyleStrokeAndFill                    // < fill and stroke the geometry
+	KPaintStyleCount         = KPaintStyleStrokeAndFill + 1
+)
+
+/** Return the paint's style, used for controlling how primitives'
+geometries are interpreted (except for drawBitmap, which always assumes
+kFill_Style).
+@return the paint's Style
+*/
+func (paint *Paint) Style() PaintStyle {
+	toimpl()
+	return KPaintStyleFill
+}
+
+/** Set the paint's style, used for controlling how primitives'
+geometries are interpreted (except for drawBitmap, which always assumes
+Fill).
+@param style    The new style to set in the paint */
+func (paint *Paint) SetStyle(style PaintStyle) {
+	paint.style = style
+}
+
+/** Return the paint's color. Note that the color is a 32bit value
+containing alpha as well as r,g,b. This 32bit value is not
+premultiplied, meaning that its alpha can be any value, regardless of
+the values of r,g,b.
+@return the paint's color (and alpha). */
+func (paint *Paint) Color() Color {
+	toimpl()
+	return KColorBlack
+}
+
+/** Set the paint's color. Note that the color is a 32bit value containing
+alpha as well as r,g,b. This 32bit value is not premultiplied, meaning
+that its alpha can be any value, regardless of the values of r,g,b.
+@param color    The new color (including alpha) to set in the paint. */
+func (paint *Paint) SetColor(color Color) {
+	paint.color = color
+}
+
+/** Helper to getColor() that just returns the color's alpha value.
+@return the alpha component of the paint's color. */
+func (paint *Paint) Alpha() uint8 {
+	toimpl()
+	return 0
+}
+
+/** Helper to setColor(), that only assigns the color's alpha value,
+leaving its r,g,b values unchanged.
+@param a    set the alpha component (0..255) of the paint's color. */
+func (paint *Paint) SetAlpha(alpha uint8) {
+	toimpl()
+}
+
+/** Helper to setColor(), that takes a,r,g,b and constructs the color value
+using SkColorSetARGB()
+@param a    The new alpha component (0..255) of the paint's color.
+@param r    The new red component (0..255) of the paint's color.
+@param g    The new green component (0..255) of the paint's color.
+@param b    The new blue component (0..255) of the paint's color.
+*/
+func (paint *Paint) SetARGB(a, r, g, b uint8) {
+	toimpl()
+}
+
+/** Return the width for stroking.
+<p />
+A value of 0 strokes in hairline mode.
+Hairlines always draw 1-pixel wide, regardless of the matrix.
+@return the paint's stroke width, used whenever the paint's style is
+		Stroke or StrokeAndFill. */
+func (paint *Paint) StrokeWidth() int {
+	toimpl()
+	return 0
+}
+
+/** Set the width for stroking.
+Pass 0 to stroke in hairline mode.
+Hairlines always draw 1-pixel wide, regardless of the matrix.
+@param width set the paint's stroke width, used whenever the paint's
+			 style is Stroke or StrokeAndFill. */
+func (paint *Paint) SetStrokeWidth(width Scalar) {
+	toimpl()
+}
+
+/** Return the paint's stroke miter value. This is used to control the
+behavior of miter joins when the joins angle is sharp.
+@return the paint's miter limit, used whenever the paint's style is
+		Stroke or StrokeAndFill. */
+func (paint *Paint) StrokeMiter() Scalar {
+	toimpl()
+	return Scalar(0)
+}
+
+/** Set the paint's stroke miter value. This is used to control the
+behavior of miter joins when the joins angle is sharp. This value must
+be >= 0.
+@param miter    set the miter limit on the paint, used whenever the
+				paint's style is Stroke or StrokeAndFill.
+*/
+func (paint *Paint) SetStrokeMiter(miter Scalar) {
+	toimpl()
+}
+
+/** Cap enum specifies the settings for the paint's strokecap. This is the
+treatment that is applied to the beginning and end of each non-closed
+contour (e.g. lines).
+
+If the cap is round or square, the caps are drawn when the contour has
+a zero length. Zero length contours can be created by following moveTo
+with a lineTo at the same point, or a moveTo followed by a close.
+
+A dash with an on interval of zero also creates a zero length contour.
+
+The zero length contour draws the square cap without rotation, since
+the no direction can be inferred. */
+type PaintCap int
+
+const (
+	KPaintCapButt   = PaintCap(iota) //< begin/end contours with no extension
+	KPaintCapRound                   //< begin/end contours with a semi-circle extension
+	KPaintCapSquare                  //< begin/end contours with a half square extension
+
+	KPaintCapLast    = KPaintCapSquare
+	KPaintCapDefault = KPaintCapButt
+	KPaintCapCount   = KPaintCapLast + 1
+)
+
+/** Return the paint's stroke cap type, controlling how the start and end
+	of stroked lines and paths are treated.
+	@return the line cap style for the paint, used whenever the paint's
+			style is Stroke or StrokeAndFill.
+*/
+func (paint *Paint) StrokeCap() PaintCap {
+	toimpl()
+	return KPaintCapDefault
+}
+
+/** Set the paint's stroke cap type.
+	@param cap  set the paint's line cap style, used whenever the paint's
+				style is Stroke or StrokeAndFill. */
+func (paint *Paint) SetStrokeCap(cap PaintCap) {
+	toimpl()
+}
+
+type PaintJoin int
+
+const (
+	KPaintJoinMiter = PaintJoin(iota) //< connect path segments with a sharp join
+	KPaintJoinRound                   //< connect path segments with a round join
+	KPaintJoinBevel                   //< connect path segments with a flat bevel join
+
+	KPaintJoinLast    = KPaintJoinBevel
+	KPaintJoinDefault = KPaintJoinMiter
+	KPaintJoinCount   = KPaintJoinLast + 1
+)
+
+/** Return the paint's stroke join type.
+	@return the paint's line join style, used whenever the paint's style is
+			Stroke or StrokeAndFill. */
+func (paint *Paint) StrokeJoin() PaintJoin {
+	toimpl()
+	return KPaintJoinDefault
+}
+
+/** Set the paint's stroke join type.
+	@param join set the paint's line join style, used whenever the paint's
+				style is Stroke or StrokeAndFill. */
+func (paint *Paint) SetStrokeJoin(join PaintJoin) {
+	toimpl()
+}
+
+/**
+ *  Applies any/all effects (patheffect, stroking) to src, returning the
+ *  result in dst. The result is that drawing src with this paint will be
+ *  the same as drawing dst with a default paint (at least from the
+ *  geometric perspective).
+ *
+ *  @param src  input path
+ *  @param dst  output path (may be the same as src)
+ *  @param cullRect If not null, the dst path may be culled to this rect.
+ *  @param resScale If > 1, increase precision, else if (0 < res < 1) reduce precision
+ *              in favor of speed/size.
+ *  @return     true if the path should be filled, or false if it should be
+ *              drawn with a hairline (width == 0)
+ */
+func (paint *Paint) FillPath(src *Path, dst *Path, cullRect *Rect, resScale Scalar) {
+	toimpl()
+}
+
+/** Get the paint's shader object.
+	<p />
+  The shader's reference count is not affected.
+	@return the paint's shader (or NULL)
+*/
+func (paint *Paint) Shader() *Shader {
+	toimpl()
+	return nil
+}
+
+/** Set or clear the shader object.
+ *  Shaders specify the source color(s) for what is being drawn. If a paint
+ *  has no shader, then the paint's color is used. If the paint has a
+ *  shader, then the shader's color(s) are use instead, but they are
+ *  modulated by the paint's alpha. This makes it easy to create a shader
+ *  once (e.g. bitmap tiling or gradient) and then change its transparency
+ *  w/o having to modify the original shader... only the paint's alpha needs
+ *  to be modified.
+ *
+ *  There is an exception to this only-respect-paint's-alpha rule: If the shader only generates
+ *  alpha (e.g. SkShader::CreateBitmapShader(bitmap, ...) where bitmap's colortype is kAlpha_8)
+ *  then the shader will use the paint's entire color to "colorize" its output (modulating the
+ *  bitmap's alpha with the paint's color+alpha).
+ *
+ *  Pass NULL to clear any previous shader.
+ *  As a convenience, the parameter passed is also returned.
+ *  If a previous shader exists, its reference count is decremented.
+ *  If shader is not NULL, its reference count is incremented.
+ *  @param shader   May be NULL. The shader to be installed in the paint
+ *  @return         shader
+ */
+func (paint *Paint) SetShader(shader *Shader) {
+	toimpl()
+}
+
+/** Get the paint's colorfilter. If there is a colorfilter, its reference
+	count is not changed.
+	@return the paint's colorfilter (or NULL)
+*/
+func (paint *Paint) ColorFilter() *ColorFilter {
+	return paint.colorFilter
+}
+
+/** Set or clear the paint's colorfilter, returning the parameter.
+	<p />
+	If the paint already has a filter, its reference count is decremented.
+	If filter is not NULL, its reference count is incremented.
+	@param filter   May be NULL. The filter to be installed in the paint
+	@return         filter
+*/
+func (paint *Paint) SetColorFilter(colorFilter *ColorFilter) {
+	toimpl()
+}
+
+/** Get the paint's xfermode object.
+	<p />
+  The xfermode's reference count is not affected.
+	@return the paint's xfermode (or NULL)
+*/
+func (paint *Paint) Xfermode() *Xfermode {
+	return paint.xfermode
+}
+
+/** Set or clear the xfermode object.
+	<p />
+	Pass NULL to clear any previous xfermode.
+	As a convenience, the parameter passed is also returned.
+	If a previous xfermode exists, its reference count is decremented.
+	If xfermode is not NULL, its reference count is incremented.
+	@param xfermode May be NULL. The new xfermode to be installed in the
+					paint
+	@return         xfermode
+*/
+func (paint *Paint) SetXfermode(xfermode *Xfermode) {
+	paint.xfermode = xfermode
+}
+
+/** Create an xfermode based on the specified Mode, and assign it into the
+	paint, returning the mode that was set. If the Mode is SrcOver, then
+	the paint's xfermode is set to null.
+ */
+func (paint *Paint) SetXfermodeMode(mode XfermodeMode) *Xfermode {
+	paint.xfermode = NewXfermodeWithMode(mode)
+	return paint.xfermode
+}
+
+/** Get the paint's patheffect object.
+	<p />
+  The patheffect reference count is not affected.
+	@return the paint's patheffect (or NULL)
+*/
+func (paint *Paint) PathEffect() *PathEffect {
+	toimpl()
+	return nil
+}
+
+// ------
+
 func (paint *Paint) Looper() *DrawLooper {
 	return paint.looper
 }
@@ -236,28 +615,6 @@ func (paint *Paint) Looper() *DrawLooper {
 func (paint *Paint) SetLooper(looper *DrawLooper) {
 	paint.looper = looper
 }
-
-func (paint *Paint) SetColor(color Color) {
-	paint.color = color
-}
-
-func (paint *Paint) Color() Color {
-	toimpl()
-	return KColorBlack
-}
-
-func (paint *Paint) SetXfermodeMode(mode XfermodeMode) *Xfermode {
-	paint.xfermode = NewXfermodeWithMode(mode)
-	return paint.xfermode
-}
-
-type PaintStyle int
-
-const (
-	KPaintStyleFill          = PaintStyle(iota) // < fill the geometry
-	KPaintStyleStroke                           // < stroke the geometry
-	KPaintStyleStrokeAndFill                    // < fill and stroke the geometry
-)
 
 func (paint *Paint) CanComputeFastBounds() bool {
 	// if paint.Looper() != nil {
@@ -291,35 +648,8 @@ func (paint *Paint) Rasterizer() bool {
 	return false
 }
 
-func (paint *Paint) Shader() *Shader {
-	toimpl()
-	return nil
-}
-
-/** Get the paint's colorfilter. If there is a colorfilter, its reference
-count is not changed.
-@return the paint's colorfilter (or NULL)
-*/
-func (paint *Paint) ColorFilter() *ColorFilter {
-	return paint.colorFilter
-}
-
-func (paint *Paint) SetColorFilter(colorFilter *ColorFilter) {
-	toimpl()
-}
-
 func (paint *Paint) SetImageFilter(imageFilter *ImageFilter) {
 	toimpl()
-}
-
-func (paint *Paint) SetXfermode(xfermode *Xfermode) {
-	paint.xfermode = xfermode
-}
-
-/** Xfermode
-@return the paint's xfermode or nil. */
-func (paint *Paint) Xfermode() *Xfermode {
-	return paint.xfermode
 }
 
 func (paint *Paint) NothingToDraw() bool {
@@ -332,15 +662,6 @@ func (paint *Paint) Clone() *Paint {
 	return nil
 }
 
-func (paint *Paint) SetStyle(style PaintStyle) {
-	paint.style = style
-}
-
-func (paint *Paint) StrokeWidth() int {
-	toimpl()
-	return 0
-}
-
 func (paint *Paint) MaskFilter() *MaskFilter {
 	toimpl()
 	return nil
@@ -348,13 +669,4 @@ func (paint *Paint) MaskFilter() *MaskFilter {
 
 func (paint *Paint) SetShader(shader *Shader) {
 	toimpl()
-}
-
-func (paint *Paint) SetAlpha(alpha uint8) {
-	toimpl()
-}
-
-func (paint *Paint) Alpha() uint8 {
-	toimpl()
-	return 0
 }
