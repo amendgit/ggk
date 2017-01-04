@@ -449,9 +449,9 @@ const (
 )
 
 /** Return the paint's stroke cap type, controlling how the start and end
-	of stroked lines and paths are treated.
-	@return the line cap style for the paint, used whenever the paint's
-			style is Stroke or StrokeAndFill.
+of stroked lines and paths are treated.
+@return the line cap style for the paint, used whenever the paint's
+		style is Stroke or StrokeAndFill.
 */
 func (paint *Paint) StrokeCap() PaintCap {
 	toimpl()
@@ -459,8 +459,8 @@ func (paint *Paint) StrokeCap() PaintCap {
 }
 
 /** Set the paint's stroke cap type.
-	@param cap  set the paint's line cap style, used whenever the paint's
-				style is Stroke or StrokeAndFill. */
+@param cap  set the paint's line cap style, used whenever the paint's
+			style is Stroke or StrokeAndFill. */
 func (paint *Paint) SetStrokeCap(cap PaintCap) {
 	toimpl()
 }
@@ -478,16 +478,16 @@ const (
 )
 
 /** Return the paint's stroke join type.
-	@return the paint's line join style, used whenever the paint's style is
-			Stroke or StrokeAndFill. */
+@return the paint's line join style, used whenever the paint's style is
+		Stroke or StrokeAndFill. */
 func (paint *Paint) StrokeJoin() PaintJoin {
 	toimpl()
 	return KPaintJoinDefault
 }
 
 /** Set the paint's stroke join type.
-	@param join set the paint's line join style, used whenever the paint's
-				style is Stroke or StrokeAndFill. */
+@param join set the paint's line join style, used whenever the paint's
+			style is Stroke or StrokeAndFill. */
 func (paint *Paint) SetStrokeJoin(join PaintJoin) {
 	toimpl()
 }
@@ -546,19 +546,19 @@ func (paint *Paint) SetShader(shader *Shader) {
 }
 
 /** Get the paint's colorfilter. If there is a colorfilter, its reference
-	count is not changed.
-	@return the paint's colorfilter (or NULL)
+count is not changed.
+@return the paint's colorfilter (or NULL)
 */
 func (paint *Paint) ColorFilter() *ColorFilter {
 	return paint.colorFilter
 }
 
 /** Set or clear the paint's colorfilter, returning the parameter.
-	<p />
-	If the paint already has a filter, its reference count is decremented.
-	If filter is not NULL, its reference count is incremented.
-	@param filter   May be NULL. The filter to be installed in the paint
-	@return         filter
+<p />
+If the paint already has a filter, its reference count is decremented.
+If filter is not NULL, its reference count is incremented.
+@param filter   May be NULL. The filter to be installed in the paint
+@return         filter
 */
 func (paint *Paint) SetColorFilter(colorFilter *ColorFilter) {
 	toimpl()
@@ -574,23 +574,23 @@ func (paint *Paint) Xfermode() *Xfermode {
 }
 
 /** Set or clear the xfermode object.
-	<p />
-	Pass NULL to clear any previous xfermode.
-	As a convenience, the parameter passed is also returned.
-	If a previous xfermode exists, its reference count is decremented.
-	If xfermode is not NULL, its reference count is incremented.
-	@param xfermode May be NULL. The new xfermode to be installed in the
-					paint
-	@return         xfermode
+<p />
+Pass NULL to clear any previous xfermode.
+As a convenience, the parameter passed is also returned.
+If a previous xfermode exists, its reference count is decremented.
+If xfermode is not NULL, its reference count is incremented.
+@param xfermode May be NULL. The new xfermode to be installed in the
+				paint
+@return         xfermode
 */
 func (paint *Paint) SetXfermode(xfermode *Xfermode) {
 	paint.xfermode = xfermode
 }
 
 /** Create an xfermode based on the specified Mode, and assign it into the
-	paint, returning the mode that was set. If the Mode is SrcOver, then
-	the paint's xfermode is set to null.
- */
+paint, returning the mode that was set. If the Mode is SrcOver, then
+the paint's xfermode is set to null.
+*/
 func (paint *Paint) SetXfermodeMode(mode XfermodeMode) *Xfermode {
 	paint.xfermode = NewXfermodeWithMode(mode)
 	return paint.xfermode
@@ -606,15 +606,238 @@ func (paint *Paint) PathEffect() *PathEffect {
 	return nil
 }
 
-// ------
+/** Set or clear the patheffect object.
+<p />
+Pass NULL to clear any previous patheffect.
+As a convenience, the parameter passed is also returned.
+If a previous patheffect exists, its reference count is decremented.
+If patheffect is not NULL, its reference count is incremented.
+@param effect   May be NULL. The new patheffect to be installed in the
+				paint
+@return         effect
+*/
+func (paint *Paint) SetPathEffect(effect *PathEffect) {
+	toimpl()
+}
 
+/** Get the paint's maskfilter object.
+	<p />
+  The maskfilter reference count is not affected.
+	@return the paint's maskfilter (or NULL)
+*/
+func (paint *Paint) MaskFilter() *MaskFilter {
+	toimpl()
+	return nil
+}
+
+/** Set or clear the maskfilter object.
+<p />
+Pass NULL to clear any previous maskfilter.
+As a convenience, the parameter passed is also returned.
+If a previous maskfilter exists, its reference count is decremented.
+If maskfilter is not NULL, its reference count is incremented.
+@param maskfilter   May be NULL. The new maskfilter to be installed in
+					the paint
+@return             maskfilter
+*/
+func (paint *Paint) SetMastFilter(maskfilter *MaskFilter) {
+	toimpl()
+}
+
+// These attributes are for text/fonts
+
+/** Get the paint's typeface object.
+<p />
+The typeface object identifies which font to use when drawing or
+measuring text. The typeface reference count is not affected.
+@return the paint's typeface (or NULL)
+*/
+func (paint *Paint) Typeface() *Typeface {
+	toimpl()
+	return nil
+}
+
+/** Set or clear the typeface object.
+<p />
+Pass NULL to clear any previous typeface.
+As a convenience, the parameter passed is also returned.
+If a previous typeface exists, its reference count is decremented.
+If typeface is not NULL, its reference count is incremented.
+@param typeface May be NULL. The new typeface to be installed in the
+				paint
+@return         typeface
+*/
+func (paint *Paint) SetTypeface(typeface *Typeface) {
+	toimpl()
+}
+
+/** Get the paint's rasterizer (or NULL).
+<p />
+The raster controls how paths/text are turned into alpha masks.
+@return the paint's rasterizer (or NULL)
+*/
+func (paint *Paint) Rasterizer() *Rasterizer {
+	toimpl()
+	return nil
+}
+
+/** Set or clear the rasterizer object.
+<p />
+Pass NULL to clear any previous rasterizer.
+As a convenience, the parameter passed is also returned.
+If a previous rasterizer exists in the paint, its reference count is
+decremented. If rasterizer is not NULL, its reference count is
+incremented.
+@param rasterizer May be NULL. The new rasterizer to be installed in
+				  the paint.
+@return           rasterizer
+*/
+func (paint *Paint) SetRasterizer(rasterizer *Rasterizer) {
+	toimpl()
+}
+
+func (paint *Paint) ImageFilter() *ImageFilter {
+	return paint.imageFilter
+}
+
+func (paint *Paint) SetImageFilter(imageFilter *ImageFilter) {
+	toimpl()
+}
+
+/**
+ *  Return the paint's SkDrawLooper (if any). Does not affect the looper's
+ *  reference count.
+ */
 func (paint *Paint) Looper() *DrawLooper {
 	return paint.looper
 }
 
+/**
+ *  Set or clear the looper object.
+ *  <p />
+ *  Pass NULL to clear any previous looper.
+ *  As a convenience, the parameter passed is also returned.
+ *  If a previous looper exists in the paint, its reference count is
+ *  decremented. If looper is not NULL, its reference count is
+ *  incremented.
+ *  @param looper May be NULL. The new looper to be installed in the paint.
+ *  @return looper
+ */
 func (paint *Paint) SetLooper(looper *DrawLooper) {
 	paint.looper = looper
 }
+
+type PaintAlign int
+
+const (
+	KPaintAlignLeft = PaintAlign(iota)
+	KPaintAlignCenter
+	KPaintAlignRight
+	KPaintAlignCount = 3
+)
+
+/** Return the paint's Align value for drawing text.
+@return the paint's Align value for drawing text.
+*/
+func (paint *Paint) TextAlign() PaintAlign {
+	toimpl()
+	return KPaintAlignLeft
+}
+
+/** Set the paint's text alignment.
+@param align set the paint's Align value for drawing text.
+*/
+func (paint *Paint) SetTextAlign(align PaintAlign) {
+	toimpl()
+}
+
+/** Return the paint's text size.
+@return the paint's text size.
+*/
+func (paint *Paint) TextSize() Scalar {
+	toimpl()
+	return Scalar(0)
+}
+
+/** Set the paint's text size. This value must be > 0
+@param textSize set the paint's text size.
+*/
+func (paint *Paint) SetTextSize(textSize Scalar) {
+	toimpl()
+}
+
+/** Return the paint's horizontal scale factor for text. The default value
+is 1.0.
+@return the paint's scale factor in X for drawing/measuring text
+*/
+func (paint *Paint) TextScaleX() Scalar {
+	toimpl()
+	return Scalar(0)
+}
+
+/** Set the paint's horizontal scale factor for text. The default value
+is 1.0. Values > 1.0 will stretch the text wider. Values < 1.0 will
+stretch the text narrower.
+@param scaleX   set the paint's scale factor in X for drawing/measuring
+				text.
+*/
+func (paint *Paint) SetTextScaleX(scaleX Scalar) {
+	toimpl()
+}
+
+/** Return the paint's horizontal skew factor for text. The default value
+is 0.
+@return the paint's skew factor in X for drawing text.
+*/
+func (paint *Paint) TextSkewX() Scalar {
+	toimpl()
+	return Scalar(0)
+}
+
+/** Set the paint's horizontal skew factor for text. The default value
+is 0. For approximating oblique text, use values around -0.25.
+@param skewX set the paint's skew factor in X for drawing text.
+*/
+func (paint *Paint) SetTextSkewX(skewX Scalar) {
+	toimpl()
+}
+
+/** Describes how to interpret the text parameters that are passed to paint
+methods like measureText() and getTextWidths().
+*/
+type PaintTextEncoding int
+
+const (
+	KPaintTextEncodingUTF8    = PaintTextEncoding(iota) //< the text parameters are UTF8
+	KPaintTextEncodingUTF16                             //< the text parameters are UTF16
+	KPaintTextEncodingUTF32                             //< the text parameters are UTF32
+	KPaintTextEncodingGlyphID                           //< the text parameters are glyph indices
+)
+
+func (paint *Paint) TextEncoding() PaintTextEncoding {
+	toimpl()
+	return KPaintTextEncodingUTF8
+}
+
+func (paint *Paint) SetTextEncoding(encoding PaintTextEncoding) {
+	toimpl()
+}
+
+/** Flags which indicate the confidence level of various metrics.
+		A set flag indicates that the metric may be trusted.
+	*/
+type PaintFontMetricsFlags int
+
+const (
+	KPaintFontMetricsFlagUnderlineThinknessIsValid = 1 << iota
+	KPaintFontMetricsFlagUnderlinePositionIsValid
+)
+
+type PaintFontMetrics struct {
+
+}
+
+// ------
 
 func (paint *Paint) CanComputeFastBounds() bool {
 	// if paint.Looper() != nil {
@@ -639,30 +862,12 @@ func (paint *Paint) doComputeFastStrokeBounds(orig Rect, storage *Rect, style Pa
 	return RectZero
 }
 
-func (paint *Paint) ImageFilter() *ImageFilter {
-	return paint.imageFilter
-}
-
-func (paint *Paint) Rasterizer() bool {
-	toimpl()
-	return false
-}
-
-func (paint *Paint) SetImageFilter(imageFilter *ImageFilter) {
-	toimpl()
-}
-
 func (paint *Paint) NothingToDraw() bool {
 	toimpl()
 	return false
 }
 
 func (paint *Paint) Clone() *Paint {
-	toimpl()
-	return nil
-}
-
-func (paint *Paint) MaskFilter() *MaskFilter {
 	toimpl()
 	return nil
 }
