@@ -824,8 +824,8 @@ func (paint *Paint) SetTextEncoding(encoding PaintTextEncoding) {
 }
 
 /** Flags which indicate the confidence level of various metrics.
-		A set flag indicates that the metric may be trusted.
-	*/
+A set flag indicates that the metric may be trusted.
+*/
 type PaintFontMetricsFlags int
 
 const (
@@ -834,7 +834,108 @@ const (
 )
 
 type PaintFontMetrics struct {
+	Flags              uint32 //< Bit field to identify which values are unknown
+	Top                Scalar //< The greatest distance above the baseline for any glyph (will be <= 0)
+	Ascent             Scalar //< The recommended distance above the baseline (will be <= 0)
+	Descent            Scalar //< The recommended distance below the baseline (will be >= 0)
+	Bottom             Scalar //< The greatest distance below the baseline for any glyph (will be >= 0)
+	Leading            Scalar //< The recommended distance to add between lines of text (will be >= 0)
+	AvgCharWidth       Scalar //< the average character width (>= 0)
+	MaxCharWidth       Scalar //< the max character width (>= 0)
+	XMin               Scalar //< The minimum bounding box x value for all glyphs
+	XMax               Scalar //< The maximum bounding box x value for all glyphs
+	XHeight            Scalar //< The height of an 'x' in px, or 0 if no 'x' in face
+	CapHeight          Scalar //< The cap height (> 0), or 0 if cannot be determined.
+	UnderlineThickness Scalar //< underline thickness, or 0 if cannot be determined
 
+	/**  Underline Position - position of the top of the Underline stroke
+	  relative to the baseline, this can have following values
+	  - Negative - means underline should be drawn above baseline.
+	  - Positive - means below baseline.
+	  - Zero     - mean underline should be drawn on baseline. */
+	UnderlinePosition Scalar
+}
+
+/**  If the fontmetrics has a valid underlinethickness, return true, and set the
+		thickness param to that value. If it doesn't return false and ignore the
+		thickness param.
+*/
+func (metrics *PaintFontMetrics) HasUnderlineThickness(thickness *Scalar) bool {
+	toimpl()
+	return false
+}
+
+/**  If the fontmetrics has a valid underlineposition, return true, and set the
+		thickness param to that value. If it doesn't return false and ignore the
+		thickness param.
+*/
+func (metrics *PaintFontMetrics) HasUnderlinePosition(position *Scalar) bool {
+	toimpl()
+	return false
+}
+
+/** Return the recommend spacing between lines (which will be
+	fDescent - fAscent + fLeading).
+	If metrics is not null, return in it the font metrics for the
+	typeface/pointsize/etc. currently set in the paint.
+	@param metrics      If not null, returns the font metrics for the
+						current typeface/pointsize/etc setting in this
+						paint.
+	@param scale        If not 0, return width as if the canvas were scaled
+						by this value
+	@param return the recommended spacing between lines
+*/
+func (paint *Paint) FontMetrics(metrics *PaintFontMetrics, scale Scalar) Scalar {
+	toimpl()
+	return Scalar(0)
+}
+
+/** Return the recommend line spacing. This will be
+	fDescent - fAscent + fLeading
+*/
+func (paint *Paint) FontSpacing() Scalar {
+	toimpl()
+	return Scalar(0)
+}
+
+/** Convert the specified text into glyph IDs, returning the number of
+	glyphs ID written. If glyphs is NULL, it is ignore and only the count
+	is returned.
+*/
+func (paint *Paint) TextToGlyphs(text string, byteLength int, glyphs []GlyphID) int {
+	toimpl()
+	return 0
+}
+
+/** Return true if all of the specified text has a corresponding non-zero
+	glyph ID. If any of the code-points in the text are not supported in
+	the typeface (i.e. the glyph ID would be zero), then return false.
+
+	If the text encoding for the paint is kGlyph_TextEncoding, then this
+	returns true if all of the specified glyph IDs are non-zero.
+ */
+func (paint *Paint) ContainsText(text string, byteLength int) bool {
+	toimpl()
+	return false
+}
+
+/** Convert the glyph array into Unichars. Unconvertable glyphs are mapped
+	to zero. Note: this does not look at the text-encoding setting in the
+	paint, only at the typeface.
+*/
+func (paint *Paint) GlyphsToUnichars(glyphs []GlyphID, count int, text []Unichar) int {
+	toimpl()
+	return Unichar(0)
+}
+
+/** Return the number of drawable units in the specified text buffer.
+	This looks at the current TextEncoding field of the paint. If you also
+	want to have the text converted into glyph IDs, call textToGlyphs
+	instead.
+*/
+func (paint *Paint) CountText(text string, byteLength int) int {
+	toimpl()
+	return 0
 }
 
 // ------
