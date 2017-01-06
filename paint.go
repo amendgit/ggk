@@ -938,16 +938,42 @@ func (paint *Paint) CountText(text string, byteLength int) int {
 	return 0
 }
 
+/** Return the width of the text. This will return the vertical measure
+ *  if isVerticalText() is true, in which case the returned value should
+ *  be treated has a height instead of a width.
+ *
+ *  @param text         The text to be measured
+ *  @param length       Number of bytes of text to measure
+ *  @param bounds       If not NULL, returns the bounds of the text,
+ *                      relative to (0, 0).
+ *  @return             The advance width of the text
+ */
+func (paint *Paint) MeasureText(text string, length int, bounds *Rect) Scalar {
+	toimpl()
+	return Scalar(0)
+}
+
+/** Return the number of bytes of text that were measured. If
+ *  isVerticalText() is true, then the vertical advances are used for
+ *  the measurement.
+ *
+ *  @param text     The text to be measured
+ *  @param length   Number of bytes of text to measure
+ *  @param maxWidth Maximum width. Only the subset of text whose accumulated
+ *                  widths are <= maxWidth are measured.
+ *  @param measuredWidth Optional. If non-null, this returns the actual
+ *                  width of the measured text.
+ *  @return         The number of bytes of text that were measured. Will be
+ *                  <= length.
+ */
+func (paint *Paint) BreakText(text string, length int, maxWidth Scalar, measuredWidth *Scalar) int {
+	toimpl()
+	return 0
+}
+
 // ------
 
 func (paint *Paint) CanComputeFastBounds() bool {
-	// if paint.Looper() != nil {
-	// 	return paint.Looper().CanComputeFastBounds()
-	// }
-	// if paint.ImageFilter() != nil && paint.ImageFilter().CanComputeFastBounds() {
-	// 	return false
-	// }
-	// return !paint.Rasterizer()
 	toimpl()
 	return false
 }
