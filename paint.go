@@ -43,6 +43,11 @@ func (paint *Paint) Hash() uint32 {
 	return 0
 }
 
+func (paint *Paint) Clone() *Paint {
+	toimpl()
+	return nil
+}
+
 func (paint *Paint) Flatten(buffer *WriteBuffer) {
 	toimpl()
 }
@@ -116,13 +121,13 @@ func (paint *Paint) Flags() PaintFlags {
 /** Set the paint's flags. Use the Flag enum to specific flag values.
 @param flags    The new flag bits for the paint (see Flags enum) */
 func (paint *Paint) SetFlags(flags PaintFlags) {
-	paint.flags = flags
+	paint.flags = uint32(flags)
 }
 
 /** Helper for getFlags(), returning true if kAntiAlias_Flag bit is set
 @return true if the antialias bit is set in the paint's flags. */
 func (paint *Paint) IsAntiAlias() bool {
-	return paint.flags&KPaintFlagAntiAlias != 0
+	return paint.flags&uint32(KPaintFlagAntiAlias) != 0
 }
 
 /** Helper for setFlags(), setting or clearing the kAntiAlias_Flag bit
@@ -134,7 +139,7 @@ func (paint *Paint) SetAnitAlias(aa bool) {
 /** Helper for getFlags(), returning true if kDither_Flag bit is set
 @return true if the dithering bit is set in the paint's flags. */
 func (paint *Paint) IsDither() bool {
-	return paint.flags&KPaintFlagDither != 0
+	return paint.flags&uint32(KPaintFlagDither) != 0
 }
 
 /** Helper for setFlags(), setting or clearing the kDither_Flag bit
@@ -146,7 +151,7 @@ func (paint *Paint) SetDither(dither bool) {
 /** Helper for getFlags(), returning true if kLinearText_Flag bit is set
 @return true if the lineartext bit is set in the paint's flags */
 func (paint *Paint) IsLinearText() bool {
-	return paint.flags&KPaintFlagLinearText != 0
+	return paint.flags&uint32(KPaintFlagLinearText) != 0
 }
 
 /** Helper for setFlags(), setting or clearing the kLinearText_Flag bit
@@ -159,7 +164,7 @@ func (paint *Paint) SetLinearText(linearText bool) {
 /** Helper for getFlags(), returning true if kSubpixelText_Flag bit is set
 @return true if the lineartext bit is set in the paint's flags */
 func (paint *Paint) IsSubpixelText() bool {
-	return paint.flags&KPaintFlagSubpixelText != 0
+	return paint.flags&uint32(KPaintFlagSubpixelText) != 0
 }
 
 /**
@@ -172,7 +177,7 @@ func (paint *Paint) SetSubpixelText(subpixelText bool) {
 }
 
 func (paint *Paint) IsLCDRenderText() bool {
-	return uint32(paint.flags)&KPaintFlagLCDRenderText != 0
+	return uint32(paint.flags)&uint32(KPaintFlagLCDRenderText) != 0
 }
 
 /**
@@ -925,7 +930,7 @@ func (paint *Paint) ContainsText(text string, byteLength int) bool {
 */
 func (paint *Paint) GlyphsToUnichars(glyphs []GlyphID, count int, text []Unichar) int {
 	toimpl()
-	return Unichar(0)
+	return 0
 }
 
 /** Return the number of drawable units in the specified text buffer.
@@ -971,34 +976,207 @@ func (paint *Paint) BreakText(text string, length int, maxWidth Scalar, measured
 	return 0
 }
 
-// ------
-
-func (paint *Paint) CanComputeFastBounds() bool {
+/** Return the advances for the text. These will be vertical advances if
+ *  isVerticalText() returns true.
+ *
+ *  @param text         the text
+ *  @param byteLength   number of bytes to of text
+ *  @param widths       If not null, returns the array of advances for
+ *                      the glyphs. If not NULL, must be at least a large
+ *                      as the number of unichars in the specified text.
+ *  @param bounds       If not null, returns the bounds for each of
+ *                      character, relative to (0, 0)
+ *  @return the number of unichars in the specified text.
+ */
+func (paint *Paint) TextWidths(text string, byteLength int, widths []Scalar, bounds []Rect) int {
 	toimpl()
-	return false
+	return 0
 }
 
-func (paint *Paint) ComputeFastStrokeBounds(orig Rect, storage *Rect) Rect {
-	return paint.doComputeFastStrokeBounds(orig, storage, KPaintStyleStroke)
+/** Return the path (outline) for the specified text.
+ *  Note: just like SkCanvas::drawText, this will respect the Align setting
+ *        in the paint.
+ *
+ *  @param text         the text
+ *  @param length       number of bytes of text
+ *  @param x            The x-coordinate of the origin of the text.
+ *  @param y            The y-coordinate of the origin of the text.
+ *  @param path         The outline of the text.
+ */
+func (paint *Paint) TextPath(text string, length int, x, y Scalar, path *Path) {
+	toimpl()
 }
 
-// Take the style explicitly, so the caller can force us to be stroked
-// without having to make a copy of the paint just to change that field.
-func (paint *Paint) doComputeFastStrokeBounds(orig Rect, storage *Rect, style PaintStyle) Rect {
+/** Return the path (outline) for the specified text.
+ *  Note: just like SkCanvas::drawText, this will respect the Align setting
+ *        in the paint.
+ *
+ *  @param text         the text
+ *  @param length       number of bytes of text
+ *  @param pos          array of positions, used to position each character
+ *  @param path         The outline of the text.
+ */
+func (paint *Paint) PosTextPath(text string, length int, pos []Point, path *Path) {
+	toimpl()
+}
+
+/** Return the number of intervals that intersect the intercept along the axis of the advance.
+ *  The return count is zero or a multiple of two, and is at most the number of glyphs * 2 in
+ *  the string. The caller may pass nullptr for intervals to determine the size of the interval
+ *  array, or may conservatively pre-allocate an array with length * 2 entries. The computed
+ *  intervals are cached by glyph to improve performance for multiple calls.
+ *  This permits constructing an underline that skips the descenders.
+ *
+ *  @param text         the text
+ *  @param length       number of bytes of text
+ *  @param x            The x-coordinate of the origin of the text.
+ *  @param y            The y-coordinate of the origin of the text.
+ *  @param bounds       The lower and upper line parallel to the advance.
+ *  @param array        If not null, the found intersections.
+ *
+ *  @return             The number of intersections, which may be zero.
+ */
+func (paint *Paint) TextIntercepts(text string, length int, x, y Scalar, bounds [2]Scalar, intervals *Scalar) int {
+	toimpl()
+	return 0
+}
+
+/** Return the number of intervals that intersect the intercept along the axis of the advance.
+ *  The return count is zero or a multiple of two, and is at most the number of glyphs * 2 in
+ *  string. The caller may pass nullptr for intervals to determine the size of the interval
+ *  array, or may conservatively pre-allocate an array with length * 2 entries. The computed
+ *  intervals are cached by glyph to improve performance for multiple calls.
+ *  This permits constructing an underline that skips the descenders.
+ *
+ *  @param text         the text
+ *  @param length       number of bytes of text
+ *  @param pos          array of positions, used to position each character
+ *  @param bounds       The lower and upper line parallel to the advance.
+ *  @param array        If not null, the glyph bounds contained by the advance parallel lines.
+ *
+ *  @return             The number of intersections, which may be zero.
+ */
+func (paint *Paint) PosTextIntercepts(text string, length int, pos []Point, bounds [2]Scalar, intervals *Scalar) int {
+	toimpl()
+	return 0
+}
+
+/** Return the number of intervals that intersect the intercept along the axis of the advance.
+ *  The return count is zero or a multiple of two, and is at most the number of glyphs * 2 in
+ *  string. The caller may pass nullptr for intervals to determine the size of the interval
+ *  array, or may conservatively pre-allocate an array with length * 2 entries. The computed
+ *  intervals are cached by glyph to improve performance for multiple calls.
+ *  This permits constructing an underline that skips the descenders.
+ *
+ *  @param text         The text.
+ *  @param length       Number of bytes of text.
+ *  @param xpos         Array of x-positions, used to position each character.
+ *  @param constY       The shared Y coordinate for all of the positions.
+ *  @param bounds       The lower and upper line parallel to the advance.
+ *  @param array        If not null, the glyph bounds contained by the advance parallel lines.
+ *
+ *  @return             The number of intersections, which may be zero.
+ */
+func (paint *Paint) PosTextHIntercepts(text string, length int, xpos []Scalar, constY Scalar, bounds [2]Scalar, intervals *Scalar) int {
+	toimpl()
+	return 0
+}
+
+/** Return the number of intervals that intersect the intercept along the axis of the advance.
+ *  The return count is zero or a multiple of two, and is at most the number of glyphs * 2 in
+ *  text blob. The caller may pass nullptr for intervals to determine the size of the interval
+ *  array. The computed intervals are cached by glyph to improve performance for multiple calls.
+ *  This permits constructing an underline that skips the descenders.
+ *
+ *  @param blob         The text blob.
+ *  @param bounds       The lower and upper line parallel to the advance.
+ *  @param array        If not null, the glyph bounds contained by the advance parallel lines.
+ *
+ *  @return             The number of intersections, which may be zero.
+ */
+func (paint *Paint) TextBlobIntercepts(blob *TextBlob, bounds [2]Scalar, intervals *Scalar) int {
+	toimpl()
+	return 0
+}
+
+/**
+ *  Return a rectangle that represents the union of the bounds of all
+ *  of the glyphs, but each one positioned at (0,0). This may be conservatively large, and
+ *  will not take into account any hinting, but will respect any text-scale-x or text-skew-x
+ *  on this paint.
+ */
+func (paint *Paint) FontBounds() Rect {
 	toimpl()
 	return RectZero
 }
 
+// returns true if the paint's settings (e.g. xfermode + alpha) resolve to
+// mean that we need not draw at all (e.g. SrcOver + 0-alpha)
 func (paint *Paint) NothingToDraw() bool {
 	toimpl()
 	return false
 }
 
-func (paint *Paint) Clone() *Paint {
+///////////////////////////////////////////////////////////////////////////
+// would prefer to make these private...
+
+/** Returns true if the current paint settings allow for fast computation of
+ bounds (i.e. there is nothing complex like a patheffect that would make
+ the bounds computation expensive.
+ */
+func (paint *Paint) CanComputeFastBounds() bool {
+	toimpl()
+	return false
+}
+
+/** Only call this if canComputeFastBounds() returned true. This takes a
+ raw rectangle (the raw bounds of a shape), and adjusts it for stylistic
+ effects in the paint (e.g. stroking). If needed, it uses the storage
+ rect parameter. It returns the adjusted bounds that can then be used
+ for quickReject tests.
+
+ The returned rect will either be orig or storage, thus the caller
+ should not rely on storage being set to the result, but should always
+ use the retured value. It is legal for orig and storage to be the same
+ rect.
+
+ e.g.
+ if (paint.canComputeFastBounds()) {
+ SkRect r, storage;
+ path.computeBounds(&r, SkPath::kFast_BoundsType);
+ const SkRect& fastR = paint.computeFastBounds(r, &storage);
+ if (canvas->quickReject(fastR, ...)) {
+ // don't draw the path
+ }
+ }
+ */
+func (paint *Paint) ComputeFastBounds(orig Rect, strong *Rect) Rect {
+	toimpl()
+	return RectZero
+}
+
+func (paint *Paint) ComputeFastStrokeBounds(orig Rect, storage *Rect) Rect {
+	return paint.doComputeFastBounds(orig, storage, KPaintStyleStroke)
+}
+
+// Take the style explicitly, so the caller can force us to be stroked
+// without having to make a copy of the paint just to change that field.
+func (paint *Paint) doComputeFastBounds(orig Rect, storage *Rect, style PaintStyle) Rect {
+	toimpl()
+	return RectZero
+}
+
+/**
+ *  Return a matrix that applies the paint's text values: size, scale, skew
+ */
+func PaintSetTextMatrix(matrix *Matrix, size, scaleX, skewX Scalar) *Matrix {
 	toimpl()
 	return nil
 }
 
-func (paint *Paint) SetShader(shader *Shader) {
+func SetTextMatrix(matrix *Matrix) *Matrix {
 	toimpl()
+	return nil
 }
+
+type GlyphCacheProc func (*GlyphCache, **byte) *Glyph

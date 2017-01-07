@@ -7,5 +7,5 @@ package ggk
 type FilterQuality int
 
 const (
-	KFilterQualityNone //< fastest but lowest quality, typically nearest-neighbor
+	KFilterQualityNone = FilterQuality(iota)//< fastest but lowest quality, typically nearest-neighbor
 )
