@@ -254,6 +254,19 @@ func NewNullBlitter() Blitter {
 	return nil
 }
 
+/** Wraps another (real) blitter, and ensures that the real blitter is only
+    called with coordinates that have been clipped by the specified clipRect.
+    This means the caller need not perform the clipping ahead of time.
+*/
+type RectClipBlitter struct {
+
+}
+
+func NewRectClipBlitter() *RectClipBlitter {
+	toimpl()
+	return nil
+}
+
 type Blitter3D struct {
 }
 
