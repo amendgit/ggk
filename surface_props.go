@@ -45,14 +45,9 @@ func NewSurfaceProps(flags SurfacePropsFlags, initType SurfacePropsInitType) *Su
 	var props = &SurfaceProps{}
 	props.flags = flags
 	if initType == KSurfacePropsInitTypeLegacyFontHost {
-		props.pixelGeometry = props.computeDefaultGeometry()
+		props.pixelGeometry = computeDefaultGeometry()
 	}
 	return props
-}
-
-func (props *SurfaceProps) computeDefaultGeometry() PixelGeometry {
-	toimpl()
-	return KPixelGeometryBGRH
 }
 
 func (props *SurfaceProps) OutstandingImageSnapshot() *BaseSurface {
@@ -62,4 +57,29 @@ func (props *SurfaceProps) OutstandingImageSnapshot() *BaseSurface {
 
 func (props *SurfaceProps) AboutToDraw(mode SurfacePropsContentChangeMode) {
 	toimpl()
+}
+
+func computeDefaultGeometry() PixelGeometry {
+	var order = FontLCDConfigSubpixelOrientation()
+	if order == KLCDOrderNone {
+		return KPixelGeometryUnknown
+	} else {
+		// Bit0 is RGB(0), BGR(1)
+		// Bit1 is H(0), V(1)
+		var gGeo = []PixelGeometry{
+			KPixelGeometryRGBH,
+			KPixelGeometryBGRH,
+			KPixelGeometryRGBV,
+			KPixelGeometryBGRV,
+		}
+		var index = 0
+		if order == KLCDOrderBGR {
+			index = index | 1
+		}
+		if FontLCDConfigSubpixelOrientation() == KLCDOrientationVertical {
+			index = index | 2
+		}
+		return gGeo[index]
+	}
+	return KPixelGeometryBGRH
 }

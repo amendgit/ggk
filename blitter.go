@@ -1,5 +1,7 @@
 package ggk
 
+import "unsafe"
+
 /** Blitter
 blitter and its subclasses are responsible for actually writing pixels
 into memory. Besides efficiency, they handle clipping and antialiasing.
@@ -97,18 +99,6 @@ type Shader3D struct {
 func NewShader3D_Shader(shader *Shader) *Shader3D {
 	toimpl()
 	return nil
-}
-
-/** BlitterClipper
-Factory to set up the appropriate most-efficient wrapper blitter
-to apply a clip. Returns a pointer to a member, so lifetime must
-be managed carefully. */
-type BlitterClipper struct {
-	// toimpl
-}
-
-func (*BlitterClipper) apply(blitter Blitter, clip *Region, bounds Rect) {
-	toimpl()
 }
 
 func BlitterChoose(device *Pixmap, matrix *Matrix, origPaint *Paint, drawCoverage bool) Blitter {
@@ -302,7 +292,7 @@ func (blitter *RectClipBlitter) RequestRowsPreserved() int {
 
 func (blitter *RectClipBlitter) AllocBlitMemory(sz int) uintptr {
 	toimpl()
-	return nil
+	return uintptr(unsafe.Pointer(nil))
 }
 
 /** Wraps another (real) blitter, and ensures that the real blitter is only
@@ -312,11 +302,16 @@ func (blitter *RectClipBlitter) AllocBlitMemory(sz int) uintptr {
 type RgnClipBlitter struct {
 }
 
-/** Factory to set up the appropriate most-efficient wrapper blitter
-    to apply a clip. Returns a pointer to a member, so lifetime must
-    be managed carefully.
-*/
+/** BlitterClipper
+Factory to set up the appropriate most-efficient wrapper blitter
+to apply a clip. Returns a pointer to a member, so lifetime must
+be managed carefully. */
 type BlitterClipper struct {
+	// toimpl
+}
+
+func (*BlitterClipper) apply(blitter Blitter, clip *Region, bounds Rect) {
+	toimpl()
 }
 
 type Blitter3D struct {
