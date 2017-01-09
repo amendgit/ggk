@@ -259,12 +259,64 @@ func NewNullBlitter() Blitter {
     This means the caller need not perform the clipping ahead of time.
 */
 type RectClipBlitter struct {
-
 }
 
 func NewRectClipBlitter() *RectClipBlitter {
 	toimpl()
 	return nil
+}
+
+func (blitter *RectClipBlitter) BlitH(x, y, width int) {
+	toimpl()
+}
+
+func (blitter *RectClipBlitter) BlitAntiH(x, y int, alphas []Alpha, runs []int16) {
+	toimpl()
+}
+
+func (blitter *RectClipBlitter) BlitV(x, y, height int, alpha Alpha) {
+	toimpl()
+}
+
+func (blitter *RectClipBlitter) BlitRect(x, y, width, height int) {
+	toimpl()
+}
+
+func (blitter *RectClipBlitter) BlitAntiRect(x, y, width, height int, leftAlpha, rightAlpha Alpha) {
+	toimpl()
+}
+
+func (blitter *RectClipBlitter) BlitMask(mask *Mask, clip Rect) {
+	toimpl()
+}
+
+func (blitter *RectClipBlitter) JustAnOpaqueColor(value *uint32) *Pixmap {
+	toimpl()
+	return nil
+}
+
+func (blitter *RectClipBlitter) RequestRowsPreserved() int {
+	toimpl()
+	return 0
+}
+
+func (blitter *RectClipBlitter) AllocBlitMemory(sz int) uintptr {
+	toimpl()
+	return nil
+}
+
+/** Wraps another (real) blitter, and ensures that the real blitter is only
+    called with coordinates that have been clipped by the specified clipRgn.
+    This means the caller need not perform the clipping ahead of time.
+*/
+type RgnClipBlitter struct {
+}
+
+/** Factory to set up the appropriate most-efficient wrapper blitter
+    to apply a clip. Returns a pointer to a member, so lifetime must
+    be managed carefully.
+*/
+type BlitterClipper struct {
 }
 
 type Blitter3D struct {
