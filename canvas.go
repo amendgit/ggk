@@ -181,6 +181,7 @@ func NewCanvasBitmap(bmp *Bitmap) *Canvas {
 	canvas.Impl = canvas
 	canvas.surfaceProps = NewSurfaceProps(KSurfacePropsFlagNone, KSurfacePropsInitTypeLegacyFontHost)
 	canvas.mcStack = list.New()
+	canvas.clipStack = NewClipStack()
 
 	var device = NewBitmapDevice(bmp, canvas.surfaceProps)
 	canvas.init(device.BaseDevice, KCanvasInitFlagDefault)
