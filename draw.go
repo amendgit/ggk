@@ -144,18 +144,17 @@ func (draw *Draw) Device() *BaseDevice {
 	return draw.device
 }
 
-type tAutoBlitterChooser struct {
+type tAutoBlitterChoose struct {
 	blitter Blitter
 }
 
-func newAutoBlitterChooser(dst *Pixmap, matrix *Matrix, paint *Paint, drawCoverage bool) *tAutoBlitterChooser {
-	var chooser = &tAutoBlitterChooser{
+func newAutoBlitterChooser(dst *Pixmap, matrix *Matrix, paint *Paint, drawCoverage bool) *tAutoBlitterChoose {
+	var chooser = &tAutoBlitterChoose{
 		blitter : BlitterChoose(dst, matrix, paint, drawCoverage),
 	}
 	return chooser
 }
 
-func (chooser *tAutoBlitterChooser) Blitter() Blitter {
-	toimpl()
-	return nil
+func (choose *tAutoBlitterChoose) Blitter() Blitter {
+	return choose.blitter
 }
