@@ -84,12 +84,61 @@ type Blitter interface {
 	AllocBlitMemory(sz int)
 }
 
+/**
+ BaseBlitter is a default implementation for Blitter interface.
+ */
 type BaseBlitter struct {
-	// empty.
+	Blitter
 }
 
 func (blitter *BaseBlitter) BlitH(x, y, width int) {
-	toimpl()
+	// empty.
+}
+
+func (blitter *BaseBlitter) BlitAntiH(x, y int, antialias []Alpha, runs []int16) {
+	// empty.
+}
+
+func (blitter *BaseBlitter) BlitV(x, y, height int, alpha Alpha) {
+	// empty.
+}
+
+func (blitter *BaseBlitter) BlitRect(x, y, width, height int) {
+	// empty.
+}
+
+func (blitter *BaseBlitter) BlitAntiRect(x, y, width, height int, leftAlpha, rightAlpha Alpha) {
+	// empty.
+}
+
+func (blitter *BaseBlitter) BlitMask(mask *Mask, clip Rect) {
+	// empty.
+}
+
+func (blitter *BaseBlitter) JustAnOpaquerColor(value *uint32) *Pixmap {
+	return nil
+}
+
+func (blitter *BaseBlitter) BlitAntiH2(x, y int, a0, a1 uint8) {
+	var runs [3]int16
+	var aa [2]Alpha
+	runs[0], runs[1], runs[2] = 1, 1, 0
+	aa[0], aa[1] = Alpha(a0), Alpha(a1)
+	blitter.Blitter.BlitAntiH(x, y, aa[:], runs[:])
+}
+
+func (blitter *BaseBlitter) BlitAntiV2(x, y int, a0, a1 uint8) {
+	var runs [2]int16
+	var aa [1]Alpha
+
+	runs[0], runs[1] = 1, 0
+	aa[0] = Alpha(a0)
+	blitter.Blitter.BlitAntiH(x, y, aa[:], runs[:])
+
+	// reset in case the clipping blitter modified runs.
+	runs[0], runs[1] = 1, 0
+	aa[0] = Alpha(a1)
+	blitter.Blitter.BlitAntiH(x, y, aa[:], runs[:])
 }
 
 type Shader3D struct {
