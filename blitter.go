@@ -141,6 +141,16 @@ func (blitter *BaseBlitter) BlitAntiV2(x, y int, a0, a1 uint8) {
 	blitter.Blitter.BlitAntiH(x, y, aa[:], runs[:])
 }
 
+func (blitter *BaseBlitter) IsNullBlitter() bool {
+	// empty
+	return false
+}
+
+func (blitter *BaseBlitter) ResetShaderContext(rec *ShaderContextRec) bool {
+	// empty.
+	return false
+}
+
 type Shader3D struct {
 	*Shader
 }
