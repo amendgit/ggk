@@ -147,8 +147,47 @@ func (blitter *BaseBlitter) IsNullBlitter() bool {
 }
 
 func (blitter *BaseBlitter) ResetShaderContext(rec *ShaderContextRec) bool {
-	// empty.
+	// empty
 	return false
+}
+
+func (blitter *BaseBlitter) ShaderContext() *ShaderContext {
+	// empty
+	return nil
+}
+
+func (blitter *BaseBlitter) RequestRowsPreserved() int {
+	return 1
+}
+
+func (blitter *BaseBlitter) AllocBlitMemory(sz int) {
+	// empty
+}
+
+func (blitter *BaseBlitter) BlitMaskRegion(mask *Mask, clip *Region) {
+	toimpl()
+}
+
+func (blitter *BaseBlitter) BlitRectRegion(rect Rect, clip *Region) {
+	toimpl()
+}
+
+func (blitter *BaseBlitter) BlitRegion(clip *Region) {
+	toimpl()
+}
+
+func (blitter *BaseBlitter) Choose(dst *Pixmap, matrix *Matrix, paint *Paint, drawCoverage bool) Blitter {
+	toimpl()
+	return nil
+}
+
+func (blitter *BaseBlitter) ChooseSprite(dst *Pixmap, paint *Paint, src *Pixmap, left, top int) Blitter {
+	toimpl()
+	return nil
+}
+
+func (blitter *BaseBlitter) PreferredShaderDest(imageInfo *ImageInfo) ShaderDstType {
+	return KShaderDstTypePMColor
 }
 
 type Shader3D struct {
