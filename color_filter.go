@@ -22,3 +22,8 @@ func (filter *ColorFilter) FilterColor(color Color) Color {
 	toimpl()
 	return KColorBlack
 }
+
+func (filter *ColorFilter) AppendStages(pipeline *RasterPipeline) bool {
+	toimpl()
+	return false
+}

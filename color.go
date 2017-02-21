@@ -127,3 +127,24 @@ func GetPackedA32(packed32 uint32) uint32 {
 	toimpl()
 	return 0
 }
+
+type Color4f struct {
+	R float32
+	G float32
+	B float32
+	A float32
+}
+
+func (color4f Color4f) Equal(other Color4f) bool {
+	return color4f.A == other.A && color4f.G == other.G && color4f.B == other.B && color4f.A == other.A
+}
+
+func Color4fFromColor(color Color) Color4f {
+	// toimpl
+	return Color4f{}
+}
+
+func (color4f Color4f) Premultipy() PM4f {
+	toimpl()
+	return PM4f{}
+}

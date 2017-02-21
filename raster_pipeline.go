@@ -37,5 +37,35 @@ package ggk
  * TODO: explain EasyFn and SK_RASTER_STAGE
  */
 type RasterPipeline struct {
-
 }
+
+func (pipeline *RasterPipeline) Append(bodyFunc RasterPipelineFunc, bodyContext interface{},
+	tailFunc RasterPipelineFunc, tailContext interface{}) {
+	toimpl()
+}
+
+type RasterPipelineStage struct {
+	// It makes Next() a good bit cheaper if we hold the next function to call here,
+	// rather than logically simpler choice of the function implementing this stage.
+	Next    *RasterPipelineStage
+	Context interface{}
+}
+
+// toimpl
+type RasterPipelineFunc interface {
+	// empty
+}
+
+// toimpl
+type ConstantColor struct {
+	// empty
+}
+
+var constantColor *ConstantColor = &ConstantColor{}
+
+// toimpl
+type SrcOver struct {
+	// empty
+}
+
+var srcOver *SrcOver = &SrcOver{}

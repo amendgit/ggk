@@ -13,7 +13,7 @@ func toimpl() {
 	}
 	var _, filename = filepath.Split(file)
 	var funcname = runtime.FuncForPC(pc).Name()
-	fmt.Printf("toimpl \t %-16v \t %-8v \t %-32v\n", filename, line, funcname)
+	fmt.Printf("toimpl \t %-22v \t %-5v \t %-32v\n", filename, line, funcname)
 }
 
 func warn(format string, a ...interface{}) {

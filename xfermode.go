@@ -21,7 +21,7 @@ const (
 // All subclasses are required to be reentrant-safe : it must be legal to share
 // the same instance between several threads.
 type Xfermode struct {
-	
+	// empty
 }
 
 func NewXfermode() *Xfermode {
@@ -42,4 +42,9 @@ func XfermodeIsMode(xfer *Xfermode, mode XfermodeMode) bool {
 func XfermodeAsMode(xfer *Xfermode) (XfermodeMode, bool) {
 	toimpl()
 	return KXfermodeModeSrcOver, false
+}
+
+func (xfermode *Xfermode) AppendStages(pipeline *RasterPipeline) bool {
+	toimpl()
+	return false
 }

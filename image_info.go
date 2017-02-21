@@ -376,3 +376,8 @@ func (h *tReadPixelsRec) Trim(srcWidth, srcHeight Scalar) error {
 	h.X, h.Y = srcRect.X(), srcRect.Y()
 	return nil
 }
+
+func ImageInfoIsGammaCorrect(info *ImageInfo) bool {
+	toimpl()
+	return false
+}
