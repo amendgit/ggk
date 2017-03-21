@@ -31,6 +31,7 @@ func (clip *RasterClip) IsEmpty() bool {
 	return clip.isEmpty
 }
 
+// TODO: what is BW
 func (clip *RasterClip) IsBW() bool {
 	return clip.isBW
 }
@@ -68,8 +69,7 @@ not, they return the raw blitter and (bw) clip region.
 
 We need to keep the constructor/destructor cost as small as possible, so we
 can freely put this guy on the stack, and not pay too much for the case when
-we're really BW anyways.
-*/
+we're really BW anyways. */
 type AAClipBlitterWrapper struct {
 
 }

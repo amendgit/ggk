@@ -90,10 +90,10 @@ func (draw *Draw) DrawPaint(paint *Paint) {
 				return
 			}
 
-			var it = NewRegionIterator(draw.rasterClip.BWRgn())
-			for !it.Done() {
-				callBitmapXferProc(draw.dst, it.Rect(), xferProc, xferData)
-				it.Next()
+			var iterator = NewRegionIterator(draw.rasterClip.BWRgn())
+			for !iterator.Done() {
+				callBitmapXferProc(draw.dst, iterator.Rect(), xferProc, xferData)
+				iterator.Next()
 			}
 
 			return
@@ -105,7 +105,7 @@ func (draw *Draw) DrawPaint(paint *Paint) {
 	ScanFillRect(devRect, draw.rasterClip, chooser.Blitter())
 }
 
-func (d *Draw) DrawRect(rect Rect, paint *Paint) {
+func (draw *Draw) DrawRect(rect Rect, paint *Paint) {
 	toimpl()
 	return
 }

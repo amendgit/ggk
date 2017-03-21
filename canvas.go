@@ -336,19 +336,19 @@ This call can fail, returning false, for serveral reasons:
 - If srcR does not intersect the base-layer bounds.
 - If the requested colortype/alphatype cannot be converted from the base-layer's types.
 - If this canvas is not backed by pixels (e.g. picture or PDF) */
-func (c *Canvas) ReadPixels(dstInfo *ImageInfo, dstData []byte, rowBytes int, x, y Scalar) error {
-	var dev = c.Device()
-	if dev == nil {
+func (canvas *Canvas) ReadPixels(dstInfo *ImageInfo, dstData []byte, rowBytes int, x, y Scalar) error {
+	var device = canvas.Device()
+	if device == nil {
 		return errorf("device is nil")
 	}
-	var size = c.BaseLayerSize()
+	var size = canvas.BaseLayerSize()
 	var rec = newReadPixelsRec(dstInfo, dstData, rowBytes, x, y)
 	if err := rec.Trim(size.Width(), size.Height()); err != nil {
-		return errorf("bad arg %v", err)
+		return errorf("bad arguments %v", err)
 	}
 	// The device can assert that the requested area is always contained in its
 	// bounds.
-	return dev.ReadPixels(rec.Info, rec.Pixels, rec.RowBytes, rec.X, rec.Y)
+	return device.ReadPixels(rec.Info, rec.Pixels, rec.RowBytes, rec.X, rec.Y)
 }
 
 /**
