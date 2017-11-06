@@ -31,7 +31,7 @@ func (clip *RasterClip) IsEmpty() bool {
 	return clip.isEmpty
 }
 
-// TODO: what is BW
+// 不要抗锯齿
 func (clip *RasterClip) IsBW() bool {
 	return clip.isBW
 }

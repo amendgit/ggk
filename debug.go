@@ -2,8 +2,8 @@ package ggk
 
 import (
 	"fmt"
-	"runtime"
 	"path/filepath"
+	"runtime"
 )
 
 func toimpl() {
@@ -11,9 +11,10 @@ func toimpl() {
 	if !ok {
 		return
 	}
-	var _, filename = filepath.Split(file)
 	var funcname = runtime.FuncForPC(pc).Name()
-	fmt.Printf("toimpl \t %-22v \t %-5v \t %-32v\n", filename, line, funcname)
+	fmt.Printf("toimpl    %v\n", funcname)
+	fmt.Printf("	%v:%v\n", file, line)
+
 }
 
 func warn(format string, a ...interface{}) {

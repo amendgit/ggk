@@ -38,8 +38,10 @@ func chooseBitmapXferProc(dst *Pixmap, paint *Paint, data *uint32) tBitmapXferPr
 	switch mode {
 	case KXfermodeModeClear:
 		return new(tBitmapXferProcClear)
+
 	case KXfermodeModeDst:
 		return new(tBitmapXferProcDst)
+
 	case KXfermodeModeSrc:
 		// Should I worry about dithering for the lower depths.
 		var pmc, _ = PremultiplyColor(color)
@@ -49,11 +51,13 @@ func chooseBitmapXferProc(dst *Pixmap, paint *Paint, data *uint32) tBitmapXferPr
 				*data = uint32(pmc)
 			}
 			return new(tBitmapXferProcSrcD8)
+
 		case KColorTypeRGB565:
 			if (data != nil) {
 				*data = Pixel32ToPixel16(uint32(pmc))
 			}
 			return new(tBitmapXferProcSrcD16)
+			
 		case KColorTypeAlpha8:
 			if (data != nil) {
 				*data = GetPackedA32(uint32(pmc))

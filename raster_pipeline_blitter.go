@@ -18,6 +18,10 @@ func appendEffectStages(effect Effect, pipeline *RasterPipeline) bool {
 }
 
 func support(info *ImageInfo) bool {
+	if info == nil {
+		print(`ag info is nil`)
+		return false
+	}
 	switch info.ColorType() {
 	case KColorTypeN32:
 		return info.GammaCloseToSRGB()
