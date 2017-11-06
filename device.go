@@ -149,7 +149,6 @@ func (b *BaseDevice) DrawPaint(draw *Draw, paint *Paint) {
 }
 
 func (b *BaseDevice) forceConservativeRasterClip() bool {
-	toimpl()
 	return false
 }
 

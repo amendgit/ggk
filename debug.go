@@ -12,8 +12,8 @@ func toimpl() {
 		return
 	}
 	var funcname = runtime.FuncForPC(pc).Name()
-	fmt.Printf("toimpl    %v\n", funcname)
-	fmt.Printf("	%v:%v\n", file, line)
+	fmt.Printf("toimpl %v\n", funcname)
+	fmt.Printf("	  \t%v:%v\n", file, line)
 
 }
 
