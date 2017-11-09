@@ -51,10 +51,21 @@ func (rgn *Region) FromRectOpRegion(rect Rect, op RegionOp, otr *Region) bool {
 	return false
 }
 
-/** Return true if this region consists of more than 1 rectangular area */
-func (rgn *Region) IsComplex() bool {
+/** Return true if this region is empty */
+func (rgn *Region) IsEmpty() bool {
 	toimpl()
 	return false
+}
+
+/** Return true if this region is a single, non-empty rectangle */
+func (rgn *Region) IsRect() bool {
+	toimpl()
+	return false
+}
+
+/** Return true if this region consists of more than 1 rectangular area */
+func (rgn *Region) IsComplex() bool {
+	return !rgn.IsEmpty() && !rgn.IsRect()
 }
 
 /**
